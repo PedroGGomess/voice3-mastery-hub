@@ -293,7 +293,7 @@ const CallProfessor = () => {
                     )}
                     <div className="text-white font-bold text-lg">{pkg.name}</div>
                     <div className="mt-1 text-[#B89A5A] text-2xl font-bold">€{pkg.price}</div>
-                    <div className="text-white/40 text-xs mt-0.5">{pkg.sessions} sessão{pkg.sessions > 1 ? 'ões' : ''} · {pkg.duration}</div>
+                    <div className="text-white/40 text-xs mt-0.5">{pkg.sessions} {pkg.sessions > 1 ? 'sessões' : 'sessão'} · {pkg.duration}</div>
                     <ul className="mt-4 space-y-1.5">
                       {pkg.features.map(f => (
                         <li key={f} className="flex items-start gap-2 text-sm text-white/70">
