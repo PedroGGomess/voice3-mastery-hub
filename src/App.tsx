@@ -22,6 +22,7 @@ import Progresso from "./pages/empresa/Progresso";
 import EmpresaSuporte from "./pages/empresa/Suporte";
 import Definicoes from "./pages/empresa/Definicoes";
 import PacksPage from "./pages/PacksPage";
+import CallProfessor from "./pages/CallProfessor";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/app/aulas" element={<ProtectedRoute requiredRole="student"><AulasComProfessora /></ProtectedRoute>} />
             <Route path="/app/perfil" element={<ProtectedRoute requiredRole="student"><Perfil /></ProtectedRoute>} />
             <Route path="/app/suporte" element={<ProtectedRoute requiredRole="student"><Suporte /></ProtectedRoute>} />
+            <Route path="/app/call-professor" element={<ProtectedRoute requiredRole="student"><CallProfessor /></ProtectedRoute>} />
 
             {/* Company routes */}
             <Route path="/empresa" element={<ProtectedRoute requiredRole="company_admin"><CompanyDashboard /></ProtectedRoute>} />
