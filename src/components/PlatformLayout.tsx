@@ -12,8 +12,8 @@ import { useNotifications } from "@/hooks/use-notifications";
 const navItems = [
   { to: "/app", icon: LayoutDashboard, label: "Dashboard", end: true },
   { to: "/app/sessoes", icon: BookOpen, label: "Sessões" },
-  { to: "/app/perfil", icon: FileText, label: "Materiais" },
-  { to: "/app/sessoes", icon: BarChart2, label: "Performance" },
+  { to: "/app/materiais", icon: FileText, label: "Materiais" },
+  { to: "/app/desempenho", icon: BarChart2, label: "Desempenho" },
   { to: "/app/call-professor", icon: Phone, label: "Call c/ Professor" },
   { to: "/app/chat", icon: MessageCircle, label: "Chat AI" },
   { to: "/app/aulas", icon: GraduationCap, label: "Aulas c/ Professora" },

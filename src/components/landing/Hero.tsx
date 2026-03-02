@@ -1,9 +1,48 @@
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
+function useCountUp(target: number, duration: number, started: boolean) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!started) return;
+    let startTime: number | null = null;
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      setCount(Math.round(progress * target));
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+  }, [started, target, duration]);
+  return count;
+}
+
+const stats = [
+  { target: 500, suffix: "+", label: "Professionals Trained" },
+  { target: 94, suffix: "%", label: "Success Rate" },
+  // target=49 → divide by 10 to display as "4.9★" rating
+  { target: 49, suffix: "", label: "Rating", display: (n: number) => `${(n / 10).toFixed(1)}★` },
+] as const;
+
 const Hero = () => {
+  const statsRef = useRef<HTMLDivElement>(null);
+  const [statsStarted, setStatsStarted] = useState(false);
+  const c0 = useCountUp(stats[0].target, 1200, statsStarted);
+  const c1 = useCountUp(stats[1].target, 1200, statsStarted);
+  const c2 = useCountUp(stats[2].target, 1200, statsStarted);
+  const counts = [c0, c1, c2];
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setStatsStarted(true); observer.disconnect(); } },
+      { threshold: 0.3 }
+    );
+    if (statsRef.current) observer.observe(statsRef.current);
+    return () => observer.disconnect();
+  }, []);
   return (
     <section
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden grain-overlay"
@@ -54,6 +93,25 @@ const Hero = () => {
             >
               <a href="#empresas">For Companies</a>
             </Button>
+          </div>
+
+          {/* Animated stats */}
+          <div ref={statsRef} className="flex flex-wrap justify-center items-center gap-0 mt-16">
+            {stats.map((stat, i) => (
+              <div key={stat.label} className="flex items-center">
+                <div className="px-8 text-center">
+                  <p className="font-serif text-3xl md:text-4xl font-semibold text-[#B89A5A]">
+                    {"display" in stat
+                      ? (stat as typeof stats[2]).display(counts[i])
+                      : `${counts[i]}${stat.suffix}`}
+                  </p>
+                  <p className="text-xs text-[#8E96A3] mt-1 tracking-wider uppercase">{stat.label}</p>
+                </div>
+                {i < stats.length - 1 && (
+                  <div className="w-px h-10 bg-[#B89A5A]/30" />
+                )}
+              </div>
+            ))}
           </div>
         </motion.div>
       </div>
