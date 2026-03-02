@@ -1,11 +1,23 @@
 import PlatformLayout from "@/components/PlatformLayout";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarDays, Clock, Video, CheckCircle2, ArrowRight, RefreshCw, X, ClipboardList, Lock, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import ChatWidget from "@/components/ChatWidget";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+
+interface Booking {
+  id: string;
+  date: string;
+  time: string;
+  duration: string;
+  topic?: string;
+  notes?: string;
+  status: "upcoming" | "past" | "cancelled";
+}
 
 const availableSlots = [
   { date: "2026-03-04", time: "18:00", duration: "45 min" },
@@ -16,35 +28,74 @@ const availableSlots = [
   { date: "2026-03-07", time: "11:00", duration: "45 min" },
 ];
 
-const pastLessons = [
-  { date: "2026-02-20", time: "18:00", topic: "Introdução e avaliação inicial", notes: "Nível B1 confirmado. Foco em fluência oral." },
-];
-
-// Mock: teacher lessons and their unlock requirements
 const teacherLessons = [
   { id: 1, requiresSessions: 4, label: "Aula com Professora #1" },
   { id: 2, requiresSessions: 8, label: "Aula com Professora #2" },
 ];
 
-// Mock completed sessions count
-const completedSessions = 2;
-
 const AulasComProfessora = () => {
+  const { currentUser } = useAuth();
+  const userId = currentUser?.id || "";
+  const storageKey = `voice3_bookings_${userId}`;
+  const progressKey = `voice3_sessions_progress_${userId}`;
+
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-  const [booked, setBooked] = useState(false);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [completedSessions, setCompletedSessions] = useState(0);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(storageKey);
+      if (stored) setBookings(JSON.parse(stored));
+    } catch {}
+    try {
+      const stored = localStorage.getItem(progressKey);
+      if (stored) {
+        const p = JSON.parse(stored);
+        setCompletedSessions(Object.values(p).filter((v: any) => v.completed).length);
+      }
+    } catch {}
+  }, [storageKey, progressKey]);
+
+  const saveBookings = (b: Booking[]) => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(b));
+    } catch {}
+  };
 
   const formattedSelected = selectedDate?.toISOString().split("T")[0];
   const slotsForDate = availableSlots.filter((s) => s.date === formattedSelected);
 
+  const unlockedLessons = teacherLessons.filter(l => completedSessions >= l.requiresSessions);
+  const hasUnlocked = unlockedLessons.length > 0;
+
+  const upcomingBooking = bookings.find(b => b.status === "upcoming");
+  const pastBookings = bookings.filter(b => b.status === "past");
+
   const handleConfirm = () => {
-    setBooked(true);
+    if (!selectedSlot || !formattedSelected) return;
+    const newBooking: Booking = {
+      id: `b-${Date.now()}`,
+      date: formattedSelected,
+      time: selectedSlot,
+      duration: "45 min",
+      status: "upcoming",
+    };
+    const updated = [...bookings, newBooking];
+    setBookings(updated);
+    saveBookings(updated);
+    toast.success("Aula marcada com sucesso! 🎉");
+    setSelectedDate(undefined);
+    setSelectedSlot(null);
   };
 
-  // Check which lessons are unlocked
-  const unlockedLessons = teacherLessons.filter(l => completedSessions >= l.requiresSessions);
-  const nextLockedLesson = teacherLessons.find(l => completedSessions < l.requiresSessions);
-  const hasUnlocked = unlockedLessons.length > 0;
+  const handleCancel = (id: string) => {
+    const updated = bookings.map(b => b.id === id ? { ...b, status: "cancelled" as const } : b);
+    setBookings(updated);
+    saveBookings(updated);
+    toast.info("Aula cancelada.");
+  };
 
   return (
     <PlatformLayout>
@@ -52,34 +103,22 @@ const AulasComProfessora = () => {
         <h1 className="font-serif text-2xl font-bold mb-2">Aulas com Professora</h1>
         <p className="text-muted-foreground mb-8">Marca, gere e acompanha as tuas aulas com professora.</p>
 
-        {/* Status of teacher lessons */}
+        {/* Status cards */}
         <div className="grid sm:grid-cols-2 gap-4 mb-8">
           {teacherLessons.map((lesson) => {
             const unlocked = completedSessions >= lesson.requiresSessions;
             return (
-              <div
-                key={lesson.id}
-                className={`premium-card ${unlocked ? "border-primary/30 bg-primary/5" : "border-border bg-muted/30 opacity-70"}`}
-              >
+              <div key={lesson.id} className={`premium-card ${unlocked ? "border-primary/30 bg-primary/5" : "border-border bg-muted/30 opacity-70"}`}>
                 <div className="flex items-center gap-3 mb-2">
-                  {unlocked ? (
-                    <CalendarDays className="h-5 w-5 text-primary" />
-                  ) : (
-                    <Lock className="h-5 w-5 text-muted-foreground" />
-                  )}
+                  {unlocked ? <CalendarDays className="h-5 w-5 text-primary" /> : <Lock className="h-5 w-5 text-muted-foreground" />}
                   <h3 className="font-semibold text-sm">{lesson.label}</h3>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {unlocked
-                    ? "Desbloqueada! Marca a tua aula abaixo."
-                    : `Completa ${lesson.requiresSessions} sessões para desbloquear (${completedSessions}/${lesson.requiresSessions})`}
+                  {unlocked ? "Desbloqueada! Marca a tua aula abaixo." : `Completa ${lesson.requiresSessions} sessões para desbloquear (${completedSessions}/${lesson.requiresSessions})`}
                 </p>
                 {!unlocked && (
                   <div className="mt-3 h-1.5 rounded-full bg-secondary overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-primary/40 transition-all"
-                      style={{ width: `${(completedSessions / lesson.requiresSessions) * 100}%` }}
-                    />
+                    <div className="h-full rounded-full bg-primary/40 transition-all" style={{ width: `${(completedSessions / lesson.requiresSessions) * 100}%` }} />
                   </div>
                 )}
               </div>
@@ -87,87 +126,78 @@ const AulasComProfessora = () => {
           })}
         </div>
 
-        {/* If no lessons unlocked — show message */}
         {!hasUnlocked && (
           <div className="premium-card text-center py-12 mb-8">
             <Lock className="h-10 w-10 text-muted-foreground mx-auto mb-4" />
             <h3 className="font-semibold mb-2">Ainda não desbloqueaste nenhuma aula</h3>
             <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-              Completa as sessões AI do teu pack para desbloquear as aulas com professora. 
-              Enquanto isso, podes tirar dúvidas com o nosso chatbot 24/7!
+              Completa as sessões AI do teu pack para desbloquear as aulas com professora. Enquanto isso, podes tirar dúvidas com o nosso chatbot 24/7!
             </p>
             <div className="flex justify-center gap-3">
               <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl">
-                <Link to="/app">
-                  <ArrowRight className="mr-2 h-4 w-4" /> Continuar Sessões
-                </Link>
+                <Link to="/app"><ArrowRight className="mr-2 h-4 w-4" /> Continuar Sessões</Link>
               </Button>
               <Button asChild variant="outline" className="rounded-xl">
-                <Link to="/app/chat">
-                  <MessageCircle className="mr-2 h-4 w-4" /> Chat AI 24/7
-                </Link>
+                <Link to="/app/chat"><MessageCircle className="mr-2 h-4 w-4" /> Chat AI 24/7</Link>
               </Button>
             </div>
           </div>
         )}
 
-        {/* Calendar booking — only if there's an unlocked lesson */}
-        {hasUnlocked && !booked && (
+        {/* Upcoming booking */}
+        {upcomingBooking && (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="premium-card border-success/30 bg-success/5 mb-8">
+            <div className="flex items-center gap-3 mb-4">
+              <CheckCircle2 className="h-6 w-6 text-success" />
+              <h2 className="font-semibold text-lg">Aula marcada!</h2>
+            </div>
+            <div className="grid sm:grid-cols-3 gap-4 mb-6">
+              <div><p className="text-xs text-muted-foreground mb-1">Data</p><p className="font-medium">{upcomingBooking.date}</p></div>
+              <div><p className="text-xs text-muted-foreground mb-1">Hora</p><p className="font-medium">{upcomingBooking.time}</p></div>
+              <div><p className="text-xs text-muted-foreground mb-1">Duração</p><p className="font-medium">{upcomingBooking.duration}</p></div>
+            </div>
+            <div className="flex gap-3 flex-wrap">
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"><Video className="mr-2 h-4 w-4" /> Entrar na aula</Button>
+              <Button variant="outline" className="rounded-xl text-destructive hover:text-destructive" onClick={() => handleCancel(upcomingBooking.id)}>
+                <X className="mr-2 h-4 w-4" /> Cancelar
+              </Button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Calendar — only if unlocked and no upcoming */}
+        {hasUnlocked && !upcomingBooking && (
           <>
             <div className="premium-card border-primary/30 bg-primary/5 mb-8">
               <div className="flex items-center gap-3 mb-2">
                 <CalendarDays className="h-5 w-5 text-primary" />
-                <h2 className="font-semibold">Sessão com Professora desbloqueada</h2>
+                <h2 className="font-semibold">Marca a tua aula</h2>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Marca a tua aula com base na disponibilidade da professora.
-              </p>
+              <p className="text-sm text-muted-foreground">Escolhe uma data e hora disponíveis.</p>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-8">
+            <div className="grid lg:grid-cols-2 gap-8 mb-8">
               <div className="premium-card">
-                <h3 className="font-semibold mb-4 flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4 text-primary" /> Escolhe uma data
-                </h3>
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
+                <h3 className="font-semibold mb-4 flex items-center gap-2"><CalendarDays className="h-4 w-4 text-primary" /> Escolhe uma data</h3>
+                <Calendar mode="single" selected={selectedDate}
                   onSelect={(d) => { setSelectedDate(d); setSelectedSlot(null); }}
                   className="pointer-events-auto rounded-xl"
-                  disabled={(date) => {
-                    const d = date.toISOString().split("T")[0];
-                    return !availableSlots.some((s) => s.date === d);
-                  }}
-                />
+                  disabled={(date) => { const d = date.toISOString().split("T")[0]; return !availableSlots.some(s => s.date === d); }} />
               </div>
-
               <div className="premium-card">
-                <h3 className="font-semibold mb-4 flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-primary" /> Horários disponíveis
-                </h3>
+                <h3 className="font-semibold mb-4 flex items-center gap-2"><Clock className="h-4 w-4 text-primary" /> Horários disponíveis</h3>
                 {slotsForDate.length > 0 ? (
                   <div className="space-y-3">
-                    {slotsForDate.map((slot) => (
-                      <button
-                        key={slot.time}
-                        onClick={() => setSelectedSlot(slot.time)}
-                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-sm transition-all ${
-                          selectedSlot === slot.time
-                            ? "border-primary bg-primary/10 text-primary"
-                            : "border-border hover:border-primary/30"
-                        }`}
-                      >
+                    {slotsForDate.map(slot => (
+                      <button key={slot.time} onClick={() => setSelectedSlot(slot.time)}
+                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-sm transition-all ${selectedSlot === slot.time ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/30"}`}>
                         <span className="font-medium">{slot.time}</span>
                         <span className="text-muted-foreground">{slot.duration}</span>
                       </button>
                     ))}
                     {selectedSlot && (
-                      <Button
-                        onClick={handleConfirm}
-                        className="w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl h-11 mt-4"
-                      >
-                        Confirmar — {formattedSelected} às {selectedSlot}
-                        <ArrowRight className="ml-2 h-4 w-4" />
+                      <Button onClick={handleConfirm} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl h-11 mt-4">
+                        Confirmar — {formattedSelected} às {selectedSlot}<ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     )}
                   </div>
@@ -181,75 +211,35 @@ const AulasComProfessora = () => {
           </>
         )}
 
-        {hasUnlocked && booked && (
-          <>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="premium-card border-success/30 bg-success/5 mb-8"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <CheckCircle2 className="h-6 w-6 text-success" />
-                <h2 className="font-semibold text-lg">Aula marcada!</h2>
-              </div>
-              <div className="grid sm:grid-cols-3 gap-4 mb-6">
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Data</p>
-                  <p className="font-medium">{formattedSelected}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Hora</p>
-                  <p className="font-medium">{selectedSlot}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Duração</p>
-                  <p className="font-medium">45 min</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl">
-                  <Video className="mr-2 h-4 w-4" /> Entrar na aula
-                </Button>
-                <Button variant="outline" className="rounded-xl" onClick={() => setBooked(false)}>
-                  <RefreshCw className="mr-2 h-4 w-4" /> Remarcar
-                </Button>
-                <Button variant="outline" className="rounded-xl text-destructive hover:text-destructive" onClick={() => setBooked(false)}>
-                  <X className="mr-2 h-4 w-4" /> Cancelar
-                </Button>
-              </div>
-            </motion.div>
-
-            <div className="premium-card mb-8">
-              <h3 className="font-semibold mb-4 flex items-center gap-2">
-                <ClipboardList className="h-4 w-4 text-primary" /> Prepara-te para a aula
-              </h3>
-              <ul className="space-y-3">
-                {["Revê o que aprendeste nas sessões anteriores", "Prepara 2-3 perguntas", "Testa o áudio e câmara", "Tem papel e caneta por perto"].map((item) => (
-                  <li key={item} className="flex items-center gap-3 text-sm">
-                    <div className="w-5 h-5 rounded border border-border flex items-center justify-center shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </>
+        {/* Prep checklist */}
+        {upcomingBooking && (
+          <div className="premium-card mb-8">
+            <h3 className="font-semibold mb-4 flex items-center gap-2"><ClipboardList className="h-4 w-4 text-primary" /> Prepara-te para a aula</h3>
+            <ul className="space-y-3">
+              {["Revê o que aprendeste nas sessões anteriores", "Prepara 2-3 perguntas", "Testa o áudio e câmara", "Tem papel e caneta por perto"].map(item => (
+                <li key={item} className="flex items-center gap-3 text-sm">
+                  <div className="w-5 h-5 rounded border border-border flex items-center justify-center shrink-0" />{item}
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
 
         {/* Past lessons */}
-        {pastLessons.length > 0 && (
-          <div className="mt-12">
+        {pastBookings.length > 0 && (
+          <div className="mt-8">
             <h3 className="font-semibold mb-4">Aulas anteriores</h3>
             <div className="space-y-3">
-              {pastLessons.map((lesson, i) => (
-                <div key={i} className="premium-card">
+              {pastBookings.map(lesson => (
+                <div key={lesson.id} className="premium-card">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4 text-success" />
                       <span className="font-medium text-sm">{lesson.date} — {lesson.time}</span>
                     </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">{lesson.topic}</p>
-                  <p className="text-xs text-muted-foreground mt-2 italic">Notas: {lesson.notes}</p>
+                  {lesson.topic && <p className="text-sm text-muted-foreground">{lesson.topic}</p>}
+                  {lesson.notes && <p className="text-xs text-muted-foreground mt-2 italic">Notas: {lesson.notes}</p>}
                 </div>
               ))}
             </div>
