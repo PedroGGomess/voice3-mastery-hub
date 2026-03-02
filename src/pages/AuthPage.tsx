@@ -3,19 +3,63 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { ArrowRight, Eye, EyeOff } from "lucide-react";
 import Voice3Logo from "@/components/Voice3Logo";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const AuthPage = () => {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login, register, isAuthenticated, currentUser } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  if (isAuthenticated) {
+    return <Navigate to={currentUser?.role === "company_admin" ? "/empresa" : "/app"} replace />;
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Mock auth — navigate to platform
-    navigate("/app");
+    setError("");
+    setLoading(true);
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
+    try {
+      if (mode === "login") {
+        const email = data.get("email") as string;
+        const password = data.get("password") as string;
+        await login(email, password);
+        toast.success("Bem-vindo de volta!");
+        // navigate happens via the isAuthenticated check re-render
+      } else {
+        const name = data.get("name") as string;
+        const email = data.get("email") as string;
+        const password = data.get("password") as string;
+        const confirmPassword = data.get("confirmPassword") as string;
+        const company = data.get("company") as string;
+        const role = (data.get("role") as string || "student") as "student" | "company_admin";
+        if (password !== confirmPassword) {
+          setError("As passwords não coincidem.");
+          setLoading(false);
+          return;
+        }
+        if (password.length < 6) {
+          setError("A password deve ter pelo menos 6 caracteres.");
+          setLoading(false);
+          return;
+        }
+        await register({ name, email, password, company: company || undefined, role });
+        toast.success("Conta criada com sucesso!");
+      }
+    } catch (err: any) {
+      setError(err.message || "Ocorreu um erro. Tenta novamente.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,6 +91,11 @@ const AuthPage = () => {
               <span>Acompanha o teu progresso em tempo real</span>
             </div>
           </div>
+          <div className="mt-8 p-4 rounded-xl bg-white/5 border border-white/10">
+            <p className="text-xs text-white/40 mb-2">Demo rápido:</p>
+            <p className="text-xs text-white/60">Aluno: demo@voice3.pt / demo123</p>
+            <p className="text-xs text-white/60">Empresa: empresa@voice3.pt / empresa123</p>
+          </div>
         </div>
       </div>
 
@@ -70,29 +119,40 @@ const AuthPage = () => {
               : "Regista-te para começar a treinar o teu Inglês empresarial."}
           </p>
 
+          {error && (
+            <div className="mb-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-sm text-destructive">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "register" && (
               <>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">Primeiro Nome</Label>
-                    <Input id="firstName" placeholder="João" required className="h-11 rounded-xl" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Apelido</Label>
-                    <Input id="lastName" placeholder="Silva" required className="h-11 rounded-xl" />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nome completo</Label>
+                  <Input id="name" name="name" placeholder="João Silva" required className="h-11 rounded-xl" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Telemóvel</Label>
-                  <Input id="phone" type="tel" placeholder="+351 912 345 678" className="h-11 rounded-xl" />
+                  <Label htmlFor="company">Empresa (opcional)</Label>
+                  <Input id="company" name="company" placeholder="Tech Corp Portugal" className="h-11 rounded-xl" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="role">Tipo de conta</Label>
+                  <select
+                    id="role"
+                    name="role"
+                    className="flex h-11 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <option value="student">Aluno / Profissional</option>
+                    <option value="company_admin">Administrador de Empresa</option>
+                  </select>
                 </div>
               </>
             )}
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="joao@empresa.pt" required className="h-11 rounded-xl" />
+              <Input id="email" name="email" type="email" placeholder="joao@empresa.pt" required className="h-11 rounded-xl" />
             </div>
 
             <div className="space-y-2">
@@ -100,6 +160,7 @@ const AuthPage = () => {
               <div className="relative">
                 <Input
                   id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   required
@@ -117,23 +178,33 @@ const AuthPage = () => {
 
             {mode === "register" && (
               <div className="space-y-2">
-                <Label htmlFor="accountType">Tipo de conta</Label>
-                <select
-                  id="accountType"
-                  className="flex h-11 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  <option value="person">Conta Pessoa</option>
-                  <option value="company">Conta Empresa</option>
-                </select>
+                <Label htmlFor="confirmPassword">Confirmar Password</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  required
+                  className="h-11 rounded-xl"
+                />
+              </div>
+            )}
+
+            {mode === "login" && (
+              <div className="flex items-center gap-2">
+                {/* "Remember me" — placeholder for future persistent session support */}
+                <input type="checkbox" id="remember" name="remember" className="rounded" />
+                <Label htmlFor="remember" className="text-sm font-normal text-muted-foreground cursor-pointer">Lembrar-me</Label>
               </div>
             )}
 
             <Button
               type="submit"
+              disabled={loading}
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl h-11 text-base font-medium"
             >
-              {mode === "login" ? "Entrar" : "Criar Conta"}
-              <ArrowRight className="ml-2 h-4 w-4" />
+              {loading ? "A processar..." : mode === "login" ? "Entrar" : "Criar Conta"}
+              {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
             </Button>
           </form>
 
@@ -141,7 +212,7 @@ const AuthPage = () => {
             <p className="text-sm text-muted-foreground">
               {mode === "login" ? "Ainda não tens conta?" : "Já tens conta?"}{" "}
               <button
-                onClick={() => setMode(mode === "login" ? "register" : "login")}
+                onClick={() => { setMode(mode === "login" ? "register" : "login"); setError(""); }}
                 className="text-primary font-medium hover:underline"
               >
                 {mode === "login" ? "Regista-te" : "Entra aqui"}
