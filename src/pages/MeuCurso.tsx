@@ -1,21 +1,26 @@
 import PlatformLayout from "@/components/PlatformLayout";
-import { Play, Clock, CheckCircle2, Circle, ArrowRight } from "lucide-react";
+import { Play, Clock, CheckCircle2, Circle, ArrowRight, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import ChatWidget from "@/components/ChatWidget";
+import { Link } from "react-router-dom";
 
 const sessions = [
   { id: 1, title: "Introdução ao Inglês Empresarial", objective: "Vocabulário base e apresentação pessoal", time: "20 min", status: "done" },
   { id: 2, title: "Email Profissional", objective: "Escrever emails formais e informais", time: "25 min", status: "done" },
   { id: 3, title: "Reuniões — Participação Ativa", objective: "Expressar opiniões e fazer sugestões", time: "25 min", status: "progress" },
   { id: 4, title: "Apresentações (Parte 1)", objective: "Estruturar uma apresentação impactante", time: "30 min", status: "todo" },
-  { id: 5, title: "📅 Aula com Professora #1", objective: "Validação do progresso com professora", time: "45 min", status: "teacher", locked: false },
+  { id: 5, title: "📅 Aula com Professora #1", objective: "Completa as sessões 1-4 para desbloquear", time: "45 min", status: "teacher", requiresSessions: 4, unlockedAt: 4 },
   { id: 6, title: "Apresentações (Parte 2)", objective: "Praticar delivery e Q&A", time: "25 min", status: "todo" },
   { id: 7, title: "Negociação em Inglês", objective: "Técnicas de negociação e persuasão", time: "30 min", status: "todo" },
   { id: 8, title: "Entrevistas de Emprego", objective: "Responder com confiança a perguntas comuns", time: "25 min", status: "todo" },
   { id: 9, title: "Comunicação Oral Avançada", objective: "Fluência e pronúncia em contexto profissional", time: "30 min", status: "todo" },
-  { id: 10, title: "📅 Aula com Professora #2", objective: "Revisão final e certificação", time: "45 min", status: "teacher", locked: true },
+  { id: 10, title: "📅 Aula com Professora #2", objective: "Completa todas as sessões para desbloquear", time: "45 min", status: "teacher", requiresSessions: 8, unlockedAt: 8 },
 ];
+
+// Count completed sessions (non-teacher)
+const completedSessions = sessions.filter(s => s.status === "done").length;
+const totalRegularSessions = sessions.filter(s => s.status !== "teacher").length;
 
 const statusConfig = {
   done: { icon: CheckCircle2, color: "text-success", bg: "bg-success/10", label: "Concluída" },
@@ -25,6 +30,8 @@ const statusConfig = {
 };
 
 const MeuCurso = () => {
+  const progressPercent = Math.round((completedSessions / totalRegularSessions) * 100);
+
   return (
     <PlatformLayout>
       {/* Welcome */}
@@ -48,7 +55,7 @@ const MeuCurso = () => {
             </p>
             <div className="mt-4 flex items-center gap-4 text-sm">
               <span className="text-primary font-medium">Pack Pro — 10 sessões</span>
-              <span className="text-muted-foreground">2/10 concluídas</span>
+              <span className="text-muted-foreground">{completedSessions}/{totalRegularSessions} concluídas</span>
             </div>
           </div>
         </div>
@@ -57,9 +64,9 @@ const MeuCurso = () => {
       {/* Progress */}
       <div className="mb-6 flex items-center gap-4">
         <div className="flex-1 h-2 rounded-full bg-secondary overflow-hidden">
-          <div className="h-full rounded-full bg-primary transition-all" style={{ width: "20%" }} />
+          <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${progressPercent}%` }} />
         </div>
-        <span className="text-sm font-medium text-muted-foreground">20%</span>
+        <span className="text-sm font-medium text-muted-foreground">{progressPercent}%</span>
       </div>
 
       {/* Sessions timeline */}
@@ -67,6 +74,10 @@ const MeuCurso = () => {
         {sessions.map((session, i) => {
           const config = statusConfig[session.status as keyof typeof statusConfig];
           const Icon = config.icon;
+          const isTeacher = session.status === "teacher";
+          const isUnlocked = isTeacher && session.requiresSessions != null && completedSessions >= session.requiresSessions;
+          const isLocked = isTeacher && !isUnlocked;
+
           return (
             <motion.div
               key={session.id}
@@ -75,14 +86,22 @@ const MeuCurso = () => {
               transition={{ delay: i * 0.05 }}
               className={`premium-card flex items-center gap-4 ${
                 session.status === "progress" ? "ring-1 ring-primary" : ""
-              } ${session.status === "teacher" ? "border-warning/30 bg-warning/5" : ""}`}
+              } ${isTeacher ? isLocked ? "border-border bg-muted/30 opacity-60" : "border-warning/30 bg-warning/5" : ""}`}
             >
-              <div className={`w-10 h-10 rounded-xl ${config.bg} flex items-center justify-center shrink-0`}>
-                <Icon className={`h-5 w-5 ${config.color}`} />
+              <div className={`w-10 h-10 rounded-xl ${isLocked ? "bg-muted" : config.bg} flex items-center justify-center shrink-0`}>
+                {isLocked ? (
+                  <Lock className="h-5 w-5 text-muted-foreground" />
+                ) : (
+                  <Icon className={`h-5 w-5 ${config.color}`} />
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-sm">{session.title}</h3>
-                <p className="text-xs text-muted-foreground">{session.objective}</p>
+                <p className="text-xs text-muted-foreground">
+                  {isLocked
+                    ? `Completa ${session.requiresSessions} sessões para desbloquear (${completedSessions}/${session.requiresSessions})`
+                    : session.objective}
+                </p>
               </div>
               <div className="flex items-center gap-3 shrink-0">
                 <span className="text-xs text-muted-foreground">{session.time}</span>
@@ -91,10 +110,13 @@ const MeuCurso = () => {
                     Continuar <ArrowRight className="ml-1 h-3 w-3" />
                   </Button>
                 )}
-                {session.status === "teacher" && !session.locked && (
+                {isTeacher && isUnlocked && (
                   <Button size="sm" className="bg-warning text-warning-foreground hover:bg-warning/90 rounded-lg h-8 text-xs" asChild>
-                    <a href="/app/aulas">Marcar Aula</a>
+                    <Link to="/app/aulas">Marcar Aula</Link>
                   </Button>
+                )}
+                {isLocked && (
+                  <span className="text-xs text-muted-foreground font-medium px-2 py-1 rounded-lg bg-muted">Bloqueada</span>
                 )}
               </div>
             </motion.div>
