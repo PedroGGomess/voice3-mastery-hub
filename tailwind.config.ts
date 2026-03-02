@@ -62,6 +62,11 @@ export default {
         },
         "surface-dark": "hsl(var(--surface-dark))",
         "surface-dark-foreground": "hsl(var(--surface-dark-foreground))",
+        gold: {
+          DEFAULT: "#c9ab5a",
+          light: "#d4ba6a",
+          dark: "#b89040",
+        },
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",

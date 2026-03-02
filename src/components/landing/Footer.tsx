@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import Voice3Logo from "@/components/Voice3Logo";
 
 const Footer = () => {
   return (
@@ -6,8 +7,8 @@ const Footer = () => {
       <div className="container">
         <div className="grid md:grid-cols-4 gap-8">
           <div>
-            <Link to="/" className="text-lg font-bold tracking-tight">
-              Voice<span className="text-primary">3</span>
+            <Link to="/" className="flex items-center">
+              <Voice3Logo height={26} variant="full" />
             </Link>
             <p className="text-sm text-muted-foreground mt-2">
               Academia de Inglês Empresarial com treino AI e aulas com professora.
