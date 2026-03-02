@@ -43,7 +43,7 @@ const FAQ = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Perguntas Frequentes</h2>
+          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">Perguntas Frequentes</h2>
         </motion.div>
 
         <Accordion type="single" collapsible className="space-y-3">

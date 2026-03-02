@@ -22,7 +22,7 @@ const ChatAI = () => {
   return (
     <PlatformLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col h-[calc(100vh-8rem)]">
-        <h1 className="text-2xl font-bold mb-2">Chat AI</h1>
+        <h1 className="font-serif text-2xl font-bold mb-2">Chat AI</h1>
         <p className="text-muted-foreground mb-6">Pratica, tira dúvidas e melhora o teu Inglês.</p>
 
         {/* Messages */}

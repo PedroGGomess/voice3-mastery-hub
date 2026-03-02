@@ -30,8 +30,8 @@ const AuthPage = () => {
           <h1 className="text-4xl font-bold mb-4">
             <Voice3Logo height={40} variant="full" />
           </h1>
-          <p className="text-white/60 text-lg leading-relaxed mb-8">
-            Domina o Inglês Empresarial com sessões AI práticas e aulas com professora nos momentos certos do teu percurso.
+          <p className="text-muted-foreground text-lg leading-relaxed mb-8">
+            Designed for professionals who must perform.
           </p>
           <div className="space-y-4 text-white/40 text-sm">
             <div className="flex items-center gap-3">
