@@ -1,16 +1,19 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
-  BookOpen, Brain, MessageCircle, GraduationCap, User, HelpCircle, LogOut, Search, Bell,
+  BookOpen, Brain, MessageCircle, GraduationCap, User, HelpCircle, LogOut, Search, Bell, Phone,
 } from "lucide-react";
 import SidebarRight from "./SidebarRight";
 import { useAuth } from "@/contexts/AuthContext";
+import NotificationPanel from "./NotificationPanel";
+import { useNotifications } from "@/hooks/use-notifications";
 
 const navItems = [
   { to: "/app", icon: BookOpen, label: "Meu Curso", end: true },
   { to: "/app/sessoes", icon: Brain, label: "Sessões" },
   { to: "/app/chat", icon: MessageCircle, label: "Chat AI" },
   { to: "/app/aulas", icon: GraduationCap, label: "Aulas" },
+  { to: "/app/call-professor", icon: Phone, label: "Call c/ Professor" },
   { to: "/app/perfil", icon: User, label: "Perfil" },
   { to: "/app/suporte", icon: HelpCircle, label: "Suporte" },
 ];
@@ -18,6 +21,8 @@ const navItems = [
 const PlatformLayout = ({ children }: { children: ReactNode }) => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+  const [notifOpen, setNotifOpen] = useState(false);
+  const { unreadCount } = useNotifications(currentUser?.id || '');
 
   const initials = (currentUser?.name || "U")
     .split(" ")
@@ -56,10 +61,16 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
-          <button className="relative w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
-            <Bell className="h-4 w-4 text-white/70" />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-primary" />
-          </button>
+          <button
+              onClick={() => setNotifOpen(true)}
+              className="relative w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
+              <Bell className="h-4 w-4 text-white/70" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 flex items-center justify-center text-xs text-white font-bold">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer">
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-xs font-bold text-white">
               {initials}
@@ -112,6 +123,7 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
           <SidebarRight />
         </aside>
       </div>
+      <NotificationPanel open={notifOpen} onClose={() => setNotifOpen(false)} userId={currentUser?.id || ''} />
     </div>
   );
 };
