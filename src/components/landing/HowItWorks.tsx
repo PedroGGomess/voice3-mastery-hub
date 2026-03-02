@@ -56,7 +56,7 @@ const HowItWorks = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.12 }}
-                className="relative flex flex-col items-center text-center"
+                className="relative flex flex-col items-center text-center group"
               >
                 {/* Gold dot on timeline */}
                 <div className="relative z-10 w-[4.5rem] h-[4.5rem] rounded-full bg-[#1C1F26] border-2 border-[#B89A5A]/40 flex items-center justify-center mb-6 group-hover:border-[#B89A5A] transition-colors">

@@ -34,6 +34,7 @@ function AnimatedCounter({ value, suffix }: { value: number; suffix: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
+  const isDecimal = !Number.isInteger(value);
 
   useEffect(() => {
     if (!inView) return;
@@ -55,7 +56,7 @@ function AnimatedCounter({ value, suffix }: { value: number; suffix: string }) {
 
   return (
     <span ref={ref}>
-      {Number.isInteger(value) ? Math.round(count) : count.toFixed(1)}{suffix}
+      {isDecimal ? count.toFixed(1) : Math.round(count)}{suffix}
     </span>
   );
 }

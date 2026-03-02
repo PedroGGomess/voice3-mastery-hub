@@ -4,6 +4,13 @@ import { Link } from "react-router-dom";
 import { Menu, X, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
+const navLinks: [string, string][] = [
+  ["Como funciona", "#como-funciona"],
+  ["Packs", "#packs"],
+  ["Empresas", "#empresas"],
+  ["FAQ", "#faq"],
+];
+
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -29,7 +36,7 @@ const Navbar = () => {
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
-          {[["Como funciona", "#como-funciona"], ["Packs", "#packs"], ["Empresas", "#empresas"], ["FAQ", "#faq"]].map(([label, href]) => (
+          {navLinks.map(([label, href]) => (
             <a key={href} href={href} className="text-sm text-[#8E96A3] hover:text-[#F4F2ED] transition-colors tracking-wide">
               {label}
             </a>
@@ -64,7 +71,7 @@ const Navbar = () => {
       {open && (
         <div className="md:hidden border-t border-[#B89A5A]/10 bg-[#0B1A2A]/98 backdrop-blur-xl">
           <div className="container py-4 space-y-3">
-            {[["Como funciona", "#como-funciona"], ["Packs", "#packs"], ["Empresas", "#empresas"], ["FAQ", "#faq"]].map(([label, href]) => (
+            {navLinks.map(([label, href]) => (
               <a key={href} href={href} className="block text-sm py-2 text-[#8E96A3] hover:text-[#F4F2ED]" onClick={() => setOpen(false)}>{label}</a>
             ))}
             <div className="pt-2 flex gap-3">
