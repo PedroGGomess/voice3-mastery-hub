@@ -1,7 +1,8 @@
 import { ReactNode, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
-  BookOpen, Brain, MessageCircle, GraduationCap, User, HelpCircle, LogOut, Search, Bell, Phone,
+  LayoutDashboard, BookOpen, FileText, BarChart2, Phone, MessageCircle,
+  GraduationCap, User, HelpCircle, LogOut, Bell, Menu, X,
 } from "lucide-react";
 import SidebarRight from "./SidebarRight";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,11 +10,13 @@ import NotificationPanel from "./NotificationPanel";
 import { useNotifications } from "@/hooks/use-notifications";
 
 const navItems = [
-  { to: "/app", icon: BookOpen, label: "Meu Curso", end: true },
-  { to: "/app/sessoes", icon: Brain, label: "Sessões" },
-  { to: "/app/chat", icon: MessageCircle, label: "Chat AI" },
-  { to: "/app/aulas", icon: GraduationCap, label: "Aulas" },
+  { to: "/app", icon: LayoutDashboard, label: "Dashboard", end: true },
+  { to: "/app/sessoes", icon: BookOpen, label: "Sessões" },
+  { to: "/app/perfil", icon: FileText, label: "Materiais" },
+  { to: "/app/sessoes", icon: BarChart2, label: "Performance" },
   { to: "/app/call-professor", icon: Phone, label: "Call c/ Professor" },
+  { to: "/app/chat", icon: MessageCircle, label: "Chat AI" },
+  { to: "/app/aulas", icon: GraduationCap, label: "Aulas c/ Professora" },
   { to: "/app/perfil", icon: User, label: "Perfil" },
   { to: "/app/suporte", icon: HelpCircle, label: "Suporte" },
 ];
@@ -22,6 +25,7 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const [notifOpen, setNotifOpen] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const { unreadCount } = useNotifications(currentUser?.id || '');
 
   const initials = (currentUser?.name || "U")
@@ -36,93 +40,133 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
     navigate("/");
   };
 
+  const SidebarContent = () => (
+    <>
+      {/* Logo */}
+      <div className="px-6 py-6 border-b border-white/5">
+        <span className="font-sans font-bold tracking-[0.2em] text-[#F4F2ED] uppercase text-lg">
+          VOICE<sup className="text-[#B89A5A] text-sm">³</sup>
+        </span>
+      </div>
+
+      {/* Nav items */}
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+        {navItems.map((item) => (
+          <NavLink
+            key={`${item.to}-${item.label}`}
+            to={item.to}
+            end={item.end}
+            onClick={() => setMobileSidebarOpen(false)}
+            className={({ isActive }) =>
+              `group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 relative ${
+                isActive
+                  ? "bg-[#243A5A] text-[#B89A5A]"
+                  : "text-[#8E96A3] hover:bg-[#243A5A]/60 hover:text-[#F4F2ED]"
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                {isActive && (
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-[#B89A5A] rounded-r" />
+                )}
+                <item.icon className={`h-4 w-4 shrink-0 ${isActive ? "text-[#B89A5A]" : "text-[#8E96A3] group-hover:text-[#F4F2ED]"}`} />
+                <span className="font-medium">{item.label}</span>
+              </>
+            )}
+          </NavLink>
+        ))}
+      </nav>
+
+      {/* User section */}
+      <div className="border-t border-white/5 p-4 space-y-3">
+        <div className="flex items-center gap-3 px-2">
+          <div className="w-9 h-9 rounded-full border-2 border-[#B89A5A]/50 bg-[#B89A5A]/10 flex items-center justify-center text-sm font-bold text-[#B89A5A] shrink-0">
+            {initials}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs text-[#B89A5A] font-medium tracking-wide uppercase">Welcome</p>
+            <p className="text-sm text-[#F4F2ED] font-semibold truncate">{currentUser?.name?.split(" ")[0] || "Utilizador"}</p>
+          </div>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[#8E96A3] hover:bg-white/5 hover:text-white transition-all"
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Sair</span>
+        </button>
+      </div>
+    </>
+  );
+
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Top Header */}
-      <header className="h-16 shrink-0 border-b border-border/50 bg-card/50 backdrop-blur-sm flex items-center px-4 gap-4 z-20">
-        {/* Logo */}
-        <div className="w-16 shrink-0 flex items-center justify-center">
-          <span className="text-base font-bold tracking-tight text-white">
-            V<span className="text-primary">3</span>
-          </span>
+    <div className="min-h-screen flex bg-background">
+      {/* Desktop sidebar */}
+      <aside className="w-60 shrink-0 hidden lg:flex flex-col bg-[#0B1A2A] border-r border-white/5 fixed h-full z-20">
+        <SidebarContent />
+      </aside>
+
+      {/* Mobile sidebar overlay */}
+      {mobileSidebarOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setMobileSidebarOpen(false)} />
+          <aside className="absolute left-0 top-0 bottom-0 w-60 flex flex-col bg-[#0B1A2A] border-r border-white/5">
+            <SidebarContent />
+          </aside>
         </div>
+      )}
 
-        {/* Search */}
-        <div className="flex-1 max-w-sm hidden md:flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2">
-          <Search className="h-4 w-4 text-white/40 shrink-0" />
-          <input
-            type="text"
-            placeholder="Pesquisar..."
-            className="flex-1 bg-transparent text-sm text-white placeholder:text-white/30 outline-none"
-          />
-        </div>
-
-        <div className="flex-1" />
-
-        {/* Right side */}
-        <div className="flex items-center gap-3">
+      {/* Main area */}
+      <div className="flex-1 flex flex-col lg:ml-60 min-w-0">
+        {/* Top Header */}
+        <header className="h-14 shrink-0 border-b border-border/30 bg-card/40 backdrop-blur-sm flex items-center px-4 gap-3 z-10 sticky top-0">
           <button
+            className="lg:hidden w-8 h-8 flex items-center justify-center text-white/60 hover:text-white"
+            onClick={() => setMobileSidebarOpen(true)}
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+
+          <div className="flex-1" />
+
+          <div className="flex items-center gap-2">
+            <button
               onClick={() => setNotifOpen(true)}
-              className="relative w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
+              className="relative w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
+            >
               <Bell className="h-4 w-4 text-white/70" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 flex items-center justify-center text-xs text-white font-bold">
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 flex items-center justify-center text-[10px] text-white font-bold">
                   {unreadCount}
                 </span>
               )}
             </button>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-xs font-bold text-white">
-              {initials}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+              <div className="w-6 h-6 rounded-full border border-[#B89A5A]/50 bg-[#B89A5A]/10 flex items-center justify-center text-xs font-bold text-[#B89A5A]">
+                {initials}
+              </div>
+              <span className="text-sm text-white/70 hidden sm:block">{currentUser?.name?.split(" ")[0] || "Utilizador"}</span>
             </div>
-            <span className="text-sm text-white/80 hidden sm:block">{currentUser?.name?.split(" ")[0] || "Utilizador"}</span>
           </div>
+        </header>
+
+        {/* Body */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* Main content */}
+          <main className="flex-1 overflow-auto">
+            <div className="p-6 max-w-4xl mx-auto">
+              {children}
+            </div>
+          </main>
+
+          {/* Right sidebar */}
+          <aside className="w-72 shrink-0 border-l border-border/30 bg-card/20 hidden xl:block overflow-auto">
+            <SidebarRight />
+          </aside>
         </div>
-      </header>
-
-      {/* Body */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left icon sidebar */}
-        <aside className="w-16 shrink-0 border-r border-border/50 bg-card/30 hidden lg:flex flex-col items-center py-4 gap-1">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              title={item.label}
-              className={({ isActive }) =>
-                `w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                  isActive
-                    ? "bg-primary/20 text-primary shadow-sm shadow-primary/20"
-                    : "text-white/40 hover:text-white/80 hover:bg-white/10"
-                }`
-              }
-            >
-              <item.icon className="h-5 w-5" />
-            </NavLink>
-          ))}
-          <div className="flex-1" />
-          <button
-            onClick={handleLogout}
-            title="Sair"
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-white/30 hover:text-white/70 hover:bg-white/10 transition-all"
-          >
-            <LogOut className="h-5 w-5" />
-          </button>
-        </aside>
-
-        {/* Main content */}
-        <main className="flex-1 overflow-auto">
-          <div className="p-6 max-w-4xl mx-auto">
-            {children}
-          </div>
-        </main>
-
-        {/* Right sidebar */}
-        <aside className="w-72 shrink-0 border-l border-border/50 bg-card/30 hidden xl:block overflow-auto">
-          <SidebarRight />
-        </aside>
       </div>
+
       <NotificationPanel open={notifOpen} onClose={() => setNotifOpen(false)} userId={currentUser?.id || ''} />
     </div>
   );
