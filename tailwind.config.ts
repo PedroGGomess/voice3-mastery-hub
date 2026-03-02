@@ -69,6 +69,11 @@ export default {
         "voice3-gold": "#B89A5A",
         "voice3-steel": "#8E96A3",
         "voice3-blue": "#243A5A",
+        midnight: "#0B1A2A",
+        charcoal: "#1C1F26",
+        offwhite: "#F4F2ED",
+        steel: "#8E96A3",
+        "executive-blue": "#243A5A",
         gold: {
           DEFAULT: "#B89A5A",
           light: "#d4ba6a",
