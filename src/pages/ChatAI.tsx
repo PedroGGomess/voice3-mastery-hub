@@ -1,7 +1,7 @@
 import PlatformLayout from "@/components/PlatformLayout";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
-import { Send, Bot, User, Trash2 } from "lucide-react";
+import { Send, User, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -12,55 +12,81 @@ interface Message {
 }
 
 const quickQuestions = [
-  "Como me preparo para uma reunião em inglês?",
-  "Como escrevo um email formal?",
-  "Dicas para negociação?",
-  "O que são as sessões do curso?",
-  "Como marco uma aula com professora?",
+  "Como melhorar em reuniões?",
+  "Dicas para emails formais",
+  "Vocabulário de apresentações",
+  "Exercício de pronúncia",
 ];
 
 function getBotResponse(text: string): string {
   const lower = text.toLowerCase();
+
+  // Greetings — check first
+  if (lower.includes("olá") || lower.includes("ola") || lower.includes("hello") || lower.includes("hi ") || lower === "hi" || lower.includes("bom dia") || lower.includes("boa tarde")) {
+    return "Olá! 👋 Sou o teu VOICE³ Performance Coach. Estou aqui para te ajudar a melhorar a tua comunicação executiva em inglês. Sobre o que queres falar hoje? Gramática, vocabulário, reuniões, apresentações?";
+  }
+
+  if (lower.includes("grammar") || lower.includes("gramática") || lower.includes("tense") || lower.includes("verb") || lower.includes("conjugation") || lower.includes("tempo verbal")) {
+    return "Grammar is the foundation of executive communication. Let me help you with that. What specific grammar point are you struggling with — conditionals, tenses, or articles?\n\nEm inglês de negócios, domina estes tempos verbais:\n• Present Perfect: 'We have completed the project.'\n• Conditional: 'If you could confirm by Friday, we would...'\n• Past Simple: 'We launched the product last year.'";
+  }
+
+  if (lower.includes("vocabulary") || lower.includes("vocabulário") || lower.includes("palavras") || lower.includes("palavra") || lower.includes("word") || lower.includes("meaning") || lower.includes("synonym") || lower.includes("translate") || lower.includes("significado")) {
+    return "Expanding your executive vocabulary is crucial. I recommend focusing on transition phrases for presentations: 'As I mentioned...', 'Building on that point...', 'The key takeaway here is...'\n\nSubstituições úteis em inglês de negócios:\n• Em vez de 'do' → 'execute', 'implement', 'deliver'\n• Em vez de 'show' → 'demonstrate', 'highlight', 'present'\n• Em vez de 'help' → 'assist', 'support', 'facilitate'";
+  }
+
+  if (lower.includes("meeting") || lower.includes("reunião") || lower.includes("reuniao") || lower.includes("meetings") || lower.includes("melhorar em reuniões")) {
+    return "For meetings, use these power phrases: Start with 'I'd like to open by...', disagree diplomatically with 'I see your point, however...', close with 'Let me summarize the key decisions...'\n\nMais frases úteis:\n• 'Could you elaborate on that?'\n• 'In my opinion...'\n• 'Sorry to interrupt, but...'";
+  }
+
+  if (lower.includes("email") || lower.includes("emails formais")) {
+    return "Executive emails should be: Direct (no filler), Specific (clear ask), Professional (no contractions in formal). Start with: 'I am writing to...' or 'Following our conversation...'\n\nEstrutura recomendada:\n1. 'Dear [Name],' / 'Hi [Name],'\n2. 'I am writing to...'\n3. Conteúdo principal\n4. 'Could you please...'\n5. 'Kind regards,' + teu nome";
+  }
+
+  if (lower.includes("presentation") || lower.includes("apresentação") || lower.includes("apresentacoes") || lower.includes("vocabulário de apresentações")) {
+    return "A strong executive presentation follows the PREP framework: Point, Reason, Example, Point again. Open with impact: 'The question I'm here to answer today is...'\n\nFrases essenciais:\n• 'I'd like to take you through...'\n• 'As you can see from this slide...'\n• 'The key takeaway here is...'\n• 'To summarize what we've covered...'";
+  }
+
+  if (lower.includes("pronunciation") || lower.includes("pronúncia") || lower.includes("pronunci") || lower.includes("exercício de pronúncia")) {
+    return "Focus on stress and rhythm over accent. In English, stress the most important word: 'We NEED to increase REVENUE.' Record yourself and compare with native speakers.\n\nExercício prático:\n1. Escolhe um parágrafo de um email profissional\n2. Lê em voz alta, gravando\n3. Ouve e identifica onde hesitas\n4. Repete até soar natural 🎙️";
+  }
+
+  if (lower.includes("confidence") || lower.includes("confiança")) {
+    return "Confidence in English comes from preparation and exposure. Start every day by listening to 10 minutes of English business news. Speak first in meetings, even briefly.\n\nDicas práticas:\n• Prepara 2-3 frases antes de cada reunião\n• Aceita os erros — fazem parte do processo\n• A consistência diária supera a perfeição ocasional 💪";
+  }
+
+  if (lower.includes("negotiation") || lower.includes("negociação") || lower.includes("negoci")) {
+    return "In negotiations, these phrases are powerful: 'Let me understand your position...', 'What would make this work for you?', 'I can offer X, but I'll need Y in return.'\n\nEstrutura de negociação:\n• Abre: 'I'd like to explore how we can...'\n• Concessão: 'We could be flexible on X if...'\n• Fecho: 'I think we've found a good solution here.'";
+  }
+
   if (lower.includes("sessão") || lower.includes("sessoes") || lower.includes("sessões") || lower.includes("curso")) {
     return "O teu pack inclui 8 sessões de Inglês Empresarial! Cada sessão tem conteúdo em texto, vocabulário, frases essenciais e um quiz. Precisas de obter 60% no quiz para concluir cada sessão. Vai a 'Meu Curso' para começar! 📚";
   }
+
   if (lower.includes("aula") || lower.includes("professora")) {
     return "As aulas com professora são desbloqueadas após completares sessões: após 4 sessões tens a Aula #1, e após 8 sessões tens a Aula #2. Cada aula dura 45 minutos e é personalizada para o teu nível. Vai a 'Aulas' para marcar! 📅";
   }
+
   if (lower.includes("progresso") || lower.includes("resultado")) {
     return "Estás a fazer um excelente trabalho! 💪 Continua a completar as sessões ao teu ritmo. A consistência é a chave para fluência em inglês empresarial. Cada sessão completada aproxima-te do teu objetivo!";
   }
-  if (lower.includes("email")) {
-    return "Para um email profissional em inglês, segue esta estrutura:\n1. **Abertura**: 'Dear [Name],' ou 'Hi [Name],'\n2. **Propósito**: 'I am writing to...'\n3. **Detalhes**: O conteúdo principal\n4. **Ação**: 'Could you please...'\n5. **Fecho**: 'Kind regards,' + teu nome\n\nEvita contrações (I'm, don't) em emails formais! ✉️";
-  }
-  if (lower.includes("reunião") || lower.includes("meeting") || lower.includes("reuniao")) {
-    return "Para participares ativamente numa reunião em inglês:\n• Usa 'In my opinion...' para dar a tua perspetiva\n• 'I see your point, but...' para discordar educadamente\n• 'Could you elaborate?' para pedir mais detalhes\n• 'Sorry to interrupt, but...' para intervir\n\nPratica estas frases na Sessão 3! 🎯";
-  }
-  if (lower.includes("negoci") || lower.includes("negociação")) {
-    return "Dicas de negociação em inglês:\n• Conhece o teu BATNA (melhor alternativa)\n• Começa com a tua posição ideal\n• Usa 'We could be flexible on X if...' para concessões\n• 'I understand your position, however...' para contraproposta\n• Procura sempre um win-win!\n\nVê a Sessão 6 para mais detalhes! 🤝";
-  }
+
   if (lower.includes("preparar") || lower.includes("prepara")) {
     return "Para te preparares para uma reunião em inglês:\n• Revê o vocabulário relevante ao tema\n• Prepara 2-3 opiniões ou perguntas\n• Pratica as frases de interação (concordar, discordar, sugerir)\n• Se possível, lê a agenda com antecedência\n\nA preparação é 80% do sucesso! 💡";
   }
-  if (lower.includes("grammar") || lower.includes("tense") || lower.includes("verb") || lower.includes("conjugation") || lower.includes("gramática") || lower.includes("tempo verbal")) {
-    return "Dica de gramática! 📖 Em inglês de negócios, domina estes tempos verbais:\n• **Present Simple**: rotinas e factos — 'We hold weekly meetings.'\n• **Present Perfect**: experiências recentes — 'We have completed the project.'\n• **Past Simple**: eventos concluídos — 'We launched the product last year.'\n• **Conditional**: propostas e negociações — 'If you could confirm by Friday, we would...' \n\nPratica um por vez para consolidar!";
-  }
-  if (lower.includes("word") || lower.includes("meaning") || lower.includes("vocabulary") || lower.includes("synonym") || lower.includes("translate") || lower.includes("vocabulário") || lower.includes("palavra") || lower.includes("significado")) {
-    return "Ótima questão de vocabulário! 📚 Algumas substituições úteis em inglês de negócios:\n• Em vez de 'do' → 'execute', 'implement', 'deliver'\n• Em vez de 'show' → 'demonstrate', 'highlight', 'present'\n• Em vez de 'help' → 'assist', 'support', 'facilitate'\n• Em vez de 'use' → 'leverage', 'utilise', 'apply'\n\nVocabulário mais rico transmite mais profissionalismo! Se tens uma palavra específica, pergunta-me!";
-  }
+
   if (lower.includes("difficult") || lower.includes("hard") || lower.includes("help") || lower.includes("stuck") || lower.includes("difícil") || lower.includes("ajuda") || lower.includes("dificuldade")) {
     return "Não te preocupes! 💛 Aprender inglês empresarial é um processo gradual e estás no caminho certo. Cada dificuldade que sentes é uma oportunidade de crescimento. Tenta voltar ao conteúdo da sessão, toma notas das frases que achaste difíceis, e pratica-as em voz alta. Estás a fazer melhor do que pensas! 🌟";
   }
+
   if (lower.includes("interview") || lower.includes("entrevista")) {
-    return "Dicas para a entrevista de emprego em inglês! 💼\n• Usa o método STAR: Situation → Task → Action → Result\n• Prepara respostas para: 'Tell me about yourself', 'Greatest strength?', 'Where do you see yourself in 5 years?'\n• Evita falar mal de empregadores anteriores\n• Termina sempre com uma pergunta ao entrevistador: 'What does success look like in this role?'\n\nVê a Sessão 7 para praticar! 🎯";
+    return "Dicas para a entrevista de emprego em inglês! 💼\n• Usa o método STAR: Situation → Task → Action → Result\n• Prepara respostas para: 'Tell me about yourself', 'Greatest strength?', 'Where do you see yourself in 5 years?'\n• Evita falar mal de empregadores anteriores\n• Termina sempre com uma pergunta ao entrevistador: 'What does success look like in this role?'";
   }
-  if (lower.includes("pronunciation") || lower.includes("pronúncia") || lower.includes("pronunci")) {
-    return "Dicas de pronúncia para inglês de negócios! 🎙️\n• Faz pausa antes de palavras-chave para dar ênfase\n• Reduz palavras funcionais (the, a, of, to) para soar mais natural\n• Pratica connected speech: 'I want to' soa como 'I wanna' em contexto informal\n• Grava-te a falar e ouve depois — é o método mais eficaz!\n• Foca-te em ser claro, não em ter sotaque perfeito\n\nA Sessão 8 tem exercícios avançados de pronúncia! 🎧";
+
+  if (lower.includes("small talk") || lower.includes("casual") || lower.includes("informal")) {
+    return "Small talk em inglês de negócios — frases essenciais! 💬\n• 'How's everything going?' / 'How's business?'\n• 'Did you have a good weekend?'\n• 'How was your trip / the conference?'\n• Para terminar: 'It was great catching up! Let's connect again soon.'";
   }
-  if (lower.includes("small talk") || lower.includes("conversa") || lower.includes("casual") || lower.includes("informal")) {
-    return "Small talk em inglês de negócios — frases essenciais! 💬\n• 'How's everything going?' / 'How's business?'\n• 'Did you have a good weekend?'\n• 'How was your trip / the conference?'\n• 'Have you been working with [company] long?'\n• Para terminar: 'It was great catching up! Let's connect again soon.'\n\nO small talk cria relações profissionais fortes — não o subestimes! 😊";
-  }
-  return "Boa pergunta! 😊 Estou aqui para te ajudar com o teu Inglês empresarial. Podes perguntar-me sobre sessões, reuniões, emails profissionais, negociações, entrevistas de emprego, vocabulário, gramática ou dicas de pronúncia. O que queres aprender hoje?";
+
+  return "Excelente pergunta! Na VOICE³, trabalhamos cada aspeto da comunicação executiva. Pode reformular a tua pergunta ou escolher um dos tópicos acima?\n\nPosso ajudar-te com: gramática, vocabulário, reuniões, emails, apresentações, pronúncia, confiança ou negociação. 😊";
 }
 
 const ChatAI = () => {
@@ -159,16 +185,21 @@ const ChatAI = () => {
                 className={`flex gap-3 ${msg.role === "user" ? "justify-end" : ""}`}
               >
                 {msg.role === "bot" && (
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                    <Bot className="h-4 w-4 text-primary" />
+                  <div className="w-8 h-8 rounded-full bg-[#B89A5A]/20 border border-[#B89A5A]/40 flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="text-[10px] font-bold text-[#B89A5A] leading-none">V³</span>
                   </div>
                 )}
-                <div className={`max-w-md px-4 py-3 rounded-2xl text-sm whitespace-pre-line ${
-                  msg.role === "user"
-                    ? "bg-primary text-primary-foreground rounded-br-sm"
-                    : "bg-secondary rounded-bl-sm"
-                }`}>
-                  {msg.text}
+                <div className="flex flex-col gap-1 max-w-md">
+                  <div className={`px-4 py-3 rounded-2xl text-sm whitespace-pre-line ${
+                    msg.role === "user"
+                      ? "bg-primary text-primary-foreground rounded-br-sm"
+                      : "bg-secondary rounded-bl-sm"
+                  }`}>
+                    {msg.text}
+                  </div>
+                  <span className={`text-[10px] text-white/30 ${msg.role === "user" ? "text-right" : "text-left"}`}>
+                    {new Date(msg.timestamp).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}
+                  </span>
                 </div>
                 {msg.role === "user" && (
                   <div className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center shrink-0 mt-0.5">
@@ -180,11 +211,11 @@ const ChatAI = () => {
           </AnimatePresence>
           {isTyping && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                <Bot className="h-4 w-4 text-primary" />
+              <div className="w-8 h-8 rounded-full bg-[#B89A5A]/20 border border-[#B89A5A]/40 flex items-center justify-center shrink-0">
+                <span className="text-[10px] font-bold text-[#B89A5A] leading-none">V³</span>
               </div>
               <div className="bg-secondary px-4 py-3 rounded-2xl rounded-bl-sm flex items-center gap-1">
-                <span className="text-xs text-muted-foreground">a escrever</span>
+                <span className="text-xs text-muted-foreground">VOICE³ Coach está a escrever</span>
                 <span className="flex gap-0.5">
                   {[0, 1, 2].map(i => (
                     <motion.span key={i} className="w-1 h-1 rounded-full bg-primary/60 inline-block"
@@ -197,7 +228,7 @@ const ChatAI = () => {
           <div ref={bottomRef} />
         </div>
 
-        {/* Quick questions */}
+        {/* Quick reply chips */}
         <div className="flex gap-2 mb-3 flex-wrap">
           {quickQuestions.map((q, i) => (
             <button key={i} onClick={() => sendMessage(q)}
