@@ -154,7 +154,7 @@ const CompanyDashboard = () => {
             className="rounded-2xl p-6"
             style={{ background: "#1C1F26" }}
           >
-            <h2 className="text-[#F4F2ED] font-semibold text-lg mb-5">Actividade Recente</h2>
+            <h2 className="text-[#F4F2ED] font-semibold text-lg mb-5">Atividade Recente</h2>
             <div className="relative pl-5 space-y-6">
               <div className="absolute left-2 top-2 bottom-2 w-px" style={{ background: "#B89A5A22" }} />
               {ACTIVITY.map((item, i) => (
@@ -168,7 +168,7 @@ const CompanyDashboard = () => {
                 </div>
               ))}
               <button className="relative flex items-center gap-1 text-xs text-[#B89A5A] hover:text-[#d4b870] transition-colors mt-2">
-                Ver toda a actividade <ChevronRight className="h-3 w-3" />
+                Ver toda a atividade <ChevronRight className="h-3 w-3" />
               </button>
             </div>
           </motion.div>
