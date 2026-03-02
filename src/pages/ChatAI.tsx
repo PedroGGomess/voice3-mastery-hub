@@ -1,52 +1,191 @@
 import PlatformLayout from "@/components/PlatformLayout";
-import { motion } from "framer-motion";
-import { useState } from "react";
-import { Send, Bot, User } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { Send, Bot, User, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ChatWidget from "@/components/ChatWidget";
+import { useAuth } from "@/contexts/AuthContext";
 
-const initialMessages = [
-  { role: "bot", text: "Olá! 👋 Sou o assistente Voice3. Posso ajudar-te com dúvidas sobre o teu curso, sessões ou Inglês empresarial. Como posso ajudar?" },
+interface Message {
+  role: "bot" | "user";
+  text: string;
+  timestamp: string;
+}
+
+const quickQuestions = [
+  "Como me preparo para uma reunião em inglês?",
+  "Como escrevo um email formal?",
+  "Dicas para negociação?",
+  "O que são as sessões do curso?",
+  "Como marco uma aula com professora?",
 ];
 
-const ChatAI = () => {
-  const [messages, setMessages] = useState(initialMessages);
-  const [input, setInput] = useState("");
+function getBotResponse(text: string): string {
+  const lower = text.toLowerCase();
+  if (lower.includes("sessão") || lower.includes("sessoes") || lower.includes("sessões") || lower.includes("curso")) {
+    return "O teu pack inclui 8 sessões de Inglês Empresarial! Cada sessão tem conteúdo em texto, vocabulário, frases essenciais e um quiz. Precisas de obter 60% no quiz para concluir cada sessão. Vai a 'Meu Curso' para começar! 📚";
+  }
+  if (lower.includes("aula") || lower.includes("professora")) {
+    return "As aulas com professora são desbloqueadas após completares sessões: após 4 sessões tens a Aula #1, e após 8 sessões tens a Aula #2. Cada aula dura 45 minutos e é personalizada para o teu nível. Vai a 'Aulas' para marcar! 📅";
+  }
+  if (lower.includes("progresso") || lower.includes("resultado")) {
+    return "Estás a fazer um excelente trabalho! 💪 Continua a completar as sessões ao teu ritmo. O consistência é a chave para fluência em inglês empresarial. Cada sessão completada aproxima-te do teu objetivo!";
+  }
+  if (lower.includes("email")) {
+    return "Para um email profissional em inglês, segue esta estrutura:\n1. **Abertura**: 'Dear [Name],' ou 'Hi [Name],'\n2. **Propósito**: 'I am writing to...'\n3. **Detalhes**: O conteúdo principal\n4. **Ação**: 'Could you please...'\n5. **Fecho**: 'Kind regards,' + teu nome\n\nEvita contrações (I'm, don't) em emails formais! ✉️";
+  }
+  if (lower.includes("reunião") || lower.includes("meeting") || lower.includes("reuniao")) {
+    return "Para participares ativamente numa reunião em inglês:\n• Usa 'In my opinion...' para dar a tua perspetiva\n• 'I see your point, but...' para discordar educadamente\n• 'Could you elaborate?' para pedir mais detalhes\n• 'Sorry to interrupt, but...' para intervir\n\nPratica estas frases na Sessão 3! 🎯";
+  }
+  if (lower.includes("negoci") || lower.includes("negociação")) {
+    return "Dicas de negociação em inglês:\n• Conhece o teu BATNA (melhor alternativa)\n• Começa com a tua posição ideal\n• Usa 'We could be flexible on X if...' para concessões\n• 'I understand your position, however...' para contraproposta\n• Procura sempre um win-win!\n\nVê a Sessão 6 para mais detalhes! 🤝";
+  }
+  if (lower.includes("preparar") || lower.includes("prepara")) {
+    return "Para te preparares para uma reunião em inglês:\n• Revê o vocabulário relevante ao tema\n• Prepara 2-3 opiniões ou perguntas\n• Pratica as frases de interação (concordar, discordar, sugerir)\n• Se possível, lê a agenda com antecedência\n\nA preparação é 80% do sucesso! 💡";
+  }
+  return "Boa pergunta! 😊 Estou aqui para te ajudar com o teu Inglês empresarial. Podes perguntar-me sobre sessões, reuniões, emails profissionais, negociações, entrevistas de emprego, ou pedir dicas de comunicação. O que queres aprender hoje?";
+}
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    setMessages([...messages, { role: "user", text: input }, { role: "bot", text: "Obrigado pela tua pergunta! Esta é uma demonstração do chat AI. Numa versão completa, receberias uma resposta personalizada sobre o teu curso." }]);
+const ChatAI = () => {
+  const { currentUser } = useAuth();
+  const userId = currentUser?.id || "";
+  const storageKey = `voice3_chat_history_${userId}`;
+
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(storageKey);
+      if (stored) {
+        setMessages(JSON.parse(stored));
+      } else {
+        const initial: Message[] = [{
+          role: "bot",
+          text: "Olá! 👋 Sou o assistente Voice³. Posso ajudar-te com dúvidas sobre o teu curso, sessões ou Inglês empresarial. Como posso ajudar?",
+          timestamp: new Date().toISOString(),
+        }];
+        setMessages(initial);
+        localStorage.setItem(storageKey, JSON.stringify(initial));
+      }
+    } catch (_e) {
+      // ignore
+    }
+  }, [storageKey]);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isTyping]);
+
+  const saveMessages = (msgs: Message[]) => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(msgs));
+    } catch (_e) {
+      // ignore
+    }
+  };
+
+  const sendMessage = (text: string) => {
+    if (!text.trim()) return;
+    const userMsg: Message = { role: "user", text: text.trim(), timestamp: new Date().toISOString() };
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
     setInput("");
+    setIsTyping(true);
+
+    setTimeout(() => {
+      const botMsg: Message = {
+        role: "bot",
+        text: getBotResponse(text),
+        timestamp: new Date().toISOString(),
+      };
+      const withBot = [...newMessages, botMsg];
+      setMessages(withBot);
+      saveMessages(withBot);
+      setIsTyping(false);
+    }, 1000);
+  };
+
+  const handleClear = () => {
+    const initial: Message[] = [{
+      role: "bot",
+      text: "Chat limpo! Como posso ajudar-te hoje?",
+      timestamp: new Date().toISOString(),
+    }];
+    setMessages(initial);
+    saveMessages(initial);
   };
 
   return (
     <PlatformLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col h-[calc(100vh-8rem)]">
-        <h1 className="font-serif text-2xl font-bold mb-2">Chat AI</h1>
-        <p className="text-muted-foreground mb-6">Pratica, tira dúvidas e melhora o teu Inglês.</p>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="font-serif text-2xl font-bold">Chat AI</h1>
+            <p className="text-muted-foreground text-sm">Pratica, tira dúvidas e melhora o teu Inglês.</p>
+          </div>
+          <Button variant="ghost" size="sm" onClick={handleClear} className="text-white/40 hover:text-white/70">
+            <Trash2 className="h-4 w-4 mr-1" /> Limpar
+          </Button>
+        </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2">
-          {messages.map((msg, i) => (
-            <div key={i} className={`flex gap-3 ${msg.role === "user" ? "justify-end" : ""}`}>
-              {msg.role === "bot" && (
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                  <Bot className="h-4 w-4 text-primary" />
+        <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-1">
+          <AnimatePresence initial={false}>
+            {messages.map((msg, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`flex gap-3 ${msg.role === "user" ? "justify-end" : ""}`}
+              >
+                {msg.role === "bot" && (
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <Bot className="h-4 w-4 text-primary" />
+                  </div>
+                )}
+                <div className={`max-w-md px-4 py-3 rounded-2xl text-sm whitespace-pre-line ${
+                  msg.role === "user"
+                    ? "bg-primary text-primary-foreground rounded-br-sm"
+                    : "bg-secondary rounded-bl-sm"
+                }`}>
+                  {msg.text}
                 </div>
-              )}
-              <div className={`max-w-md px-4 py-3 rounded-2xl text-sm ${
-                msg.role === "user"
-                  ? "bg-primary text-primary-foreground rounded-br-sm"
-                  : "bg-secondary rounded-bl-sm"
-              }`}>
-                {msg.text}
+                {msg.role === "user" && (
+                  <div className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <User className="h-4 w-4" />
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          {isTyping && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <Bot className="h-4 w-4 text-primary" />
               </div>
-              {msg.role === "user" && (
-                <div className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center shrink-0 mt-0.5">
-                  <User className="h-4 w-4" />
-                </div>
-              )}
-            </div>
+              <div className="bg-secondary px-4 py-3 rounded-2xl rounded-bl-sm flex items-center gap-1">
+                <span className="text-xs text-muted-foreground">a escrever</span>
+                <span className="flex gap-0.5">
+                  {[0, 1, 2].map(i => (
+                    <motion.span key={i} className="w-1 h-1 rounded-full bg-primary/60 inline-block"
+                      animate={{ y: [0, -4, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.2 }} />
+                  ))}
+                </span>
+              </div>
+            </motion.div>
+          )}
+          <div ref={bottomRef} />
+        </div>
+
+        {/* Quick questions */}
+        <div className="flex gap-2 mb-3 flex-wrap">
+          {quickQuestions.map((q, i) => (
+            <button key={i} onClick={() => sendMessage(q)}
+              className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white/80 transition-colors">
+              {q}
+            </button>
           ))}
         </div>
 
@@ -56,11 +195,12 @@ const ChatAI = () => {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage(input)}
             placeholder="Escreve a tua mensagem..."
             className="flex-1 px-5 py-3 rounded-xl bg-secondary text-sm outline-none placeholder:text-muted-foreground border border-border focus:border-primary transition-colors"
           />
-          <Button onClick={handleSend} className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl h-12 w-12">
+          <Button onClick={() => sendMessage(input)} disabled={!input.trim() || isTyping}
+            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl h-12 w-12">
             <Send className="h-4 w-4" />
           </Button>
         </div>
