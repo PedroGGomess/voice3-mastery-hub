@@ -25,7 +25,7 @@ const FinalCTA = () => {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 h-12 text-base font-medium rounded-lg glow">
-              Começar Agora
+              Apply for VOICE³
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
             <Button size="lg" variant="outline" className="border-border/60 text-foreground hover:bg-secondary px-8 h-12 text-base rounded-lg">

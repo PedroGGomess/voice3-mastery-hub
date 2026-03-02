@@ -77,6 +77,10 @@
     @apply bg-card/90 backdrop-blur-xl border border-border/30 rounded-lg;
     box-shadow: var(--shadow-card);
   }
+  .glass-card:hover {
+    box-shadow: var(--shadow-card-hover);
+    @apply border-primary/20;
+  }
   .section-dark {
     background: var(--gradient-hero);
     @apply text-foreground;
