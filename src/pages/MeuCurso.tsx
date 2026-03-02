@@ -1,8 +1,10 @@
 import PlatformLayout from "@/components/PlatformLayout";
-import { Play, Clock, CheckCircle2, Circle, ArrowRight, Lock } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import ChatWidget from "@/components/ChatWidget";
+import CourseProgressTimeline from "@/components/CourseProgressTimeline";
+import SessionCard from "@/components/SessionCard";
+import { BookOpen, CheckCircle2, Play, Lock, Clock, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const sessions = [
@@ -18,14 +20,16 @@ const sessions = [
   { id: 10, title: "📅 Aula com Professora #2", objective: "Completa todas as sessões para desbloquear", time: "45 min", status: "teacher", requiresSessions: 8, unlockedAt: 8 },
 ];
 
-// Count completed sessions (non-teacher)
 const completedSessions = sessions.filter(s => s.status === "done").length;
 const totalRegularSessions = sessions.filter(s => s.status !== "teacher").length;
+
+// The 3 featured session cards: done, progress (highlighted), todo
+const featuredSessions = [sessions[1], sessions[2], sessions[3]];
 
 const statusConfig = {
   done: { icon: CheckCircle2, color: "text-success", bg: "bg-success/10", label: "Concluída" },
   progress: { icon: Play, color: "text-primary", bg: "bg-primary/10", label: "Em progresso" },
-  todo: { icon: Circle, color: "text-muted-foreground", bg: "bg-secondary", label: "Por fazer" },
+  todo: { icon: BookOpen, color: "text-white/40", bg: "bg-white/5", label: "Por fazer" },
   teacher: { icon: Clock, color: "text-warning", bg: "bg-warning/10", label: "Aula com Professora" },
 };
 
@@ -34,95 +38,125 @@ const MeuCurso = () => {
 
   return (
     <PlatformLayout>
-      {/* Welcome */}
+      {/* Page header */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-8"
+      >
+        <h1 className="text-3xl font-bold text-white tracking-tight">Inglês Empresarial</h1>
+        <p className="text-white/50 mt-1">Pack Pro · {completedSessions}/{totalRegularSessions} sessões concluídas</p>
+      </motion.div>
+
+      {/* Course Progress Timeline */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="premium-card mb-8 overflow-hidden"
+        transition={{ delay: 0.1 }}
+        className="rounded-2xl bg-white/5 border border-white/10 mb-6"
       >
-        <div className="flex flex-col md:flex-row gap-6 items-start">
-          <div className="w-full md:w-80 aspect-video bg-surface-dark rounded-xl flex items-center justify-center shrink-0">
-            <div className="text-center">
-              <Play className="h-12 w-12 text-primary mx-auto mb-2" />
-              <p className="text-sm text-surface-dark-foreground">Vídeo de boas-vindas</p>
-            </div>
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold mb-2">Bem-vindo ao Voice3! 🎉</h1>
-            <p className="text-muted-foreground">
-              Obrigado por escolheres o Voice3. O teu percurso para dominar o Inglês empresarial começa aqui. 
-              Assiste ao vídeo de boas-vindas e começa a tua primeira sessão.
-            </p>
-            <div className="mt-4 flex items-center gap-4 text-sm">
-              <span className="text-primary font-medium">Pack Pro — 10 sessões</span>
-              <span className="text-muted-foreground">{completedSessions}/{totalRegularSessions} concluídas</span>
-            </div>
-          </div>
+        <div className="px-6 pt-5 pb-2 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-white/80 uppercase tracking-wider">
+            Course Progress
+          </h2>
+          <span className="text-xs text-primary font-medium">{progressPercent}% completo</span>
+        </div>
+        <CourseProgressTimeline />
+      </motion.div>
+
+      {/* Sessions section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="mb-8"
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold text-white/80 uppercase tracking-wider">Sessões</h2>
+          <button className="text-xs text-primary hover:text-primary/80 transition-colors">Ver todas</button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {featuredSessions.map((session, i) => (
+            <SessionCard
+              key={session.id}
+              title={session.title}
+              subtitle={session.objective}
+              time={session.time}
+              status={session.status as "done" | "progress" | "todo"}
+              highlighted={session.status === "progress"}
+              index={i}
+            />
+          ))}
         </div>
       </motion.div>
 
-      {/* Progress */}
-      <div className="mb-6 flex items-center gap-4">
-        <div className="flex-1 h-2 rounded-full bg-secondary overflow-hidden">
-          <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${progressPercent}%` }} />
+      {/* All sessions list */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden"
+      >
+        <div className="px-6 py-4 border-b border-white/10">
+          <h2 className="text-sm font-semibold text-white/80 uppercase tracking-wider">Todas as Sessões</h2>
         </div>
-        <span className="text-sm font-medium text-muted-foreground">{progressPercent}%</span>
-      </div>
+        <div className="divide-y divide-white/5">
+          {sessions.map((session, i) => {
+            const config = statusConfig[session.status as keyof typeof statusConfig];
+            const Icon = config.icon;
+            const isTeacher = session.status === "teacher";
+            const isUnlocked = isTeacher && session.requiresSessions != null && completedSessions >= session.requiresSessions;
+            const isLocked = isTeacher && !isUnlocked;
 
-      {/* Sessions timeline */}
-      <div className="space-y-3">
-        {sessions.map((session, i) => {
-          const config = statusConfig[session.status as keyof typeof statusConfig];
-          const Icon = config.icon;
-          const isTeacher = session.status === "teacher";
-          const isUnlocked = isTeacher && session.requiresSessions != null && completedSessions >= session.requiresSessions;
-          const isLocked = isTeacher && !isUnlocked;
+            return (
+              <motion.div
+                key={session.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.04 }}
+                className={`flex items-center gap-4 px-6 py-3.5 transition-colors hover:bg-white/5 ${
+                  session.status === "progress" ? "bg-primary/5" : ""
+                }`}
+              >
+                <div className={`w-9 h-9 rounded-xl ${isLocked ? "bg-white/5" : config.bg} flex items-center justify-center shrink-0`}>
+                  {isLocked ? (
+                    <Lock className="h-4 w-4 text-white/30" />
+                  ) : (
+                    <Icon className={`h-4 w-4 ${config.color}`} />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className={`font-medium text-sm ${session.status === "progress" ? "text-white" : "text-white/80"}`}>
+                    {session.title}
+                  </h3>
+                  <p className="text-xs text-white/40 truncate">
+                    {isLocked
+                      ? `Completa ${session.requiresSessions} sessões para desbloquear (${completedSessions}/${session.requiresSessions})`
+                      : session.objective}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className="text-xs text-white/30">{session.time}</span>
+                  {session.status === "progress" && (
+                    <Button size="sm" className="bg-primary text-white hover:bg-primary/90 rounded-lg h-7 text-xs px-3">
+                      Continuar <ArrowRight className="ml-1 h-3 w-3" />
+                    </Button>
+                  )}
+                  {isTeacher && isUnlocked && (
+                    <Button size="sm" className="bg-warning text-warning-foreground hover:bg-warning/90 rounded-lg h-7 text-xs px-3" asChild>
+                      <Link to="/app/aulas">Marcar Aula</Link>
+                    </Button>
+                  )}
+                  {isLocked && (
+                    <span className="text-xs text-white/30 font-medium px-2 py-1 rounded-lg bg-white/5">Bloqueada</span>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </motion.div>
 
-          return (
-            <motion.div
-              key={session.id}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className={`premium-card flex items-center gap-4 ${
-                session.status === "progress" ? "ring-1 ring-primary" : ""
-              } ${isTeacher ? isLocked ? "border-border bg-muted/30 opacity-60" : "border-warning/30 bg-warning/5" : ""}`}
-            >
-              <div className={`w-10 h-10 rounded-xl ${isLocked ? "bg-muted" : config.bg} flex items-center justify-center shrink-0`}>
-                {isLocked ? (
-                  <Lock className="h-5 w-5 text-muted-foreground" />
-                ) : (
-                  <Icon className={`h-5 w-5 ${config.color}`} />
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-sm">{session.title}</h3>
-                <p className="text-xs text-muted-foreground">
-                  {isLocked
-                    ? `Completa ${session.requiresSessions} sessões para desbloquear (${completedSessions}/${session.requiresSessions})`
-                    : session.objective}
-                </p>
-              </div>
-              <div className="flex items-center gap-3 shrink-0">
-                <span className="text-xs text-muted-foreground">{session.time}</span>
-                {session.status === "progress" && (
-                  <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg h-8 text-xs">
-                    Continuar <ArrowRight className="ml-1 h-3 w-3" />
-                  </Button>
-                )}
-                {isTeacher && isUnlocked && (
-                  <Button size="sm" className="bg-warning text-warning-foreground hover:bg-warning/90 rounded-lg h-8 text-xs" asChild>
-                    <Link to="/app/aulas">Marcar Aula</Link>
-                  </Button>
-                )}
-                {isLocked && (
-                  <span className="text-xs text-muted-foreground font-medium px-2 py-1 rounded-lg bg-muted">Bloqueada</span>
-                )}
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
       <ChatWidget />
     </PlatformLayout>
   );
