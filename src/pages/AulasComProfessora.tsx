@@ -49,7 +49,7 @@ const AulasComProfessora = () => {
   return (
     <PlatformLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-bold mb-2">Aulas com Professora</h1>
+        <h1 className="font-serif text-2xl font-bold mb-2">Aulas com Professora</h1>
         <p className="text-muted-foreground mb-8">Marca, gere e acompanha as tuas aulas com professora.</p>
 
         {/* Status of teacher lessons */}

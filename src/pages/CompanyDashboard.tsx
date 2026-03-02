@@ -25,7 +25,7 @@ const CompanyDashboard = () => {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold">Dashboard Empresa</h1>
+            <h1 className="font-serif text-2xl font-bold">Dashboard Empresa</h1>
             <p className="text-muted-foreground">Visão geral do progresso da equipa.</p>
           </div>
           <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl">

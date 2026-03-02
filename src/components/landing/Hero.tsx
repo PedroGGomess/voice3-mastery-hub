@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import heroDashboard from "@/assets/hero-dashboard.jpg";
 
 const Hero = () => {
@@ -19,27 +19,25 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm text-sm text-white/70 mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-sm text-muted-foreground mb-8 tracking-wide">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse-glow" />
-              Powered by AI • Aulas com Professora
+              Executive Communication Programme
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
-              Domina o Inglês Empresarial{" "}
-              <span className="gradient-text">com AI</span>{" "}
-              — e valida com aulas reais.
+            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.15] mb-6 text-foreground">
+              Designed for professionals who must perform.
             </h1>
             
-            <p className="text-lg md:text-xl text-white/60 max-w-lg mb-10 leading-relaxed">
-              Sessões práticas, feedback imediato, e aulas com professora em pontos-chave do teu percurso.
+            <p className="text-lg md:text-xl text-muted-foreground max-w-lg mb-10 leading-relaxed">
+              You will not improve your English. You will perform with precision.
             </p>
             
             <div className="flex flex-wrap gap-4">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 h-12 text-base font-medium rounded-xl glow">
-                Começar Agora
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 h-12 text-base font-medium rounded-lg glow">
+                Apply for VOICE³
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 px-8 h-12 text-base font-medium rounded-xl backdrop-blur-sm">
+              <Button size="lg" variant="outline" className="border-border/60 text-foreground hover:bg-secondary px-8 h-12 text-base font-medium rounded-lg">
                 Ver Packs
               </Button>
             </div>
@@ -55,8 +53,8 @@ const Hero = () => {
               <div className="absolute -inset-4 bg-primary/10 rounded-3xl blur-3xl" />
               <img
                 src={heroDashboard}
-                alt="Voice3 Dashboard - Plataforma de Inglês Empresarial"
-                className="relative rounded-2xl border border-white/10 shadow-2xl w-full"
+                alt="VOICE³ Dashboard — Executive Communication Programme"
+                className="relative rounded-lg border border-border/30 shadow-2xl w-full"
               />
             </div>
           </motion.div>

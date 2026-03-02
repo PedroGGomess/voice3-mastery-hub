@@ -19,7 +19,7 @@ const Sessoes = () => {
   return (
     <PlatformLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-bold mb-2">Sessões</h1>
+        <h1 className="font-serif text-2xl font-bold mb-2">Sessões</h1>
         <p className="text-muted-foreground mb-8">Todas as sessões do teu pack. Treina ao teu ritmo.</p>
 
         <div className="grid gap-4">

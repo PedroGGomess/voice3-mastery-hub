@@ -19,7 +19,7 @@ const SessionFormats = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Como são as sessões</h2>
+          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">Como são as sessões</h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Formatos variados para maximizar a tua aprendizagem.
           </p>

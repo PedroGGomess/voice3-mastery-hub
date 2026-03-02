@@ -22,7 +22,7 @@ const ForCompanies = () => {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
               <Building2 className="h-4 w-4" /> Para Empresas
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">
               Investe no Inglês da tua equipa
             </h2>
             <p className="text-muted-foreground text-lg mb-8 max-w-lg">

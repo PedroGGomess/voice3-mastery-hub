@@ -31,7 +31,7 @@ const SocialProof = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">O que dizem os nossos alunos</h2>
+          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">O que dizem os nossos alunos</h2>
           <p className="text-muted-foreground text-lg">
             Profissionais que já transformaram o seu Inglês empresarial.
           </p>

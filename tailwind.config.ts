@@ -14,6 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
+        serif: ['Playfair Display', 'Georgia', 'serif'],
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       colors: {
@@ -62,10 +63,16 @@ export default {
         },
         "surface-dark": "hsl(var(--surface-dark))",
         "surface-dark-foreground": "hsl(var(--surface-dark-foreground))",
+        "voice3-navy": "#0B1A2A",
+        "voice3-charcoal": "#1C1F26",
+        "voice3-offwhite": "#F4F2ED",
+        "voice3-gold": "#B89A5A",
+        "voice3-steel": "#8E96A3",
+        "voice3-blue": "#243A5A",
         gold: {
-          DEFAULT: "#c9ab5a",
+          DEFAULT: "#B89A5A",
           light: "#d4ba6a",
-          dark: "#b89040",
+          dark: "#9a7f42",
         },
         success: {
           DEFAULT: "hsl(var(--success))",
@@ -113,8 +120,8 @@ export default {
           "50%": { transform: "translateY(-10px)" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 20px hsl(224 70% 48% / 0.1)" },
-          "50%": { boxShadow: "0 0 40px hsl(224 70% 48% / 0.3)" },
+          "0%, 100%": { boxShadow: "0 0 20px hsl(39 38% 54% / 0.1)" },
+          "50%": { boxShadow: "0 0 40px hsl(39 38% 54% / 0.3)" },
         },
       },
       animation: {
