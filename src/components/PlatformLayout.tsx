@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { BookOpen, Brain, MessageCircle, GraduationCap, User, HelpCircle, LogOut } from "lucide-react";
+import Voice3Logo from "@/components/Voice3Logo";
 
 const navItems = [
   { to: "/app", icon: BookOpen, label: "Meu Curso", end: true },
@@ -19,9 +20,7 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
       {/* Sidebar */}
       <aside className="w-64 shrink-0 border-r border-border bg-card hidden lg:flex flex-col">
         <div className="h-16 flex items-center px-6 border-b border-border">
-          <span className="text-lg font-bold tracking-tight">
-            Voice<span className="text-primary">3</span>
-          </span>
+          <Voice3Logo height={30} variant="full" />
         </div>
         <nav className="flex-1 py-4 px-3 space-y-1">
           {navItems.map((item) => (

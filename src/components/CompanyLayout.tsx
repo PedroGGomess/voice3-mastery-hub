@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { LayoutDashboard, Users, CreditCard, BarChart3, HelpCircle, Settings, LogOut } from "lucide-react";
+import Voice3Logo from "@/components/Voice3Logo";
 
 const navItems = [
   { to: "/empresa", icon: LayoutDashboard, label: "Visão Geral", end: true },
@@ -15,11 +16,9 @@ const CompanyLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="min-h-screen flex bg-background">
       <aside className="w-64 shrink-0 border-r border-border bg-card hidden lg:flex flex-col">
-        <div className="h-16 flex items-center px-6 border-b border-border">
-          <span className="text-lg font-bold tracking-tight">
-            Voice<span className="text-primary">3</span>
-            <span className="text-xs ml-2 px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">Empresa</span>
-          </span>
+        <div className="h-16 flex items-center px-6 border-b border-border gap-3">
+          <Voice3Logo height={30} variant="full" />
+          <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">Empresa</span>
         </div>
         <nav className="flex-1 py-4 px-3 space-y-1">
           {navItems.map((item) => (

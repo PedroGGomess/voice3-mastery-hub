@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import Voice3Logo from "@/components/Voice3Logo";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -9,8 +10,8 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
       <div className="container flex items-center justify-between h-16">
-        <Link to="/" className="text-xl font-bold tracking-tight">
-          Voice<span className="text-primary">3</span>
+        <Link to="/" className="flex items-center">
+          <Voice3Logo height={28} variant="full" />
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
