@@ -1,45 +1,54 @@
 import { motion } from "framer-motion";
-import { MessageSquare, Mic, Video, FileText, BarChart3 } from "lucide-react";
+import { Video, Headphones, PenLine } from "lucide-react";
 
-const formats = [
-  { icon: MessageSquare, title: "Chat de Texto", desc: "Pratica escrita com feedback AI em tempo real." },
-  { icon: Mic, title: "Áudio", desc: "Treina pronúncia e compreensão oral." },
-  { icon: Video, title: "Roleplay & Vídeo", desc: "Simula cenários reais do teu dia-a-dia profissional." },
-  { icon: FileText, title: "Exercícios", desc: "Atividades focadas em vocabulário e gramática business." },
-  { icon: BarChart3, title: "Feedback AI", desc: "Análise detalhada do teu desempenho após cada sessão." },
+const features = [
+  {
+    emoji: "📹",
+    icon: Video,
+    title: "Video Masterclasses",
+    desc: "Professional video content for each module, produced for executive learners.",
+  },
+  {
+    emoji: "🎧",
+    icon: Headphones,
+    title: "Audio Training",
+    desc: "Listen, repeat, master pronunciation. Designed for busy schedules.",
+  },
+  {
+    emoji: "✍️",
+    icon: PenLine,
+    title: "Interactive Exercises",
+    desc: "Quizzes, writing tasks, and real-time AI feedback on your performance.",
+  },
 ];
 
 const SessionFormats = () => {
   return (
-    <section className="py-24 bg-secondary/30" id="sessoes">
+    <section className="py-28" style={{ backgroundColor: "#0B1A2A" }} id="sessoes">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">Como são as sessões</h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Formatos variados para maximizar a tua aprendizagem.
-          </p>
+          <p className="text-[#B89A5A] tracking-[0.2em] uppercase text-sm mb-4 font-medium">The Experience</p>
+          <h2 className="font-serif text-4xl md:text-5xl font-semibold text-[#F4F2ED]">A Premium Learning Experience</h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-5 gap-4">
-          {formats.map((f, i) => (
+        <div className="grid md:grid-cols-3 gap-6">
+          {features.map((f, i) => (
             <motion.div
               key={f.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className="premium-card text-center"
+              transition={{ delay: i * 0.1 }}
+              className="bg-[#1C1F26] rounded-xl p-8 border border-[#B89A5A]/10 hover:border-[#B89A5A]/30 transition-all duration-300 hover:shadow-[0_0_20px_rgba(184,154,90,0.15)] group"
             >
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <f.icon className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-sm mb-2">{f.title}</h3>
-              <p className="text-xs text-muted-foreground">{f.desc}</p>
+              <div className="text-4xl mb-6">{f.emoji}</div>
+              <h3 className="font-serif text-xl font-semibold text-[#F4F2ED] mb-3">{f.title}</h3>
+              <p className="text-[#8E96A3] leading-relaxed">{f.desc}</p>
             </motion.div>
           ))}
         </div>
