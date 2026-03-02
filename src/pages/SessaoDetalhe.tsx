@@ -101,7 +101,10 @@ const SessaoDetalhe = () => {
             if (audioIntervalRef.current) clearInterval(audioIntervalRef.current);
             return 100;
           }
-          return prev + (100 / 150); // 150 ticks × 200ms = 30s real time
+          const AUDIO_DURATION_MS = 30000;
+          const AUDIO_UPDATE_INTERVAL_MS = 200;
+          const increment = 100 / (AUDIO_DURATION_MS / AUDIO_UPDATE_INTERVAL_MS);
+          return prev + increment;
         });
       }, 200);
     } else {

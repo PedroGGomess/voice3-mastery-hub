@@ -100,7 +100,8 @@ const AuthPage = () => {
         packDetails,
       });
       toast.success("Conta criada com sucesso! 🎉");
-      setTimeout(() => navigate("/app"), 500);
+      const NAVIGATION_DELAY_MS = 500;
+      setTimeout(() => navigate("/app"), NAVIGATION_DELAY_MS);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Ocorreu um erro.');
       setLoading(false);
