@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Eye, EyeOff } from "lucide-react";
+import Voice3Logo from "@/components/Voice3Logo";
 
 const AuthPage = () => {
   const [mode, setMode] = useState<"login" | "register">("login");
@@ -27,7 +28,7 @@ const AuthPage = () => {
         }} />
         <div className="relative z-10 max-w-md">
           <h1 className="text-4xl font-bold mb-4">
-            Voice<span className="text-primary">3</span>
+            <Voice3Logo height={40} variant="full" />
           </h1>
           <p className="text-white/60 text-lg leading-relaxed mb-8">
             Domina o Inglês Empresarial com sessões AI práticas e aulas com professora nos momentos certos do teu percurso.
@@ -57,9 +58,7 @@ const AuthPage = () => {
           className="w-full max-w-md"
         >
           <div className="lg:hidden mb-8">
-            <h1 className="text-2xl font-bold">
-              Voice<span className="text-primary">3</span>
-            </h1>
+            <Voice3Logo height={32} variant="full" />
           </div>
 
           <h2 className="text-2xl font-bold mb-2">
