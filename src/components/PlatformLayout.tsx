@@ -16,7 +16,7 @@ const navItems = [
 
 const PlatformLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="dark min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background">
       {/* Top Header */}
       <header className="h-16 shrink-0 border-b border-border/50 bg-card/50 backdrop-blur-sm flex items-center px-4 gap-4 z-20">
         {/* Logo */}

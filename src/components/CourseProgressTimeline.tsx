@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { CheckCircle2, Circle, Play } from "lucide-react";
+import { CheckCircle2, Play } from "lucide-react";
 
 interface TimelineNode {
   id: number;
@@ -18,6 +18,15 @@ const nodes: TimelineNode[] = [
 ];
 
 const CourseProgressTimeline = () => {
+  const lastActiveIndex = nodes.reduce(
+    (acc, node, i) => (node.status !== "todo" ? i : acc),
+    0,
+  );
+  const progressPct =
+    nodes.length > 1
+      ? (lastActiveIndex / (nodes.length - 1)) * 100
+      : 0;
+
   return (
     <div className="relative flex items-center justify-between px-4 py-6">
       {/* Connecting line */}
@@ -26,7 +35,7 @@ const CourseProgressTimeline = () => {
       <motion.div
         className="absolute left-8 top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r from-primary to-primary/60"
         initial={{ width: 0 }}
-        animate={{ width: "38%" }}
+        animate={{ width: `${progressPct}%` }}
         transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
       />
 

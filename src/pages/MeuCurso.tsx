@@ -73,7 +73,7 @@ const MeuCurso = () => {
       >
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold text-white/80 uppercase tracking-wider">Sessões</h2>
-          <button className="text-xs text-primary hover:text-primary/80 transition-colors">Ver todas</button>
+          <Link to="/app/sessoes" className="text-xs text-primary hover:text-primary/80 transition-colors">Ver todas</Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {featuredSessions.map((session, i) => (

@@ -9,10 +9,9 @@ interface SessionCardProps {
   status: "done" | "progress" | "todo";
   highlighted?: boolean;
   index: number;
-  onAction?: () => void;
 }
 
-const SessionCard = ({ title, subtitle, time, status, highlighted, index, onAction }: SessionCardProps) => {
+const SessionCard = ({ title, subtitle, time, status, highlighted, index }: SessionCardProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -55,7 +54,6 @@ const SessionCard = ({ title, subtitle, time, status, highlighted, index, onActi
         <div className="flex items-center gap-2">
           <Button
             size="sm"
-            onClick={onAction}
             className={`h-7 text-xs rounded-lg px-3 ${
               highlighted
                 ? "bg-white text-primary hover:bg-white/90"
