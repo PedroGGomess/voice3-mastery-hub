@@ -28,7 +28,7 @@ function getBotResponse(text: string): string {
     return "As aulas com professora são desbloqueadas após completares sessões: após 4 sessões tens a Aula #1, e após 8 sessões tens a Aula #2. Cada aula dura 45 minutos e é personalizada para o teu nível. Vai a 'Aulas' para marcar! 📅";
   }
   if (lower.includes("progresso") || lower.includes("resultado")) {
-    return "Estás a fazer um excelente trabalho! 💪 Continua a completar as sessões ao teu ritmo. O consistência é a chave para fluência em inglês empresarial. Cada sessão completada aproxima-te do teu objetivo!";
+    return "Estás a fazer um excelente trabalho! 💪 Continua a completar as sessões ao teu ritmo. A consistência é a chave para fluência em inglês empresarial. Cada sessão completada aproxima-te do teu objetivo!";
   }
   if (lower.includes("email")) {
     return "Para um email profissional em inglês, segue esta estrutura:\n1. **Abertura**: 'Dear [Name],' ou 'Hi [Name],'\n2. **Propósito**: 'I am writing to...'\n3. **Detalhes**: O conteúdo principal\n4. **Ação**: 'Could you please...'\n5. **Fecho**: 'Kind regards,' + teu nome\n\nEvita contrações (I'm, don't) em emails formais! ✉️";
@@ -42,7 +42,25 @@ function getBotResponse(text: string): string {
   if (lower.includes("preparar") || lower.includes("prepara")) {
     return "Para te preparares para uma reunião em inglês:\n• Revê o vocabulário relevante ao tema\n• Prepara 2-3 opiniões ou perguntas\n• Pratica as frases de interação (concordar, discordar, sugerir)\n• Se possível, lê a agenda com antecedência\n\nA preparação é 80% do sucesso! 💡";
   }
-  return "Boa pergunta! 😊 Estou aqui para te ajudar com o teu Inglês empresarial. Podes perguntar-me sobre sessões, reuniões, emails profissionais, negociações, entrevistas de emprego, ou pedir dicas de comunicação. O que queres aprender hoje?";
+  if (lower.includes("grammar") || lower.includes("tense") || lower.includes("verb") || lower.includes("conjugation") || lower.includes("gramática") || lower.includes("tempo verbal")) {
+    return "Dica de gramática! 📖 Em inglês de negócios, domina estes tempos verbais:\n• **Present Simple**: rotinas e factos — 'We hold weekly meetings.'\n• **Present Perfect**: experiências recentes — 'We have completed the project.'\n• **Past Simple**: eventos concluídos — 'We launched the product last year.'\n• **Conditional**: propostas e negociações — 'If you could confirm by Friday, we would...' \n\nPratica um por vez para consolidar!";
+  }
+  if (lower.includes("word") || lower.includes("meaning") || lower.includes("vocabulary") || lower.includes("synonym") || lower.includes("translate") || lower.includes("vocabulário") || lower.includes("palavra") || lower.includes("significado")) {
+    return "Ótima questão de vocabulário! 📚 Algumas substituições úteis em inglês de negócios:\n• Em vez de 'do' → 'execute', 'implement', 'deliver'\n• Em vez de 'show' → 'demonstrate', 'highlight', 'present'\n• Em vez de 'help' → 'assist', 'support', 'facilitate'\n• Em vez de 'use' → 'leverage', 'utilise', 'apply'\n\nVocabulário mais rico transmite mais profissionalismo! Se tens uma palavra específica, pergunta-me!";
+  }
+  if (lower.includes("difficult") || lower.includes("hard") || lower.includes("help") || lower.includes("stuck") || lower.includes("difícil") || lower.includes("ajuda") || lower.includes("dificuldade")) {
+    return "Não te preocupes! 💛 Aprender inglês empresarial é um processo gradual e estás no caminho certo. Cada dificuldade que sentes é uma oportunidade de crescimento. Tenta voltar ao conteúdo da sessão, toma notas das frases que achaste difíceis, e pratica-as em voz alta. Estás a fazer melhor do que pensas! 🌟";
+  }
+  if (lower.includes("interview") || lower.includes("entrevista")) {
+    return "Dicas para a entrevista de emprego em inglês! 💼\n• Usa o método STAR: Situation → Task → Action → Result\n• Prepara respostas para: 'Tell me about yourself', 'Greatest strength?', 'Where do you see yourself in 5 years?'\n• Evita falar mal de empregadores anteriores\n• Termina sempre com uma pergunta ao entrevistador: 'What does success look like in this role?'\n\nVê a Sessão 7 para praticar! 🎯";
+  }
+  if (lower.includes("pronunciation") || lower.includes("pronúncia") || lower.includes("pronunci")) {
+    return "Dicas de pronúncia para inglês de negócios! 🎙️\n• Faz pausa antes de palavras-chave para dar ênfase\n• Reduz palavras funcionais (the, a, of, to) para soar mais natural\n• Pratica connected speech: 'I want to' soa como 'I wanna' em contexto informal\n• Grava-te a falar e ouve depois — é o método mais eficaz!\n• Foca-te em ser claro, não em ter sotaque perfeito\n\nA Sessão 8 tem exercícios avançados de pronúncia! 🎧";
+  }
+  if (lower.includes("small talk") || lower.includes("conversa") || lower.includes("casual") || lower.includes("informal")) {
+    return "Small talk em inglês de negócios — frases essenciais! 💬\n• 'How's everything going?' / 'How's business?'\n• 'Did you have a good weekend?'\n• 'How was your trip / the conference?'\n• 'Have you been working with [company] long?'\n• Para terminar: 'It was great catching up! Let's connect again soon.'\n\nO small talk cria relações profissionais fortes — não o subestimes! 😊";
+  }
+  return "Boa pergunta! 😊 Estou aqui para te ajudar com o teu Inglês empresarial. Podes perguntar-me sobre sessões, reuniões, emails profissionais, negociações, entrevistas de emprego, vocabulário, gramática ou dicas de pronúncia. O que queres aprender hoje?";
 }
 
 const ChatAI = () => {

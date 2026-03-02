@@ -21,6 +21,7 @@ import Packs from "./pages/empresa/Packs";
 import Progresso from "./pages/empresa/Progresso";
 import EmpresaSuporte from "./pages/empresa/Suporte";
 import Definicoes from "./pages/empresa/Definicoes";
+import PacksPage from "./pages/PacksPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
             {/* Public */}
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<AuthPage />} />
+            <Route path="/packs" element={<PacksPage />} />
 
             {/* Student routes */}
             <Route path="/app" element={<ProtectedRoute requiredRole="student"><MeuCurso /></ProtectedRoute>} />

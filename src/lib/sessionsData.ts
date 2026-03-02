@@ -16,6 +16,10 @@ export interface Session {
   title: string;
   objective: string;
   time: string;
+  videoUrl: string;
+  videoTitle: string;
+  audioTitle: string;
+  audioTranscript: string;
   content: SessionContent[];
   quiz: QuizQuestion[];
   exercise: string;
@@ -27,6 +31,10 @@ export const sessionsData: Session[] = [
     title: 'Introdução ao Inglês Empresarial',
     objective: 'Vocabulário base e apresentação pessoal profissional',
     time: '20 min',
+    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=0',
+    videoTitle: 'Business English: Professional Self-Introduction',
+    audioTitle: 'Exercício de Apresentação Profissional',
+    audioTranscript: 'In this exercise, you will practice introducing yourself in a professional setting. Focus on clarity, confidence, and keeping your introduction concise within three to four sentences. Remember to state your name, role, and one key responsibility.',
     content: [
       {
         type: 'text',
@@ -104,6 +112,10 @@ export const sessionsData: Session[] = [
     title: 'Email Profissional',
     objective: 'Escrever emails formais e informais em inglês',
     time: '25 min',
+    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=10',
+    videoTitle: 'Writing Professional Emails in English',
+    audioTitle: 'Leitura de Email Formal em Inglês',
+    audioTranscript: 'This audio exercise demonstrates the correct tone and pacing for a formal business email. Listen carefully to how formal expressions are pronounced and how the email structure is reflected in the spoken delivery. Practice reading the sample email aloud until it sounds natural.',
     content: [
       {
         type: 'text',
@@ -178,6 +190,10 @@ export const sessionsData: Session[] = [
     title: 'Reuniões — Participação Ativa',
     objective: 'Expressar opiniões e fazer sugestões em reuniões',
     time: '25 min',
+    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=20',
+    videoTitle: 'How to Participate Confidently in Business Meetings',
+    audioTitle: 'Simulação de Reunião em Inglês',
+    audioTranscript: 'In this audio simulation, two professionals navigate a project meeting in English. Pay attention to how they agree, disagree, and make suggestions using polished business phrases. Practice repeating each line after the speaker to build muscle memory.',
     content: [
       {
         type: 'text',
@@ -260,6 +276,10 @@ export const sessionsData: Session[] = [
     title: 'Apresentações (Parte 1)',
     objective: 'Estruturar e iniciar uma apresentação profissional impactante',
     time: '30 min',
+    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=30',
+    videoTitle: 'Structuring a Powerful Business Presentation Opening',
+    audioTitle: 'Exemplos de Aberturas de Apresentação',
+    audioTranscript: 'This exercise presents three different opening styles for a business presentation: a hook question, a surprising statistic, and a bold statement. Each approach is demonstrated with a clear example and then analysed for effectiveness. Listen and decide which style best suits your communication preference.',
     content: [
       {
         type: 'text',
@@ -337,6 +357,10 @@ export const sessionsData: Session[] = [
     title: 'Apresentações (Parte 2)',
     objective: 'Dominar o delivery e responder a perguntas com confiança',
     time: '25 min',
+    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=40',
+    videoTitle: 'Delivering a Presentation and Handling Q&A with Confidence',
+    audioTitle: 'Exercício de Q&A em Apresentação',
+    audioTranscript: 'This audio exercise focuses on the Q&A portion of a business presentation where the speaker receives challenging questions from the audience. Notice how each response begins with an acknowledgement before addressing the substance of the question. Practise these techniques to handle any question with poise.',
     content: [
       {
         type: 'text',
@@ -417,6 +441,10 @@ export const sessionsData: Session[] = [
     title: 'Negociação em Inglês',
     objective: 'Técnicas de negociação e linguagem persuasiva em inglês',
     time: '30 min',
+    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=50',
+    videoTitle: 'Business Negotiation Techniques in English',
+    audioTitle: 'Diálogo de Negociação Comercial',
+    audioTranscript: 'This audio presents a complete negotiation scenario between a buyer and a supplier discussing pricing and terms. You will hear how each party uses strategic language to make proposals, counter-offers, and conditional concessions. Analyse the techniques used and identify moments where the conversation shifts in favour of each party.',
     content: [
       {
         type: 'text',
@@ -495,6 +523,10 @@ export const sessionsData: Session[] = [
     title: 'Entrevistas de Emprego',
     objective: 'Responder com confiança a perguntas comuns de entrevistas em inglês',
     time: '25 min',
+    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=60',
+    videoTitle: 'Mastering the English Job Interview',
+    audioTitle: 'Simulação de Entrevista em Inglês',
+    audioTranscript: 'This audio simulation walks you through a full job interview conducted in English, from the opening greeting to the closing questions. The candidate demonstrates the STAR method in three different competency-based answers. Listen and take note of the pacing, tone, and vocabulary choices used to create a professional impression.',
     content: [
       {
         type: 'text',
@@ -576,6 +608,10 @@ export const sessionsData: Session[] = [
     title: 'Comunicação Oral Avançada',
     objective: 'Fluência, pronúncia e expressão natural em contexto profissional',
     time: '30 min',
+    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=70',
+    videoTitle: 'Advanced Oral Communication for Business Professionals',
+    audioTitle: 'Técnicas de Pronúncia e Ritmo em Inglês',
+    audioTranscript: 'This advanced audio exercise focuses on the rhythm and stress patterns of natural business English speech. You will hear examples of weak forms, connected speech, and strategic pausing used by fluent speakers in professional contexts. Repeat each sentence immediately after hearing it to train your ear and improve your spoken fluency.',
     content: [
       {
         type: 'text',
