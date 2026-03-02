@@ -19,7 +19,9 @@ const Sessoes = () => {
   try {
     const stored = localStorage.getItem(`voice3_sessions_progress_${userId}`);
     if (stored) progress = JSON.parse(stored);
-  } catch {}
+  } catch (_e) {
+    // ignore
+  }
 
   const getStatus = (id: number): "done" | "progress" | "todo" => {
     if (progress[id]?.completed) return "done";

@@ -26,7 +26,9 @@ const MeuCurso = () => {
   try {
     const stored = localStorage.getItem(`voice3_sessions_progress_${userId}`);
     if (stored) progress = JSON.parse(stored);
-  } catch {}
+  } catch (_e) {
+    // ignore
+  }
 
   const completedCount = Object.values(progress).filter(p => p.completed).length;
   const progressPercent = Math.round((completedCount / TOTAL_SESSIONS) * 100);

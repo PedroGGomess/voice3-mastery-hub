@@ -26,7 +26,9 @@ const Definicoes = () => {
     try {
       const stored = localStorage.getItem(storageKey);
       if (stored) return JSON.parse(stored);
-    } catch {}
+    } catch (_e) {
+      // ignore
+    }
     return {
       companyName: currentUser?.company || "",
       website: "",

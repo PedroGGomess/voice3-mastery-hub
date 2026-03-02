@@ -28,7 +28,9 @@ const Perfil = () => {
   try {
     const stored = localStorage.getItem(`voice3_sessions_progress_${userId}`);
     if (stored) progress = JSON.parse(stored);
-  } catch {}
+  } catch (_e) {
+    // ignore
+  }
 
   const completedSessions = Object.values(progress).filter(p => p.completed).length;
   const scores = Object.values(progress).filter(p => p.completed).map(p => p.score);

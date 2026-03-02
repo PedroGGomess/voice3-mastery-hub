@@ -35,7 +35,9 @@ const Alunos = () => {
   };
 
   const saveStudents = (s: Student[]) => {
-    try { localStorage.setItem(storageKey, JSON.stringify(s)); } catch {}
+    try { localStorage.setItem(storageKey, JSON.stringify(s)); } catch (_e) {
+      // ignore
+    }
   };
 
   const [students, setStudents] = useState<Student[]>(getStudents);

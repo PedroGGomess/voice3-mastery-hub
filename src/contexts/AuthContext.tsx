@@ -84,43 +84,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    try {
-      const stored = localStorage.getItem(USERS_KEY);
-      const users: StoredUser[] = stored ? JSON.parse(stored) : [];
-      const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
-      if (!user) throw new Error('Email ou password incorretos.');
-      const { password: _, ...userWithoutPwd } = user;
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userWithoutPwd));
-      setCurrentUser(userWithoutPwd);
-    } catch (e) {
-      throw e;
-    }
+    const stored = localStorage.getItem(USERS_KEY);
+    const users: StoredUser[] = stored ? JSON.parse(stored) : [];
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+    if (!user) throw new Error('Email ou password incorretos.');
+    const { password: _, ...userWithoutPwd } = user;
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userWithoutPwd));
+    setCurrentUser(userWithoutPwd);
   };
 
   const register = async (data: { name: string; email: string; password: string; company?: string; role: 'student' | 'company_admin' }) => {
-    try {
-      const stored = localStorage.getItem(USERS_KEY);
-      const users: StoredUser[] = stored ? JSON.parse(stored) : [];
-      if (users.find(u => u.email.toLowerCase() === data.email.toLowerCase())) {
-        throw new Error('Este email já está registado.');
-      }
-      const newUser: StoredUser = {
-        id: `user-${Date.now()}`,
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        company: data.company,
-        role: data.role,
-        createdAt: new Date().toISOString().split('T')[0],
-      };
-      users.push(newUser);
-      localStorage.setItem(USERS_KEY, JSON.stringify(users));
-      const { password: _, ...userWithoutPwd } = newUser;
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userWithoutPwd));
-      setCurrentUser(userWithoutPwd);
-    } catch (e) {
-      throw e;
+    const stored = localStorage.getItem(USERS_KEY);
+    const users: StoredUser[] = stored ? JSON.parse(stored) : [];
+    if (users.find(u => u.email.toLowerCase() === data.email.toLowerCase())) {
+      throw new Error('Este email já está registado.');
     }
+    const newUser: StoredUser = {
+      id: `user-${Date.now()}`,
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      company: data.company,
+      role: data.role,
+      createdAt: new Date().toISOString().split('T')[0],
+    };
+    users.push(newUser);
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    const { password: _, ...userWithoutPwd } = newUser;
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userWithoutPwd));
+    setCurrentUser(userWithoutPwd);
   };
 
   const logout = () => {

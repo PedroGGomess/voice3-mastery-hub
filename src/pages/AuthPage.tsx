@@ -57,8 +57,8 @@ const AuthPage = () => {
         await register({ name, email, password, company: company || undefined, role });
         toast.success("Conta criada com sucesso!");
       }
-    } catch (err: any) {
-      setError(err.message || "Ocorreu um erro. Tenta novamente.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Ocorreu um erro. Tenta novamente.');
     } finally {
       setLoading(false);
     }

@@ -69,7 +69,9 @@ const ChatAI = () => {
         setMessages(initial);
         localStorage.setItem(storageKey, JSON.stringify(initial));
       }
-    } catch {}
+    } catch (_e) {
+      // ignore
+    }
   }, [storageKey]);
 
   useEffect(() => {
@@ -79,7 +81,9 @@ const ChatAI = () => {
   const saveMessages = (msgs: Message[]) => {
     try {
       localStorage.setItem(storageKey, JSON.stringify(msgs));
-    } catch {}
+    } catch (_e) {
+      // ignore
+    }
   };
 
   const sendMessage = (text: string) => {

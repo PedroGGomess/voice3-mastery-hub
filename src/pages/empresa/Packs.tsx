@@ -21,7 +21,10 @@ const Packs = () => {
     try {
       const stored = localStorage.getItem(storageKey);
       return stored ? JSON.parse(stored) : [];
-    } catch { return []; }
+    } catch (_e) {
+      // ignore
+      return [];
+    }
   };
 
   const [history, setHistory] = useState(getHistory);
@@ -34,7 +37,9 @@ const Packs = () => {
     const payment = { id: `pay-${Date.now()}`, pack: pack.name, price: pack.price, date: new Date().toISOString().split("T")[0], status: "Pago" };
     const updated = [payment, ...history];
     setHistory(updated);
-    try { localStorage.setItem(storageKey, JSON.stringify(updated)); } catch {}
+    try { localStorage.setItem(storageKey, JSON.stringify(updated)); } catch (_e) {
+      // ignore
+    }
     toast.success(`Pack ${pack.name} adquirido com sucesso! (demonstração)`);
   };
 
@@ -90,14 +95,17 @@ const Packs = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {history.map((h: any) => (
-                    <tr key={h.id} className="border-b border-border/30">
-                      <td className="py-3 text-sm font-medium">{h.pack}</td>
-                      <td className="py-3 text-sm">{h.price}</td>
-                      <td className="py-3 text-sm text-muted-foreground">{h.date}</td>
-                      <td className="py-3"><span className="text-xs px-2 py-0.5 rounded-full bg-success/10 text-success">{h.status}</span></td>
+                    {history.map((h: unknown) => {
+                  const item = h as Record<string, unknown>;
+                  return (
+                    <tr key={item.id as string} className="border-b border-border/30">
+                      <td className="py-3 text-sm font-medium">{item.pack}</td>
+                      <td className="py-3 text-sm">{item.price}</td>
+                      <td className="py-3 text-sm text-muted-foreground">{item.date}</td>
+                      <td className="py-3"><span className="text-xs px-2 py-0.5 rounded-full bg-success/10 text-success">{item.status}</span></td>
                     </tr>
-                  ))}
+                  );
+                })}
                 </tbody>
               </table>
             </div>

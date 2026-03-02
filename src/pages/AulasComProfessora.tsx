@@ -48,20 +48,29 @@ const AulasComProfessora = () => {
     try {
       const stored = localStorage.getItem(storageKey);
       if (stored) setBookings(JSON.parse(stored));
-    } catch {}
+    } catch (_e) {
+      // ignore
+    }
     try {
       const stored = localStorage.getItem(progressKey);
       if (stored) {
         const p = JSON.parse(stored);
-        setCompletedSessions(Object.values(p).filter((v: any) => v.completed).length);
+        setCompletedSessions(Object.values(p).filter((v: unknown) => {
+          const item = v as Record<string, unknown>;
+          return item.completed;
+        }).length);
       }
-    } catch {}
+    } catch (_e) {
+      // ignore
+    }
   }, [storageKey, progressKey]);
 
   const saveBookings = (b: Booking[]) => {
     try {
       localStorage.setItem(storageKey, JSON.stringify(b));
-    } catch {}
+    } catch (_e) {
+      // ignore
+    }
   };
 
   const formattedSelected = selectedDate?.toISOString().split("T")[0];

@@ -23,7 +23,10 @@ const EmpresaSuporte = () => {
   const storageKey = `voice3_support_tickets_${currentUser?.id}`;
 
   const getTickets = () => {
-    try { const s = localStorage.getItem(storageKey); return s ? JSON.parse(s) : []; } catch { return []; }
+    try { const s = localStorage.getItem(storageKey); return s ? JSON.parse(s) : []; } catch (_e) {
+      // ignore
+      return [];
+    }
   };
 
   const [tickets, setTickets] = useState(getTickets);
@@ -35,7 +38,9 @@ const EmpresaSuporte = () => {
     const ticket = { id: `t-${Date.now()}`, subject, message, createdAt: new Date().toISOString(), status: "open" };
     const updated = [ticket, ...tickets];
     setTickets(updated);
-    try { localStorage.setItem(storageKey, JSON.stringify(updated)); } catch {}
+    try { localStorage.setItem(storageKey, JSON.stringify(updated)); } catch (_e) {
+      // ignore
+    }
     toast.success("Pedido de suporte enviado!");
     setSubject("");
     setMessage("");
@@ -83,18 +88,21 @@ const EmpresaSuporte = () => {
               </div>
             ) : (
               <div className="space-y-3">
-                {tickets.map((t: any) => (
-                  <div key={t.id} className="p-4 rounded-xl bg-white/5 border border-white/10">
-                    <div className="flex items-start justify-between mb-1">
-                      <p className="font-medium text-sm">{t.subject}</p>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${t.status === "resolved" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>
-                        {t.status === "resolved" ? "Resolvido" : "Em análise"}
-                      </span>
+                {tickets.map((t: unknown) => {
+                  const ticket = t as Record<string, unknown>;
+                  return (
+                    <div key={ticket.id as string} className="p-4 rounded-xl bg-white/5 border border-white/10">
+                      <div className="flex items-start justify-between mb-1">
+                        <p className="font-medium text-sm">{ticket.subject}</p>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${ticket.status === "resolved" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>
+                          {ticket.status === "resolved" ? "Resolvido" : "Em análise"}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground line-clamp-2">{ticket.message}</p>
+                      <p className="text-xs text-white/30 mt-1">{new Date(ticket.createdAt as string).toLocaleDateString("pt-PT")}</p>
                     </div>
-                    <p className="text-xs text-muted-foreground line-clamp-2">{t.message}</p>
-                    <p className="text-xs text-white/30 mt-1">{new Date(t.createdAt).toLocaleDateString("pt-PT")}</p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

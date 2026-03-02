@@ -32,7 +32,9 @@ const SessaoDetalhe = () => {
           setExistingScore(progress[sessionId].score);
         }
       }
-    } catch {}
+    } catch (_e) {
+      // ignore
+    }
   }, [userId, sessionId]);
 
   if (!session) {
