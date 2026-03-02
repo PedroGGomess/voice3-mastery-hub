@@ -15,7 +15,9 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { login, register, isAuthenticated, currentUser } = useAuth();
+  const { login, register, isAuthenticated, isLoading, currentUser } = useAuth();
+
+  if (isLoading) return null;
 
   if (isAuthenticated) {
     return <Navigate to={currentUser?.role === "company_admin" ? "/empresa" : "/app"} replace />;

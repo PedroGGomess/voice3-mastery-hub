@@ -8,8 +8,12 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
-  const { isAuthenticated, currentUser } = useAuth();
+  const { isAuthenticated, isLoading, currentUser } = useAuth();
   const location = useLocation();
+
+  if (isLoading) {
+    return null; // Wait for auth to load before deciding
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;

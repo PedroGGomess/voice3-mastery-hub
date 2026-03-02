@@ -16,6 +16,7 @@ interface StoredUser extends User {
 interface AuthContextType {
   currentUser: User | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (data: { name: string; email: string; password: string; company?: string; role: 'student' | 'company_admin' }) => Promise<void>;
   logout: () => void;
@@ -66,6 +67,7 @@ function seedDemoData() {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     seedDemoData();
@@ -76,6 +78,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (e) {
       localStorage.removeItem(CURRENT_USER_KEY);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -144,7 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, isAuthenticated: !!currentUser, login, register, logout, updateProfile }}>
+    <AuthContext.Provider value={{ currentUser, isAuthenticated: !!currentUser, isLoading, login, register, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );
