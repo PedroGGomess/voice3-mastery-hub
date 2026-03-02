@@ -1,9 +1,10 @@
 import { ReactNode } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   BookOpen, Brain, MessageCircle, GraduationCap, User, HelpCircle, LogOut, Search, Bell,
 } from "lucide-react";
 import SidebarRight from "./SidebarRight";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { to: "/app", icon: BookOpen, label: "Meu Curso", end: true },
@@ -15,6 +16,21 @@ const navItems = [
 ];
 
 const PlatformLayout = ({ children }: { children: ReactNode }) => {
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const initials = (currentUser?.name || "U")
+    .split(" ")
+    .map(n => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Top Header */}
@@ -46,9 +62,9 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
           </button>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer">
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-xs font-bold text-white">
-              U
+              {initials}
             </div>
-            <span className="text-sm text-white/80 hidden sm:block">Utilizador</span>
+            <span className="text-sm text-white/80 hidden sm:block">{currentUser?.name?.split(" ")[0] || "Utilizador"}</span>
           </div>
         </div>
       </header>
@@ -76,6 +92,7 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
           ))}
           <div className="flex-1" />
           <button
+            onClick={handleLogout}
             title="Sair"
             className="w-10 h-10 rounded-xl flex items-center justify-center text-white/30 hover:text-white/70 hover:bg-white/10 transition-all"
           >

@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { LayoutDashboard, Users, CreditCard, BarChart3, HelpCircle, Settings, LogOut } from "lucide-react";
 import Voice3Logo from "@/components/Voice3Logo";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { to: "/empresa", icon: LayoutDashboard, label: "Visão Geral", end: true },
@@ -13,6 +14,14 @@ const navItems = [
 ];
 
 const CompanyLayout = ({ children }: { children: ReactNode }) => {
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen flex bg-background">
       <aside className="w-64 shrink-0 border-r border-border bg-card hidden lg:flex flex-col">
@@ -38,7 +47,14 @@ const CompanyLayout = ({ children }: { children: ReactNode }) => {
           ))}
         </nav>
         <div className="p-3 border-t border-border">
-          <button className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-secondary w-full transition-colors">
+          <div className="px-3 py-2 mb-2">
+            <p className="text-sm font-medium">{currentUser?.name}</p>
+            <p className="text-xs text-muted-foreground">{currentUser?.company}</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-secondary w-full transition-colors"
+          >
             <LogOut className="h-4 w-4" /> Sair
           </button>
         </div>

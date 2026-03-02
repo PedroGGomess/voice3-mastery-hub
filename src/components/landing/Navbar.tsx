@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
 import Voice3Logo from "@/components/Voice3Logo";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const { isAuthenticated, currentUser } = useAuth();
+
+  const dashboardLink = currentUser?.role === "company_admin" ? "/empresa" : "/app";
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
@@ -23,12 +27,23 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/login">Entrar</Link>
-          </Button>
-          <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg" asChild>
-            <Link to="/login">Começar</Link>
-          </Button>
+          {isAuthenticated ? (
+            <>
+              <span className="text-sm text-muted-foreground">{currentUser?.name?.split(" ")[0]}</span>
+              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg" asChild>
+                <Link to={dashboardLink}><LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Minha Plataforma</Link>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/login">Entrar</Link>
+              </Button>
+              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg" asChild>
+                <Link to="/login">Começar</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         <button className="md:hidden" onClick={() => setOpen(!open)}>
@@ -44,12 +59,20 @@ const Navbar = () => {
             <a href="#empresas" className="block text-sm py-2" onClick={() => setOpen(false)}>Empresas</a>
             <a href="#faq" className="block text-sm py-2" onClick={() => setOpen(false)}>FAQ</a>
             <div className="pt-2 flex gap-3">
-              <Button variant="outline" size="sm" className="flex-1" asChild>
-                <Link to="/login">Entrar</Link>
-              </Button>
-              <Button size="sm" className="flex-1 bg-primary text-primary-foreground" asChild>
-                <Link to="/login">Começar</Link>
-              </Button>
+              {isAuthenticated ? (
+                <Button size="sm" className="flex-1 bg-primary text-primary-foreground" asChild>
+                  <Link to={dashboardLink} onClick={() => setOpen(false)}><LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Plataforma</Link>
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline" size="sm" className="flex-1" asChild>
+                    <Link to="/login" onClick={() => setOpen(false)}>Entrar</Link>
+                  </Button>
+                  <Button size="sm" className="flex-1 bg-primary text-primary-foreground" asChild>
+                    <Link to="/login" onClick={() => setOpen(false)}>Começar</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
