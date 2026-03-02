@@ -19,6 +19,7 @@ const statusConfig = {
 const MeuCurso = () => {
   const { currentUser } = useAuth();
   const userId = currentUser?.id || "";
+  const firstName = currentUser?.name?.split(" ")[0] || "Utilizador";
 
   let progress: Record<number, { completed: boolean; score: number; completedAt: string }> = {};
   try {
@@ -56,7 +57,7 @@ const MeuCurso = () => {
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
         <p className="text-xs text-[#B89A5A] tracking-[0.2em] uppercase font-medium mb-1">Executive Communication Programme</p>
         <h1 className="font-serif text-2xl font-semibold text-[#F4F2ED] tracking-tight">
-          Bem-vindo de volta, <span className="text-[#B89A5A]">{currentUser?.name?.split(" ")[0] || "Utilizador"}</span>
+          Bem-vindo de volta, <span className="text-[#B89A5A]">{firstName}</span>
         </h1>
       </motion.div>
 
