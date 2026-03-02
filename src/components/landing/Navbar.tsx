@@ -19,14 +19,14 @@ const Navbar = () => {
   const dashboardLink = currentUser?.role === "company_admin" ? "/empresa" : "/app";
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled ? "bg-[#0B1A2A]/95 backdrop-blur-xl border-b border-[#B89A5A]/10 shadow-lg" : "bg-transparent"
+      scrolled ? "bg-[#0B1A2A]/95 backdrop-blur-sm border-b border-[#B89A5A]/10 shadow-lg" : "bg-transparent"
     }`}>
       <div className="container flex items-center justify-between h-16">
         <Link to="/" className="flex items-center">
