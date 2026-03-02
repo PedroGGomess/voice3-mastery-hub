@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Check, ArrowRight, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const packs = [
   {
     name: "Starter",
+    price: 149,
     sessions: 4,
     lessons: 1,
     lessonDetail: "1 aula no fim do pack",
@@ -14,31 +16,34 @@ const packs = [
   },
   {
     name: "Pro",
-    sessions: 10,
+    price: 349,
+    sessions: 8,
     lessons: 2,
     lessonDetail: "1 a meio + 1 no fim",
     results: "Confiança em reuniões e apresentações",
-    features: ["10 sessões AI práticas", "Roleplay & áudio", "2 aulas com professora", "Relatório de progresso", "Certificado avançado"],
+    features: ["8 sessões AI práticas", "Roleplay & áudio", "2 aulas com professora", "Relatório de progresso", "Certificado avançado"],
     popular: true,
   },
   {
     name: "Advanced",
-    sessions: 15,
+    price: 499,
+    sessions: 12,
     lessons: 3,
     lessonDetail: "Distribuídas ao longo do percurso",
     results: "Domínio completo do Inglês empresarial",
-    features: ["15 sessões AI práticas", "Todos os formatos", "3 aulas com professora", "Análise detalhada", "Suporte prioritário"],
+    features: ["12 sessões AI práticas", "Todos os formatos", "3 aulas com professora", "Análise detalhada", "Suporte prioritário"],
     popular: false,
   },
   {
     name: "Business Master",
-    sessions: null,
-    lessons: null,
-    lessonDetail: "Personalizado",
-    results: "Plano à medida da tua empresa",
-    features: ["Sessões personalizadas", "Plano à medida", "Call com comercial", "Acompanhamento dedicado", "Relatórios empresa"],
+    price: 799,
+    sessions: 20,
+    lessons: 4,
+    lessonDetail: "4 aulas personalizadas",
+    results: "Plano premium para executivos",
+    features: ["20 sessões AI práticas", "Plano à medida", "4 aulas com professora", "Acompanhamento dedicado", "Relatórios empresa"],
     popular: false,
-    custom: true,
+    custom: false,
   },
 ];
 
@@ -79,13 +84,9 @@ const Packs = () => {
               <h3 className="text-xl font-bold mb-1">{pack.name}</h3>
               
               <div className="mb-4">
-                {pack.sessions ? (
-                  <div className="text-3xl font-bold">
-                    {pack.sessions} <span className="text-base font-normal text-muted-foreground">sessões</span>
-                  </div>
-                ) : (
-                  <div className="text-3xl font-bold gradient-text">Personalizado</div>
-                )}
+                <div className="text-3xl font-bold">
+                  €{pack.price} <span className="text-base font-normal text-muted-foreground">/pack</span>
+                </div>
                 {pack.lessons && (
                   <p className="text-sm text-primary font-medium mt-1">
                     + {pack.lessons} aula{pack.lessons > 1 ? "s" : ""} com professora
@@ -107,18 +108,18 @@ const Packs = () => {
                 ))}
               </ul>
 
-              <Button
-                className={`w-full rounded-xl h-11 ${
-                  pack.popular
-                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                    : pack.custom
-                    ? "bg-foreground text-background hover:bg-foreground/90"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                }`}
-              >
-                {pack.custom ? "Falar com Comercial" : "Escolher"}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              <Link to="/login" className="w-full">
+                <Button
+                  className={`w-full rounded-xl h-11 ${
+                    pack.popular
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                  }`}
+                >
+                  Escolher
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </motion.div>
           ))}
         </div>

@@ -7,6 +7,8 @@ interface User {
   company?: string;
   role: 'student' | 'company_admin';
   createdAt: string;
+  pack?: string;
+  packDetails?: { name: string; sessions: number; teacherLessons: number; price: number };
 }
 
 interface StoredUser extends User {
@@ -18,7 +20,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (data: { name: string; email: string; password: string; company?: string; role: 'student' | 'company_admin' }) => Promise<void>;
+  register: (data: { name: string; email: string; password: string; company?: string; role: 'student' | 'company_admin'; pack?: string; packDetails?: { name: string; sessions: number; teacherLessons: number; price: number } }) => Promise<void>;
   logout: () => void;
   updateProfile: (data: Partial<User>) => void;
 }
@@ -93,7 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setCurrentUser(userWithoutPwd);
   };
 
-  const register = async (data: { name: string; email: string; password: string; company?: string; role: 'student' | 'company_admin' }) => {
+  const register = async (data: { name: string; email: string; password: string; company?: string; role: 'student' | 'company_admin'; pack?: string; packDetails?: { name: string; sessions: number; teacherLessons: number; price: number } }) => {
     const stored = localStorage.getItem(USERS_KEY);
     const users: StoredUser[] = stored ? JSON.parse(stored) : [];
     if (users.find(u => u.email.toLowerCase() === data.email.toLowerCase())) {
@@ -107,6 +109,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       company: data.company,
       role: data.role,
       createdAt: new Date().toISOString().split('T')[0],
+      pack: data.pack,
+      packDetails: data.packDetails,
     };
     users.push(newUser);
     localStorage.setItem(USERS_KEY, JSON.stringify(users));
