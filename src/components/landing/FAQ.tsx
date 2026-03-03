@@ -74,7 +74,7 @@ const FAQ = () => {
             >
               <AccordionItem
                 value={`faq-${i}`}
-                className="bg-[#1C1F26] border border-[#B89A5A]/10 rounded-xl px-6 hover:border-[#B89A5A]/30 transition-colors"
+                className="bg-[#11263A] border border-[#B89A5A]/10 rounded-xl px-6 hover:border-[#B89A5A]/30 transition-colors"
               >
                 <AccordionTrigger className="text-left font-medium text-[#F4F2ED] hover:no-underline py-5 hover:text-[#B89A5A] transition-colors [&[data-state=open]]:text-[#B89A5A]">
                   {faq.q}
@@ -87,6 +87,8 @@ const FAQ = () => {
           ))}
         </Accordion>
       </div>
+      {/* Section divider */}
+      <div className="h-px w-full mt-8" style={{ background: 'linear-gradient(90deg, transparent, #B89A5A33, transparent)' }} />
     </section>
   );
 };

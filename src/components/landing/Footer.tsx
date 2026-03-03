@@ -2,8 +2,20 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer style={{ backgroundColor: "#0B1A2A" }} className="border-t border-[#B89A5A]/10">
-      <div className="container py-16">
+    <footer style={{ backgroundColor: "#081520" }} className="relative border-t border-[#B89A5A]/10 overflow-hidden">
+      {/* Subtle background video loop placeholder */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover brightness-[0.1] saturate-[0.3] pointer-events-none"
+        aria-hidden="true"
+        poster="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=80"
+      >
+        <source src="" type="video/mp4" />
+      </video>
+      <div className="relative z-10 container py-16">
         <div className="grid md:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div className="md:col-span-1">

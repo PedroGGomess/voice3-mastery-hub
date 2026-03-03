@@ -26,7 +26,9 @@ const Navbar = () => {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled ? "bg-[#0B1A2A]/95 backdrop-blur-sm border-b border-[#B89A5A]/10 shadow-lg" : "bg-transparent"
+      scrolled
+        ? "backdrop-blur-md bg-[#0B1A2A]/80 border-b border-white/5 shadow-lg"
+        : "backdrop-blur-md bg-[#0B1A2A]/80 border-b border-white/5"
     }`}>
       <div className="container flex items-center justify-between h-16">
         <Link to="/" className="flex items-center">
@@ -35,10 +37,11 @@ const Navbar = () => {
           </span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-10">
+        <div className="hidden md:flex items-center gap-8">
           {navLinks.map(([label, href]) => (
-            <Link key={href} to={href} className="text-sm text-[#8E96A3] hover:text-[#F4F2ED] transition-colors tracking-wider">
+            <Link key={href} to={href} className="relative group text-sm text-[#8E96A3] hover:text-[#F4F2ED] transition-colors tracking-wider py-1">
               {label}
+              <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#B89A5A] transition-all duration-300 group-hover:w-full" />
             </Link>
           ))}
         </div>
@@ -47,7 +50,7 @@ const Navbar = () => {
           {isAuthenticated ? (
             <>
               <span className="text-sm text-[#8E96A3]">{currentUser?.name?.split(" ")[0]}</span>
-              <Button size="sm" className="bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold rounded-lg" asChild>
+              <Button size="sm" className="bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#C9AB6B] hover:shadow-[0_0_20px_rgba(184,154,90,0.3)] font-semibold rounded-lg transition-all duration-300" asChild>
                 <Link to={dashboardLink}><LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Minha Plataforma</Link>
               </Button>
             </>
@@ -56,7 +59,7 @@ const Navbar = () => {
               <Button variant="ghost" size="sm" className="text-[#8E96A3] hover:text-[#F4F2ED] hover:bg-white/5" asChild>
                 <Link to="/login">Entrar</Link>
               </Button>
-              <Button size="sm" className="bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold rounded-lg px-5" asChild>
+              <Button size="sm" className="bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#C9AB6B] hover:shadow-[0_0_20px_rgba(184,154,90,0.3)] font-semibold rounded-lg px-5 transition-all duration-300" asChild>
                 <Link to="/login">Apply for VOICE³</Link>
               </Button>
             </>

@@ -77,7 +77,7 @@ const Packs = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <section className="py-28" style={{ backgroundColor: "#1C1F26" }} id="packs">
+    <section className="py-28" style={{ backgroundColor: "#0B1A2A" }} id="packs">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -100,7 +100,7 @@ const Packs = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className={`relative flex flex-col rounded-xl p-7 bg-[#0B1A2A] border transition-all duration-300 ${
+              className={`relative flex flex-col rounded-xl p-7 bg-[#11263A] border transition-all duration-300 ${
                 pack.popular
                   ? "border-[#B89A5A] shadow-[0_0_30px_rgba(184,154,90,0.15)] -translate-y-2"
                   : "border-[#B89A5A]/15 hover:border-[#B89A5A]/30"
@@ -110,6 +110,16 @@ const Packs = () => {
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#B89A5A] text-[#0B1A2A] text-xs font-bold flex items-center gap-1 whitespace-nowrap">
                   <Star className="h-3 w-3 fill-[#0B1A2A]" /> MOST POPULAR
                 </div>
+              )}
+
+              {/* Pro pack subtle background image */}
+              {pack.popular && (
+                <img
+                  src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80"
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 w-full h-full object-cover rounded-xl opacity-[0.08] pointer-events-none"
+                />
               )}
 
               <div className="mb-6">
@@ -135,13 +145,13 @@ const Packs = () => {
               {pack.business ? (
                 <Button
                   onClick={() => setModalOpen(true)}
-                  className="w-full h-11 rounded-lg font-semibold bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a]"
+                  className="w-full h-12 rounded-xl font-semibold bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#C9AB6B] hover:shadow-[0_0_24px_rgba(184,154,90,0.3)] hover:-translate-y-0.5 transition-all duration-300"
                 >
                   {pack.cta}
                 </Button>
               ) : pack.ctaVariant === "gold" ? (
                 <Button
-                  className="w-full h-11 rounded-lg font-semibold bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a]"
+                  className="w-full h-12 rounded-xl font-semibold bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#C9AB6B] hover:shadow-[0_0_24px_rgba(184,154,90,0.3)] hover:-translate-y-0.5 transition-all duration-300"
                   asChild
                 >
                   <Link to="/login">{pack.cta}</Link>
@@ -149,7 +159,7 @@ const Packs = () => {
               ) : (
                 <Button
                   variant="outline"
-                  className="w-full h-11 rounded-lg font-medium border-[#B89A5A]/30 text-[#F4F2ED] hover:bg-[#B89A5A]/10 hover:border-[#B89A5A]/60"
+                  className="w-full h-12 rounded-xl font-medium border border-[#B89A5A]/40 text-[#B89A5A] bg-transparent hover:border-[#B89A5A] hover:bg-[#B89A5A]/5 hover:shadow-[0_0_16px_rgba(184,154,90,0.15)] hover:-translate-y-0.5 transition-all duration-300"
                   asChild
                 >
                   <Link to="/login">{pack.cta}</Link>
@@ -161,6 +171,8 @@ const Packs = () => {
       </div>
 
       <BusinessMasterModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      {/* Section divider */}
+      <div className="h-px w-full mt-8" style={{ background: 'linear-gradient(90deg, transparent, #B89A5A33, transparent)' }} />
     </section>
   );
 };
