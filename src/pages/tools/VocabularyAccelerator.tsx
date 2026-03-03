@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, CheckCircle, ChevronRight, Star, Trophy } from "lucide-react";
 import { toast } from "sonner";
@@ -127,7 +127,7 @@ const VocabularyAccelerator = () => {
   const [bonusAwarded, setBonusAwarded] = useState(false);
   const [totalLearned, setTotalLearned] = useState(0);
 
-  const dayIndex = Math.floor(Date.now() / MS_PER_DAY) % 12;
+  const dayIndex = useMemo(() => Math.floor(Date.now() / MS_PER_DAY) % 12, []);
   const dailyWords = WORD_SETS[dayIndex];
 
   useEffect(() => {

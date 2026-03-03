@@ -240,6 +240,7 @@ const AIDebateClub = () => {
   const [aiFinalDisplay, setAiFinalDisplay] = useState("");
   const [scores, setScores] = useState<ReturnType<typeof scoreText> | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [activeInterval, setActiveInterval] = useState<ReturnType<typeof setInterval> | null>(null);
   const history = currentUser ? getPracticeHistory(currentUser.id, "ai-debate") : [];
 
   useEffect(() => {
@@ -257,6 +258,7 @@ const AIDebateClub = () => {
         onDone?.();
       }
     }, 20);
+    return interval;
   }
 
   function handleTopicSelect(topic: Topic) {
@@ -272,7 +274,9 @@ const AIDebateClub = () => {
     setStage("ai_counter");
     const counters = side === "For" ? selectedTopic!.countersAgainst : selectedTopic!.countersFor;
     const counter = counters[Math.floor(Math.random() * counters.length)];
-    typeText(counter, setAiCounterDisplay, () => setStage("rebuttal"));
+    if (activeInterval) clearInterval(activeInterval);
+    const id = typeText(counter, setAiCounterDisplay, () => setStage("rebuttal"));
+    setActiveInterval(id);
   }
 
   function handleRebuttalSubmit() {
@@ -283,7 +287,8 @@ const AIDebateClub = () => {
     setStage("ai_final");
     const finals = side === "For" ? selectedTopic!.finalAgainst : selectedTopic!.finalFor;
     const final = finals[0];
-    typeText(final, setAiFinalDisplay, () => {
+    if (activeInterval) clearInterval(activeInterval);
+    const id = typeText(final, setAiFinalDisplay, () => {
       const openingScore = scoreText(openingText);
       const rebuttalScore = scoreText(rebuttalText);
       const combined = {
@@ -313,9 +318,8 @@ const AIDebateClub = () => {
         toast.success(`Debate complete! +${Math.round(75 + combined.total * 0.5)} pts`);
       }
     });
+    setActiveInterval(id);
   }
-
-  function resetDebate() {
     setStage("topic_selection");
     setTopics(getRandomTopics(3));
     setSelectedTopic(null);

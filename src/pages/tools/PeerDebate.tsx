@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getAllPeerDebates, postPeerDebate, respondToPeerDebate, savePracticeAttempt, awardPoints } from "@/lib/persistence";
 import type { PeerDebatePost } from "@/lib/persistence";
 
-function scoreText(text: string): number {
+const MAX_POSITION_PREVIEW_LENGTH = 200;
   const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
   const words = text.split(/\s+/).filter(w => w.length > 0);
   const avgLen = sentences.length > 0 ? words.length / sentences.length : 0;
@@ -221,7 +221,7 @@ const PeerDebate = () => {
                             )}
                           </div>
                           <p className="text-sm leading-relaxed mb-4" style={{ color: "#8E96A3" }}>
-                            {debate.position.length > 200 ? debate.position.slice(0, 200) + "..." : debate.position}
+                            {debate.position.length > MAX_POSITION_PREVIEW_LENGTH ? debate.position.slice(0, MAX_POSITION_PREVIEW_LENGTH) + "..." : debate.position}
                           </p>
 
                           {/* Responses */}

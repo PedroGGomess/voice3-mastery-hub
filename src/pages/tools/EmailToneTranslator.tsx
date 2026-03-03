@@ -7,6 +7,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { saveToolkitEntry, getToolkitHistory, awardPoints } from "@/lib/persistence";
 import type { ToolkitEntry } from "@/lib/persistence";
 
+const MAX_WORDS_PER_SENTENCE = 20;
+
 function translateDirect(text: string): string {
   let result = text;
   result = result.replace(/just /gi, "");
@@ -18,7 +20,7 @@ function translateDirect(text: string): string {
   const sentences = result.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 0);
   const shortened = sentences.map(s => {
     const words = s.split(" ");
-    if (words.length > 20) return words.slice(0, 20).join(" ") + ".";
+    if (words.length > MAX_WORDS_PER_SENTENCE) return words.slice(0, MAX_WORDS_PER_SENTENCE).join(" ") + ".";
     return s;
   });
   const base = shortened.join(" ").trim();
