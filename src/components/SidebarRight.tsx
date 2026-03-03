@@ -26,6 +26,36 @@ const SidebarRight = () => {
         </div>
       </div>
 
+      {/* Quick Tools */}
+      <div>
+        <p className="text-[10px] text-[#8E96A3]/50 uppercase tracking-[0.15em] font-medium mb-2 px-1">
+          Quick Tools
+        </p>
+        <div className="flex flex-col gap-1.5">
+          <Link
+            to="/app/toolkit/rescue-mode"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#1C1F26] border border-white/5 hover:border-[#B89A5A]/20 text-xs text-[#F4F2ED] hover:text-[#B89A5A] transition-all font-medium"
+          >
+            <span>🚨</span>
+            Rescue Mode
+          </Link>
+          <Link
+            to="/app/toolkit/grammar"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#1C1F26] border border-white/5 hover:border-[#B89A5A]/20 text-xs text-[#F4F2ED] hover:text-[#B89A5A] transition-all font-medium"
+          >
+            <span>📚</span>
+            Grammar
+          </Link>
+          <Link
+            to="/app/practice/hostile-qa"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#1C1F26] border border-white/5 hover:border-[#B89A5A]/20 text-xs text-[#F4F2ED] hover:text-[#B89A5A] transition-all font-medium"
+          >
+            <span>🔥</span>
+            Q&amp;A Gauntlet
+          </Link>
+        </div>
+      </div>
+
       {/* Calendar card */}
       <div className="rounded-xl bg-white/5 border border-white/5 flex-1">
         <div className="px-4 pt-4 pb-2 border-b border-white/5">

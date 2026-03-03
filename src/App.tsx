@@ -31,6 +31,12 @@ import NotFound from "./pages/NotFound";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import ForCompaniesPage from "./pages/ForCompaniesPage";
 import ContactPage from "./pages/ContactPage";
+import Catalogue from "./pages/Catalogue";
+import Toolkit from "./pages/Toolkit";
+import Practice from "./pages/Practice";
+import RescueMode from "./pages/tools/RescueMode";
+import GrammarOnDemand from "./pages/tools/GrammarOnDemand";
+import HostileQA from "./pages/tools/HostileQA";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +69,12 @@ const App = () => (
             <Route path="/app/materiais" element={<ProtectedRoute requiredRole="student"><Materiais /></ProtectedRoute>} />
             <Route path="/app/desempenho" element={<ProtectedRoute requiredRole="student"><Desempenho /></ProtectedRoute>} />
             <Route path="/app/leaderboard" element={<ProtectedRoute requiredRole="student"><Leaderboard /></ProtectedRoute>} />
+            <Route path="/app/catalogue" element={<ProtectedRoute requiredRole="student"><Catalogue /></ProtectedRoute>} />
+            <Route path="/app/toolkit" element={<ProtectedRoute requiredRole="student"><Toolkit /></ProtectedRoute>} />
+            <Route path="/app/toolkit/rescue-mode" element={<ProtectedRoute requiredRole="student"><RescueMode /></ProtectedRoute>} />
+            <Route path="/app/toolkit/grammar" element={<ProtectedRoute requiredRole="student"><GrammarOnDemand /></ProtectedRoute>} />
+            <Route path="/app/practice" element={<ProtectedRoute requiredRole="student"><Practice /></ProtectedRoute>} />
+            <Route path="/app/practice/hostile-qa" element={<ProtectedRoute requiredRole="student"><HostileQA /></ProtectedRoute>} />
 
             {/* Company routes */}
             <Route path="/empresa" element={<ProtectedRoute requiredRole="company_admin"><CompanyDashboard /></ProtectedRoute>} />
