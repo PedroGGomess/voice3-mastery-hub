@@ -30,7 +30,7 @@ const steps = [
 
 const HowItWorks = () => {
   return (
-    <section className="py-28" style={{ backgroundColor: "#0B1A2A" }} id="como-funciona">
+    <section className="py-28" style={{ backgroundColor: "#11263A" }} id="como-funciona">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -59,7 +59,7 @@ const HowItWorks = () => {
                 className="relative flex flex-col items-center text-center group"
               >
                 {/* Gold dot on timeline */}
-                <div className="relative z-10 w-[4.5rem] h-[4.5rem] rounded-full bg-[#1C1F26] border-2 border-[#B89A5A]/40 flex items-center justify-center mb-6 group-hover:border-[#B89A5A] transition-colors">
+                <div className="relative z-10 w-[4.5rem] h-[4.5rem] rounded-full bg-[#11263A] border-2 border-[#B89A5A]/40 flex items-center justify-center mb-6 group-hover:border-[#B89A5A] transition-colors">
                   <step.icon className="h-6 w-6 text-[#B89A5A]" />
                 </div>
                 <div className="text-[#B89A5A]/30 text-5xl font-serif font-bold absolute top-16 opacity-20 select-none">{step.number}</div>
@@ -67,6 +67,28 @@ const HowItWorks = () => {
                 <p className="text-sm text-[#8E96A3] leading-relaxed">{step.desc}</p>
               </motion.div>
             ))}
+          </div>
+
+          {/* Executive images between steps */}
+          <div className="grid grid-cols-3 gap-8 mt-10 px-[12.5%]">
+            <img
+              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80"
+              alt=""
+              aria-hidden="true"
+              className="w-full h-32 object-cover rounded-xl brightness-[0.4] saturate-[0.6]"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80"
+              alt=""
+              aria-hidden="true"
+              className="w-full h-32 object-cover rounded-xl brightness-[0.4] saturate-[0.6]"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=400&q=80"
+              alt=""
+              aria-hidden="true"
+              className="w-full h-32 object-cover rounded-xl brightness-[0.4] saturate-[0.6]"
+            />
           </div>
         </div>
 
@@ -79,7 +101,7 @@ const HowItWorks = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="flex gap-5 items-start bg-[#1C1F26] rounded-xl p-5 border border-[#B89A5A]/10"
+              className="flex gap-5 items-start bg-[#0B1A2A] rounded-xl p-5 border border-[#B89A5A]/10"
             >
               <div className="w-12 h-12 shrink-0 rounded-full bg-[#0B1A2A] border border-[#B89A5A]/40 flex items-center justify-center">
                 <step.icon className="h-5 w-5 text-[#B89A5A]" />
@@ -93,6 +115,8 @@ const HowItWorks = () => {
           ))}
         </div>
       </div>
+      {/* Section divider */}
+      <div className="h-px w-full mt-8" style={{ background: 'linear-gradient(90deg, transparent, #B89A5A33, transparent)' }} />
     </section>
   );
 };

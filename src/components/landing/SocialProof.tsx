@@ -63,7 +63,7 @@ function AnimatedCounter({ value, suffix }: { value: number; suffix: string }) {
 
 const SocialProof = () => {
   return (
-    <section className="py-28" style={{ backgroundColor: "#1C1F26" }}>
+    <section className="py-28" style={{ backgroundColor: "#0B1A2A" }}>
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -84,7 +84,7 @@ const SocialProof = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="text-center p-6 bg-[#0B1A2A] rounded-xl border border-[#B89A5A]/10"
+              className="text-center p-6 bg-[#11263A] rounded-xl border border-[#B89A5A]/10"
             >
               <div className="font-serif text-4xl font-bold text-[#B89A5A] mb-2">
                 <AnimatedCounter value={stat.value} suffix={stat.suffix} />
@@ -103,7 +103,7 @@ const SocialProof = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-[#0B1A2A] rounded-xl p-7 border border-[#B89A5A]/10 flex flex-col"
+              className="bg-[#11263A] rounded-xl p-7 border border-[#B89A5A]/10 flex flex-col"
             >
               <div className="text-[#B89A5A] font-serif text-6xl leading-none mb-4 opacity-60">"</div>
               <p className="text-[#F4F2ED]/80 italic leading-relaxed flex-1 mb-6">"{t.quote}"</p>
@@ -119,7 +119,21 @@ const SocialProof = () => {
             </motion.div>
           ))}
         </div>
+
+        {/* Executive image accent */}
+        <div className="mt-16 flex justify-center">
+          <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-[#B89A5A]/40">
+            <img
+              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80"
+              alt=""
+              aria-hidden="true"
+              className="w-full h-full object-cover brightness-[0.5] saturate-[0.5]"
+            />
+          </div>
+        </div>
       </div>
+      {/* Section divider */}
+      <div className="h-px w-full mt-8" style={{ background: 'linear-gradient(90deg, transparent, #B89A5A33, transparent)' }} />
     </section>
   );
 };

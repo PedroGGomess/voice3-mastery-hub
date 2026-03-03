@@ -59,11 +59,17 @@ const Hero = () => {
       style={{ backgroundColor: "#0B1A2A" }}
     >
       {/* Background image */}
+      <img
+        src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=80"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover object-center brightness-[0.3] saturate-[0.7] pointer-events-none"
+      />
+
+      {/* Gold light reflection bottom-right */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80')",
-        }}
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at bottom right, rgba(184,154,90,0.08), transparent 60%)" }}
       />
 
       {/* Background video */}
@@ -72,17 +78,32 @@ const Hero = () => {
         muted
         loop
         playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-[0.15] pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover brightness-[0.2] saturate-[0.5] pointer-events-none"
         aria-hidden="true"
+        poster="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=80"
       >
-        <source src="https://cdn.coverr.co/videos/coverr-typing-on-laptop-4088/1080p.mp4" type="video/mp4" />
+        {/* TODO: Replace with 10s cinematic executive boardroom loop */}
+        <source src="" type="video/mp4" />
       </video>
 
-      {/* Dark overlay gradient */}
+      {/* Overlay: navy fade in/out */}
       <div
         className="absolute inset-0 pointer-events-none"
+        style={{ background: "linear-gradient(180deg, #0B1A2A 0%, transparent 40%, transparent 60%, #0B1A2A 100%)" }}
+      />
+      {/* Overlay: depth layer */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: "linear-gradient(135deg, rgba(11,26,42,0.95), rgba(11,26,42,0.6))" }}
+      />
+
+      {/* Cinematic gold light sweep */}
+      <div
+        className="absolute inset-y-0 pointer-events-none"
         style={{
-          background: "linear-gradient(to bottom, rgba(11,26,42,0.85), rgba(11,26,42,0.95))",
+          background: "linear-gradient(90deg, transparent, #B89A5A, transparent)",
+          width: "40%",
+          animation: "hero-light-sweep 10s ease-in-out infinite",
         }}
       />
 
@@ -107,7 +128,7 @@ const Hero = () => {
 
           <motion.h1
             variants={itemVariants}
-            className="font-serif text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.05] tracking-wide text-[#F4F2ED] mb-6 max-w-5xl mx-auto"
+            className="font-serif text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.1] tracking-[0.02em] text-[#F4F2ED] mb-6 max-w-5xl mx-auto"
           >
             You will not improve your English.{" "}
             <em className="not-italic text-[#B89A5A]">You will perform with precision.</em>
@@ -128,18 +149,18 @@ const Hero = () => {
           <motion.div variants={itemVariants} className="flex flex-wrap justify-center gap-4">
             <Button
               size="lg"
-              className="bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold px-10 py-4 text-base rounded-xl shadow-lg shadow-[#B89A5A]/20 hover:shadow-xl hover:shadow-[#B89A5A]/30 transition-all duration-300 ease-in-out"
+              className="h-12 px-8 bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#C9AB6B] hover:shadow-[0_0_24px_rgba(184,154,90,0.3)] hover:-translate-y-0.5 font-semibold rounded-xl transition-all duration-300"
               asChild
             >
               <Link to="/login">
-                Apply for VOICE<sup className="text-[#B89A5A]">³</sup>
+                Apply for VOICE<sup className="text-[#0B1A2A]">³</sup>
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-2 border-[#B89A5A]/40 text-[#F4F2ED] hover:border-[#B89A5A] hover:bg-[#B89A5A]/10 px-10 py-4 text-base rounded-xl transition-all duration-300 ease-in-out"
+              className="h-12 px-8 border border-[#B89A5A]/40 text-[#B89A5A] bg-transparent hover:border-[#B89A5A] hover:bg-[#B89A5A]/5 hover:shadow-[0_0_16px_rgba(184,154,90,0.15)] hover:-translate-y-0.5 rounded-xl transition-all duration-300"
               asChild
             >
               <Link to="/for-companies">For Companies</Link>

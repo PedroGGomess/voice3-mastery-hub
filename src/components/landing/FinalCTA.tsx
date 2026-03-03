@@ -9,7 +9,7 @@ const FinalCTA = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <section className="relative py-28 overflow-hidden" style={{ backgroundColor: "#0B1A2A" }}>
+    <section className="relative py-28 overflow-hidden" style={{ backgroundColor: "#11263A" }}>
       {/* Gold top accent line */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#B89A5A]/50 to-transparent" />
 
@@ -34,7 +34,7 @@ const FinalCTA = () => {
           <div className="flex flex-wrap justify-center gap-4">
             <Button
               size="lg"
-              className="bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold px-10 h-13 text-base rounded-lg shadow-[0_0_30px_rgba(184,154,90,0.2)] transition-all duration-300"
+              className="h-12 px-8 bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#C9AB6B] hover:shadow-[0_0_24px_rgba(184,154,90,0.3)] hover:-translate-y-0.5 font-semibold rounded-xl transition-all duration-300"
               asChild
             >
               <Link to="/login">
@@ -46,7 +46,7 @@ const FinalCTA = () => {
               size="lg"
               variant="outline"
               onClick={() => setModalOpen(true)}
-              className="border-[#B89A5A]/40 text-[#F4F2ED] hover:bg-[#B89A5A]/10 hover:border-[#B89A5A]/70 px-10 h-13 text-base rounded-lg"
+              className="h-12 px-8 border border-[#B89A5A]/40 text-[#B89A5A] bg-transparent hover:border-[#B89A5A] hover:bg-[#B89A5A]/5 hover:shadow-[0_0_16px_rgba(184,154,90,0.15)] hover:-translate-y-0.5 rounded-xl transition-all duration-300"
             >
               Contact Sales
             </Button>

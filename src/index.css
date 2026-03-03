@@ -11,7 +11,7 @@ html {
     --background: 216 33% 10%;        /* #0B1A2A - Midnight Navy */
     --foreground: 40 15% 94%;         /* #F4F2ED - Soft Off-White */
 
-    --card: 225 14% 13%;              /* #1C1F26 - Charcoal */
+    --card: 213 56% 15%;              /* #11263A - Navy Card */
     --card-foreground: 40 15% 94%;    /* #F4F2ED */
 
     --popover: 225 14% 13%;
@@ -20,10 +20,10 @@ html {
     --primary: 39 38% 54%;            /* #B89A5A - Muted Gold */
     --primary-foreground: 216 33% 10%;
 
-    --secondary: 220 25% 16%;         /* Deep surface */
+    --secondary: 213 56% 15%;         /* #11263A Navy surface */
     --secondary-foreground: 40 15% 94%;
 
-    --muted: 220 25% 16%;
+    --muted: 211 67% 12%;
     --muted-foreground: 215 10% 60%;  /* #8E96A3 - Steel Grey */
 
     --accent: 218 42% 25%;            /* #243A5A - Deep Executive Blue */
@@ -181,6 +181,13 @@ html {
   @keyframes light-sweep {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
+  }
+
+  /* Hero light sweep animation */
+  @keyframes hero-light-sweep {
+    0% { opacity: 0; transform: translateX(-100%) skewX(-15deg); }
+    50% { opacity: 0.07; }
+    100% { opacity: 0; transform: translateX(200%) skewX(-15deg); }
   }
 
   /* Gold divider expand animation */

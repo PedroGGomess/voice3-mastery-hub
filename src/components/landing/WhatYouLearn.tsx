@@ -24,7 +24,7 @@ const pillars = [
 
 const WhatYouLearn = () => {
   return (
-    <section className="py-28" style={{ backgroundColor: "#1C1F26" }} id="metodo">
+    <section className="py-28" style={{ backgroundColor: "#11263A" }} id="metodo">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -63,6 +63,8 @@ const WhatYouLearn = () => {
           ))}
         </div>
       </div>
+      {/* Section divider */}
+      <div className="h-px w-full mt-8" style={{ background: 'linear-gradient(90deg, transparent, #B89A5A33, transparent)' }} />
     </section>
   );
 };

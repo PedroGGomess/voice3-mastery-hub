@@ -44,7 +44,7 @@ const SessionFormats = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-[#1C1F26] rounded-xl p-8 border border-[#B89A5A]/10 hover:border-[#B89A5A]/30 transition-all duration-300 hover:shadow-[0_0_20px_rgba(184,154,90,0.15)] group"
+              className="bg-[#11263A] rounded-xl p-8 border border-[#B89A5A]/10 hover:border-[#B89A5A]/30 transition-all duration-300 hover:shadow-[0_0_20px_rgba(184,154,90,0.15)] group"
             >
               <div className="text-4xl mb-6">{f.emoji}</div>
               <h3 className="font-serif text-xl font-semibold text-[#F4F2ED] mb-3">{f.title}</h3>
@@ -53,6 +53,8 @@ const SessionFormats = () => {
           ))}
         </div>
       </div>
+      {/* Section divider */}
+      <div className="h-px w-full mt-8" style={{ background: 'linear-gradient(90deg, transparent, #B89A5A33, transparent)' }} />
     </section>
   );
 };

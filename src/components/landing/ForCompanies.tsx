@@ -19,7 +19,7 @@ const ForCompanies = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <section className="py-28" style={{ backgroundColor: "#0B1A2A" }} id="empresas">
+    <section className="py-28" style={{ backgroundColor: "#11263A" }} id="empresas">
       <div className="container">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left */}
@@ -49,14 +49,14 @@ const ForCompanies = () => {
             <Button
               onClick={() => setModalOpen(true)}
               size="lg"
-              className="bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold rounded-lg h-12 px-8"
+              className="h-12 px-8 bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#C9AB6B] hover:shadow-[0_0_24px_rgba(184,154,90,0.3)] hover:-translate-y-0.5 font-semibold rounded-xl transition-all duration-300"
             >
               Agendar Demonstração
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-[#B89A5A]/40 text-[#F4F2ED] hover:bg-[#B89A5A]/10 hover:border-[#B89A5A]/70 h-12 px-8 rounded-lg"
+              className="h-12 px-8 border border-[#B89A5A]/40 text-[#B89A5A] bg-transparent hover:border-[#B89A5A] hover:bg-[#B89A5A]/5 hover:shadow-[0_0_16px_rgba(184,154,90,0.15)] hover:-translate-y-0.5 rounded-xl transition-all duration-300"
               asChild
             >
               <Link to="/for-companies">
@@ -73,7 +73,20 @@ const ForCompanies = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <div className="bg-[#1C1F26] rounded-2xl border border-[#B89A5A]/15 p-6 shadow-[0_0_40px_rgba(0,0,0,0.4)]">
+            {/* Team meeting image */}
+            <div className="relative mb-4 rounded-xl overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80"
+                alt=""
+                aria-hidden="true"
+                className="w-full h-40 object-cover brightness-[0.3] saturate-[0.5]"
+              />
+              <div className="absolute inset-0 bg-[#11263A]/60 backdrop-blur-sm" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <p className="text-[#B89A5A] font-serif text-sm tracking-widest uppercase opacity-80">Executive Team Training</p>
+              </div>
+            </div>
+            <div className="bg-[#0B1A2A] rounded-2xl border border-[#B89A5A]/15 p-6 shadow-[0_0_40px_rgba(0,0,0,0.4)]">
               {/* Mock dashboard header */}
               <div className="flex items-center justify-between mb-6">
                 <div>
@@ -139,6 +152,8 @@ const ForCompanies = () => {
       </div>
 
       <BusinessMasterModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      {/* Section divider */}
+      <div className="h-px w-full mt-8" style={{ background: 'linear-gradient(90deg, transparent, #B89A5A33, transparent)' }} />
     </section>
   );
 };
