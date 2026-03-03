@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { sessionsData } from "@/lib/sessionsData";
 import { CheckCircle2, AlertTriangle, Lock, Flame, Target, Clock, BarChart2, Star, Award, Zap, BookOpen, MessageSquare, TrendingUp, TrendingDown } from "lucide-react";
+import { getUserPoints } from "@/lib/persistence";
 
 const TOTAL_SESSIONS = 10;
 
@@ -28,6 +29,7 @@ function formatTime(minutes: number) {
 const Desempenho = () => {
   const { currentUser } = useAuth();
   const userId = currentUser?.id || "";
+  const { total: totalPoints, breakdown: pointsBreakdown } = getUserPoints(userId);
 
   const progress: Record<number, { completed: boolean; score: number; completedAt: string }> = useMemo(() => {
     try {
@@ -295,6 +297,36 @@ const Desempenho = () => {
               </div>
             );
           })}
+        </div>
+      </motion.div>
+
+      {/* Points Summary */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.33 }} className="mb-6">
+        <div className="flex items-center gap-3 mb-3">
+          <h2 className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium">Points & Activity</h2>
+          <div className="h-px flex-1 bg-[#B89A5A]/20" />
+        </div>
+        <div className="rounded-xl bg-[#1C1F26] border border-[#B89A5A]/10 p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-xs text-[#8E96A3] mb-0.5">Total Authority Points</p>
+              <p className="font-serif text-3xl font-bold text-[#B89A5A]">{totalPoints.toLocaleString()}</p>
+            </div>
+            <Zap className="h-8 w-8 text-[#B89A5A]/30" />
+          </div>
+          {pointsBreakdown.length > 0 ? (
+            <div className="space-y-2 max-h-40 overflow-y-auto">
+              <p className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium mb-2">Recent Activity</p>
+              {pointsBreakdown.slice(0, 8).map(entry => (
+                <div key={entry.id} className="flex items-center justify-between text-xs">
+                  <span className="text-[#8E96A3]">{entry.sourceName}</span>
+                  <span className="text-[#B89A5A] font-semibold">+{entry.points}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-[#8E96A3]/60">Complete sessions and practices to earn points.</p>
+          )}
         </div>
       </motion.div>
 

@@ -37,6 +37,14 @@ import Practice from "./pages/Practice";
 import RescueMode from "./pages/tools/RescueMode";
 import GrammarOnDemand from "./pages/tools/GrammarOnDemand";
 import HostileQA from "./pages/tools/HostileQA";
+import ProgrammeDetail from "./pages/ProgrammeDetail";
+import AIDebateClub from "./pages/tools/AIDebateClub";
+import PeerDebate from "./pages/tools/PeerDebate";
+import EmailToneTranslator from "./pages/tools/EmailToneTranslator";
+import VocabularyAccelerator from "./pages/tools/VocabularyAccelerator";
+import MeetingPrep from "./pages/tools/MeetingPrep";
+import CoachPersonas from "./pages/tools/CoachPersonas";
+import ShadowCoach from "./pages/tools/ShadowCoach";
 
 const queryClient = new QueryClient();
 
@@ -70,11 +78,19 @@ const App = () => (
             <Route path="/app/desempenho" element={<ProtectedRoute requiredRole="student"><Desempenho /></ProtectedRoute>} />
             <Route path="/app/leaderboard" element={<ProtectedRoute requiredRole="student"><Leaderboard /></ProtectedRoute>} />
             <Route path="/app/catalogue" element={<ProtectedRoute requiredRole="student"><Catalogue /></ProtectedRoute>} />
+            <Route path="/app/catalogue/:programmeId" element={<ProtectedRoute requiredRole="student"><ProgrammeDetail /></ProtectedRoute>} />
             <Route path="/app/toolkit" element={<ProtectedRoute requiredRole="student"><Toolkit /></ProtectedRoute>} />
             <Route path="/app/toolkit/rescue-mode" element={<ProtectedRoute requiredRole="student"><RescueMode /></ProtectedRoute>} />
             <Route path="/app/toolkit/grammar" element={<ProtectedRoute requiredRole="student"><GrammarOnDemand /></ProtectedRoute>} />
+            <Route path="/app/toolkit/email-tone" element={<ProtectedRoute requiredRole="student"><EmailToneTranslator /></ProtectedRoute>} />
+            <Route path="/app/toolkit/vocabulary" element={<ProtectedRoute requiredRole="student"><VocabularyAccelerator /></ProtectedRoute>} />
+            <Route path="/app/toolkit/meeting-prep" element={<ProtectedRoute requiredRole="student"><MeetingPrep /></ProtectedRoute>} />
+            <Route path="/app/toolkit/coach-personas" element={<ProtectedRoute requiredRole="student"><CoachPersonas /></ProtectedRoute>} />
+            <Route path="/app/toolkit/shadow-coach" element={<ProtectedRoute requiredRole="student"><ShadowCoach /></ProtectedRoute>} />
             <Route path="/app/practice" element={<ProtectedRoute requiredRole="student"><Practice /></ProtectedRoute>} />
             <Route path="/app/practice/hostile-qa" element={<ProtectedRoute requiredRole="student"><HostileQA /></ProtectedRoute>} />
+            <Route path="/app/practice/debate" element={<ProtectedRoute requiredRole="student"><AIDebateClub /></ProtectedRoute>} />
+            <Route path="/app/practice/peer-debate" element={<ProtectedRoute requiredRole="student"><PeerDebate /></ProtectedRoute>} />
 
             {/* Company routes */}
             <Route path="/empresa" element={<ProtectedRoute requiredRole="company_admin"><CompanyDashboard /></ProtectedRoute>} />

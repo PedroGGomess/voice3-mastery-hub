@@ -1,5 +1,6 @@
 import { ReactNode, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useScrollReset } from "@/hooks/useScrollReset";
 import {
   LayoutDashboard, BookOpen, FileText, BarChart2, Phone, MessageCircle,
   GraduationCap, User, HelpCircle, LogOut, Bell, Menu, Trophy,
@@ -41,6 +42,7 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
   const [notifOpen, setNotifOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const { unreadCount } = useNotifications(currentUser?.id || '');
+  useScrollReset();
 
   const initials = (currentUser?.name || "U")
     .split(" ")

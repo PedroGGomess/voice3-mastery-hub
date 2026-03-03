@@ -9,6 +9,8 @@ export interface Programme {
   icon: string;
   isNew?: boolean;
   isFlagship?: boolean;
+  outcomes: string[];
+  modules: Array<{ title: string; description: string }>;
 }
 
 export interface Segment {
@@ -42,6 +44,26 @@ export const segmentsData: Segment[] = [
         status: "available",
         icon: "Star",
         isFlagship: true,
+        outcomes: [
+          "Command authority in any professional setting",
+          "Structure arguments using the ARRC framework",
+          "Handle hostile questions with confidence",
+          "Deliver executive-level presentations",
+          "Navigate cross-cultural business conversations",
+          "Build a personal communication brand",
+        ],
+        modules: [
+          { title: "Session 1: Executive Presence Foundations", description: "Build your baseline communication authority" },
+          { title: "Session 2: Professional Email Mastery", description: "Write emails that command respect" },
+          { title: "Session 3: The ARRC Framework", description: "Acknowledge, Reframe, Redirect, Close — under pressure" },
+          { title: "Session 4: Presentation Command", description: "Structure and deliver board-ready presentations" },
+          { title: "Session 5: Hostile Questions", description: "Respond to aggressive questioning without losing control" },
+          { title: "Session 6: Negotiation Language", description: "Navigate complex deals with diplomatic precision" },
+          { title: "Session 7: Stakeholder Communication", description: "Manage conflicting interests and steer outcomes" },
+          { title: "Session 8: Data & Numbers", description: "Present financial and operational data with authority" },
+          { title: "Session 9: Cross-Cultural Dynamics", description: "Adapt your style for global business environments" },
+          { title: "Session 10: The Authority Audit", description: "Consolidate your executive communication identity" },
+        ],
       },
       {
         id: "crisis-communication",
@@ -52,6 +74,18 @@ export const segmentsData: Segment[] = [
         sessions: 4,
         status: "coming_soon",
         icon: "AlertTriangle",
+        outcomes: [
+          "Communicate calmly and clearly under pressure",
+          "Structure crisis messages for different audiences",
+          "Manage media and board communication simultaneously",
+          "Rebuild trust after a communication failure",
+        ],
+        modules: [
+          { title: "Session 1: Crisis Readiness", description: "Frameworks for anticipating and preparing" },
+          { title: "Session 2: Internal Communication", description: "Keeping your team steady in a storm" },
+          { title: "Session 3: External Messaging", description: "Media, board, and investor communication" },
+          { title: "Session 4: Recovery & Trust", description: "Post-crisis communication strategy" },
+        ],
       },
       {
         id: "stakeholder-management",
@@ -62,6 +96,18 @@ export const segmentsData: Segment[] = [
         sessions: 4,
         status: "coming_soon",
         icon: "Users",
+        outcomes: [
+          "Map and prioritise stakeholder interests",
+          "Manage conflicting agendas in meetings",
+          "Influence without formal authority",
+          "Build lasting stakeholder trust",
+        ],
+        modules: [
+          { title: "Session 1: Stakeholder Mapping", description: "Identify who matters and why" },
+          { title: "Session 2: Influence Without Authority", description: "Drive outcomes through communication" },
+          { title: "Session 3: Conflict Navigation", description: "Handle disagreements diplomatically" },
+          { title: "Session 4: Long-Term Relationships", description: "Build trust across the organisation" },
+        ],
       },
       {
         id: "upward-communication",
@@ -72,6 +118,17 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "TrendingUp",
+        outcomes: [
+          "Challenge decisions with confidence and tact",
+          "Present bad news without losing credibility",
+          "Navigate pushback from senior leadership",
+          "Frame difficult messages strategically",
+        ],
+        modules: [
+          { title: "Session 1: Speaking Truth to Power", description: "How to challenge upward diplomatically" },
+          { title: "Session 2: Bad News Delivery", description: "Structure difficult conversations" },
+          { title: "Session 3: Board-Level Language", description: "Adapt your register for the C-suite" },
+        ],
       },
       {
         id: "hostile-audience",
@@ -82,6 +139,17 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "Shield",
+        outcomes: [
+          "Maintain composure under aggressive questioning",
+          "Reframe hostile questions as opportunities",
+          "Win over sceptical stakeholders",
+          "Project authority in adversarial settings",
+        ],
+        modules: [
+          { title: "Session 1: Reading the Room", description: "Identify and neutralise resistance early" },
+          { title: "Session 2: Defensive Communication", description: "Answer attacks without becoming defensive" },
+          { title: "Session 3: Turning the Tide", description: "Convert critics into allies" },
+        ],
       },
       {
         id: "cross-cultural-boardroom",
@@ -92,6 +160,18 @@ export const segmentsData: Segment[] = [
         sessions: 4,
         status: "coming_soon",
         icon: "Globe",
+        outcomes: [
+          "Identify key cultural communication differences",
+          "Adapt your style in real time",
+          "Navigate high-context vs low-context cultures",
+          "Build trust across cultural boundaries",
+        ],
+        modules: [
+          { title: "Session 1: Cultural Intelligence", description: "The frameworks you need to read any room" },
+          { title: "Session 2: British & American Business Culture", description: "Decode the unspoken rules" },
+          { title: "Session 3: Asian & Middle Eastern Contexts", description: "High-context communication mastery" },
+          { title: "Session 4: Adaptive Communication", description: "Real-time style switching" },
+        ],
       },
     ],
   },
@@ -113,6 +193,16 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "Monitor",
+        outcomes: [
+          "Discuss product roadmaps and sprints fluently",
+          "Present growth metrics and KPIs with authority",
+          "Communicate with engineering and product teams",
+        ],
+        modules: [
+          { title: "Session 1: Product Language", description: "From MVP to roadmap in executive English" },
+          { title: "Session 2: Growth Metrics", description: "ARR, MRR, churn, and LTV explained" },
+          { title: "Session 3: Tech Leadership", description: "Cross-functional communication in tech" },
+        ],
       },
       {
         id: "finance-banking",
@@ -123,6 +213,16 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "BarChart2",
+        outcomes: [
+          "Use financial vocabulary with precision",
+          "Communicate deal terms confidently",
+          "Present to investors and boards",
+        ],
+        modules: [
+          { title: "Session 1: Financial Vocabulary", description: "The language of deals and markets" },
+          { title: "Session 2: Investor Communication", description: "How to speak to money" },
+          { title: "Session 3: Regulatory Language", description: "Compliance and risk in English" },
+        ],
       },
       {
         id: "pharma-healthcare",
@@ -133,6 +233,16 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "Heart",
+        outcomes: [
+          "Use clinical and regulatory terminology correctly",
+          "Communicate with HCP and patient stakeholders",
+          "Navigate international regulatory communication",
+        ],
+        modules: [
+          { title: "Session 1: Clinical Language", description: "Terminology for trials and approvals" },
+          { title: "Session 2: Regulatory Communication", description: "FDA, EMA, and INFARMED language" },
+          { title: "Session 3: HCP Engagement", description: "Communicate with medical professionals" },
+        ],
       },
       {
         id: "real-estate",
@@ -143,6 +253,14 @@ export const segmentsData: Segment[] = [
         sessions: 2,
         status: "coming_soon",
         icon: "Home",
+        outcomes: [
+          "Discuss real estate investment confidently",
+          "Use development and planning terminology",
+        ],
+        modules: [
+          { title: "Session 1: Investment Language", description: "Yield, cap rate, and deal vocabulary" },
+          { title: "Session 2: Development Communication", description: "Planning, construction, and stakeholders" },
+        ],
       },
       {
         id: "energy",
@@ -153,6 +271,16 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "Zap",
+        outcomes: [
+          "Use energy sector vocabulary fluently",
+          "Discuss energy transition strategies",
+          "Communicate across upstream and downstream",
+        ],
+        modules: [
+          { title: "Session 1: Energy Fundamentals", description: "The vocabulary of power and extraction" },
+          { title: "Session 2: Renewables & Transition", description: "Language for the green energy shift" },
+          { title: "Session 3: Energy Finance", description: "Deals, projects, and investment language" },
+        ],
       },
       {
         id: "manufacturing-engineering",
@@ -163,6 +291,16 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "Settings",
+        outcomes: [
+          "Present operational data with authority",
+          "Navigate supply chain communication",
+          "Lead technical teams in English",
+        ],
+        modules: [
+          { title: "Session 1: Operations Language", description: "From factory floor to boardroom" },
+          { title: "Session 2: Supply Chain Communication", description: "Vendor, logistics, and procurement" },
+          { title: "Session 3: Technical Presentations", description: "Make complex data accessible" },
+        ],
       },
       {
         id: "insurance",
@@ -173,6 +311,14 @@ export const segmentsData: Segment[] = [
         sessions: 2,
         status: "coming_soon",
         icon: "FileCheck",
+        outcomes: [
+          "Use insurance and risk vocabulary correctly",
+          "Communicate policy terms to clients",
+        ],
+        modules: [
+          { title: "Session 1: Insurance Vocabulary", description: "Policy, premium, and claims language" },
+          { title: "Session 2: Client Advisory", description: "Explain complex coverage clearly" },
+        ],
       },
       {
         id: "hr-people",
@@ -183,6 +329,14 @@ export const segmentsData: Segment[] = [
         sessions: 2,
         status: "coming_soon",
         icon: "UserCheck",
+        outcomes: [
+          "Conduct performance conversations in English",
+          "Use HR vocabulary with confidence",
+        ],
+        modules: [
+          { title: "Session 1: Talent & Performance", description: "The language of people management" },
+          { title: "Session 2: Organisational Communication", description: "Change, culture, and engagement" },
+        ],
       },
       {
         id: "legal-compliance",
@@ -193,6 +347,16 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "Scale",
+        outcomes: [
+          "Use legal vocabulary correctly in business contexts",
+          "Communicate compliance requirements clearly",
+          "Navigate contract language with confidence",
+        ],
+        modules: [
+          { title: "Session 1: Legal Vocabulary", description: "Contracts, liability, and legal process" },
+          { title: "Session 2: Compliance Communication", description: "Regulatory and ethics language" },
+          { title: "Session 3: Legal Writing", description: "Formal correspondence and documents" },
+        ],
       },
       {
         id: "procurement-supply-chain",
@@ -203,6 +367,16 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "Package",
+        outcomes: [
+          "Negotiate procurement terms in English",
+          "Manage vendor relationships cross-culturally",
+          "Communicate supply disruptions professionally",
+        ],
+        modules: [
+          { title: "Session 1: Procurement Language", description: "Tenders, RFPs, and vendor communication" },
+          { title: "Session 2: Negotiation in Supply Chain", description: "Price, terms, and relationship management" },
+          { title: "Session 3: Crisis Communication", description: "Disruption, delay, and escalation language" },
+        ],
       },
     ],
   },
@@ -225,6 +399,20 @@ export const segmentsData: Segment[] = [
         status: "available",
         icon: "Presentation",
         isNew: true,
+        outcomes: [
+          "Structure presentations using executive frameworks",
+          "Open with impact and close with action",
+          "Handle Q&A with confidence",
+          "Adapt delivery for virtual and in-person formats",
+          "Use data and slides as support, not crutches",
+        ],
+        modules: [
+          { title: "Session 1: Structure & Storyboarding", description: "Build presentations that guide decisions" },
+          { title: "Session 2: Opening & Closing", description: "Command attention from the first word" },
+          { title: "Session 3: Visual Communication", description: "Make slides work for you, not against you" },
+          { title: "Session 4: Delivery & Voice", description: "Pace, pause, and power in your delivery" },
+          { title: "Session 5: Q&A Mastery", description: "Handle questions with poise and authority" },
+        ],
       },
       {
         id: "sales-client-management",
@@ -235,6 +423,18 @@ export const segmentsData: Segment[] = [
         sessions: 4,
         status: "coming_soon",
         icon: "Handshake",
+        outcomes: [
+          "Deliver compelling pitches in English",
+          "Navigate client objections with confidence",
+          "Build long-term client trust through communication",
+          "Close deals with authority",
+        ],
+        modules: [
+          { title: "Session 1: The Executive Pitch", description: "Structure and deliver winning proposals" },
+          { title: "Session 2: Objection Handling", description: "Turn resistance into agreement" },
+          { title: "Session 3: Client Relationship Language", description: "Build rapport across cultures" },
+          { title: "Session 4: Closing & Follow-Up", description: "Convert conversations to commitments" },
+        ],
       },
       {
         id: "storytelling",
@@ -245,6 +445,16 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "BookOpen",
+        outcomes: [
+          "Apply narrative frameworks to business communication",
+          "Make data and strategy emotionally compelling",
+          "Use storytelling to drive organisational change",
+        ],
+        modules: [
+          { title: "Session 1: Business Narrative Frameworks", description: "From data to story" },
+          { title: "Session 2: Emotional Authority", description: "Connect without losing executive presence" },
+          { title: "Session 3: Change & Vision Stories", description: "Inspire action through narrative" },
+        ],
       },
       {
         id: "writing-lab",
@@ -256,6 +466,18 @@ export const segmentsData: Segment[] = [
         status: "available",
         icon: "PenLine",
         isNew: true,
+        outcomes: [
+          "Write concise, authoritative executive emails",
+          "Structure reports that drive decisions",
+          "Master the language of business memos",
+          "Eliminate common writing errors in English",
+        ],
+        modules: [
+          { title: "Session 1: Executive Email Mastery", description: "Subject lines, tone, and structure" },
+          { title: "Session 2: Report Writing", description: "Executive summaries and recommendations" },
+          { title: "Session 3: Memos & Briefings", description: "Internal communication that lands" },
+          { title: "Session 4: The Writing Audit", description: "Fix your most common mistakes" },
+        ],
       },
       {
         id: "numbers-financial-data",
@@ -266,6 +488,16 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "Calculator",
+        outcomes: [
+          "Present financial data with confidence",
+          "Explain KPIs and budgets to non-financial audiences",
+          "Use numbers to tell a business story",
+        ],
+        modules: [
+          { title: "Session 1: Financial Vocabulary", description: "The language of P&L, balance sheets, and forecasts" },
+          { title: "Session 2: Data Storytelling", description: "Turn numbers into narratives" },
+          { title: "Session 3: Budget Presentations", description: "Defend and explain financial decisions" },
+        ],
       },
       {
         id: "business-language",
@@ -276,6 +508,16 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "Languages",
+        outcomes: [
+          "Communicate across departments with fluency",
+          "Use strategic and operational vocabulary",
+          "Avoid jargon and communicate clearly cross-functionally",
+        ],
+        modules: [
+          { title: "Session 1: Strategy Language", description: "Vision, objectives, and execution vocabulary" },
+          { title: "Session 2: Operations & Marketing", description: "Cross-functional communication mastery" },
+          { title: "Session 3: Executive Vocabulary Builder", description: "250 power words for any context" },
+        ],
       },
     ],
   },
@@ -297,6 +539,18 @@ export const segmentsData: Segment[] = [
         sessions: 4,
         status: "coming_soon",
         icon: "Headphones",
+        outcomes: [
+          "Understand British, American, and Indian accents",
+          "Follow fast-paced native speech confidently",
+          "Pick up idiomatic expressions in context",
+          "Improve listening in noisy or virtual environments",
+        ],
+        modules: [
+          { title: "Session 1: British English", description: "RP, regional accents, and understated communication" },
+          { title: "Session 2: American English", description: "Directness, informality, and business idioms" },
+          { title: "Session 3: Global English", description: "Indian, Irish, and international accents" },
+          { title: "Session 4: Speed & Clarity", description: "Following native speech at natural pace" },
+        ],
       },
       {
         id: "cultural-decoder",
@@ -307,6 +561,16 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "Globe2",
+        outcomes: [
+          "Decode indirect and high-context communication",
+          "Navigate British understatement and politeness",
+          "Read non-verbal and unspoken business signals",
+        ],
+        modules: [
+          { title: "Session 1: High vs Low Context", description: "The invisible rules of global business" },
+          { title: "Session 2: The British Code", description: "What they say vs what they mean" },
+          { title: "Session 3: Asian Business Culture", description: "Hierarchy, face, and indirect communication" },
+        ],
       },
       {
         id: "pronunciation-clinic",
@@ -317,6 +581,18 @@ export const segmentsData: Segment[] = [
         sessions: 4,
         status: "coming_soon",
         icon: "Mic",
+        outcomes: [
+          "Eliminate pronunciation errors that cause misunderstanding",
+          "Build clear, confident vocal delivery",
+          "Master problematic sounds for Portuguese speakers",
+          "Use stress and intonation for impact",
+        ],
+        modules: [
+          { title: "Session 1: Problematic Sounds", description: "The sounds Portuguese speakers struggle with most" },
+          { title: "Session 2: Word Stress", description: "Stress patterns that change meaning" },
+          { title: "Session 3: Sentence Intonation", description: "Use intonation to project confidence" },
+          { title: "Session 4: Connected Speech", description: "Sound natural in fast conversations" },
+        ],
       },
       {
         id: "remote-leadership",
@@ -327,6 +603,16 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "Video",
+        outcomes: [
+          "Lead virtual meetings with authority and structure",
+          "Write async communication that lands",
+          "Build connection with distributed teams",
+        ],
+        modules: [
+          { title: "Session 1: Virtual Meeting Leadership", description: "Own the room from your screen" },
+          { title: "Session 2: Async Communication", description: "Loom, Slack, and email strategies" },
+          { title: "Session 3: Remote Team Trust", description: "Build culture across distance" },
+        ],
       },
     ],
   },
@@ -348,6 +634,20 @@ export const segmentsData: Segment[] = [
         sessions: 5,
         status: "coming_soon",
         icon: "Crown",
+        outcomes: [
+          "Articulate your leadership vision in English",
+          "Lead difficult conversations with poise",
+          "Build and communicate your executive identity",
+          "Give and receive feedback professionally",
+          "Navigate career conversations with authority",
+        ],
+        modules: [
+          { title: "Session 1: Leadership Vision", description: "Define and communicate what you stand for" },
+          { title: "Session 2: Difficult Conversations", description: "Navigate conflict, performance, and change" },
+          { title: "Session 3: Executive Identity", description: "Build your personal brand in English" },
+          { title: "Session 4: Feedback & Coaching", description: "Give feedback that drives performance" },
+          { title: "Session 5: Career Conversations", description: "Advocate for yourself at the senior level" },
+        ],
       },
       {
         id: "social-english",
@@ -358,6 +658,16 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "Coffee",
+        outcomes: [
+          "Navigate small talk and networking confidently",
+          "Build rapport in informal executive settings",
+          "Handle dinners, events, and social occasions",
+        ],
+        modules: [
+          { title: "Session 1: Small Talk Mastery", description: "Topics, openers, and graceful exits" },
+          { title: "Session 2: Networking Events", description: "Make and keep valuable connections" },
+          { title: "Session 3: Business Dinners & Social", description: "Etiquette and conversation flow" },
+        ],
       },
       {
         id: "executive-book-club",
@@ -368,6 +678,20 @@ export const segmentsData: Segment[] = [
         sessions: 6,
         status: "coming_soon",
         icon: "BookMarked",
+        outcomes: [
+          "Discuss leadership concepts fluently in English",
+          "Extract and apply insights from business books",
+          "Build intellectual vocabulary for executive conversations",
+          "Contribute to high-level strategy debates",
+        ],
+        modules: [
+          { title: "Session 1: Leadership Classics", description: "Discuss the foundational texts" },
+          { title: "Session 2: Strategy & Innovation", description: "Blue Ocean, Disruption, and beyond" },
+          { title: "Session 3: Culture & People", description: "Radical Candor, Drive, and team dynamics" },
+          { title: "Session 4: Finance & Economics", description: "Talking about markets and money" },
+          { title: "Session 5: Communication & Influence", description: "Persuasion and narrative in business" },
+          { title: "Session 6: Personal Development", description: "Mindset, resilience, and growth" },
+        ],
       },
     ],
   },
@@ -390,6 +714,18 @@ export const segmentsData: Segment[] = [
         status: "available",
         icon: "ClipboardCheck",
         isNew: true,
+        outcomes: [
+          "Answer competency-based questions with the STAR framework",
+          "Discuss salary and terms with confidence",
+          "Handle tough interview questions without hesitation",
+          "Research and prepare for executive-level panels",
+        ],
+        modules: [
+          { title: "Session 1: Executive Interview Structure", description: "What C-suite panels expect" },
+          { title: "Session 2: STAR Framework Mastery", description: "Answer any competency question powerfully" },
+          { title: "Session 3: Tough Questions", description: "Weaknesses, gaps, and challenging scenarios" },
+          { title: "Session 4: Salary & Negotiation", description: "Discuss terms with confidence and clarity" },
+        ],
       },
       {
         id: "expat-survival",
@@ -400,6 +736,16 @@ export const segmentsData: Segment[] = [
         sessions: 3,
         status: "coming_soon",
         icon: "MapPin",
+        outcomes: [
+          "Navigate administrative and practical English",
+          "Build relationships in a new cultural context",
+          "Communicate in a new professional environment",
+        ],
+        modules: [
+          { title: "Session 1: Practical English", description: "Housing, banking, healthcare in English" },
+          { title: "Session 2: Cultural Integration", description: "Unwritten rules of your new country" },
+          { title: "Session 3: Professional Networking", description: "Build your network from scratch" },
+        ],
       },
     ],
   },
@@ -421,6 +767,14 @@ export const segmentsData: Segment[] = [
         sessions: 2,
         status: "coming_soon",
         icon: "Linkedin",
+        outcomes: [
+          "Write LinkedIn posts that attract executive attention",
+          "Build your personal brand in English",
+        ],
+        modules: [
+          { title: "Session 1: LinkedIn Writing", description: "Posts, headlines, and thought leadership" },
+          { title: "Session 2: Engagement & Brand", description: "Build visibility and credibility" },
+        ],
       },
       {
         id: "industry-news-briefing",
@@ -431,6 +785,18 @@ export const segmentsData: Segment[] = [
         sessions: 4,
         status: "coming_soon",
         icon: "Newspaper",
+        outcomes: [
+          "Read and comprehend FT, WSJ, and Economist articles",
+          "Discuss current events with executive vocabulary",
+          "Form and express opinions on business news",
+          "Use current events to build your business English",
+        ],
+        modules: [
+          { title: "Session 1: Reading Business Press", description: "Strategies for FT and WSJ comprehension" },
+          { title: "Session 2: Discussing News", description: "Vocabulary for opinion and analysis" },
+          { title: "Session 3: Economic Events", description: "React to macro and micro news" },
+          { title: "Session 4: Industry Briefing", description: "Sector-specific news and vocabulary" },
+        ],
       },
       {
         id: "podcast-companion",
@@ -441,6 +807,18 @@ export const segmentsData: Segment[] = [
         sessions: 4,
         status: "coming_soon",
         icon: "Podcast",
+        outcomes: [
+          "Follow complex spoken English in podcast format",
+          "Extract vocabulary and arguments from audio",
+          "Use podcast language in your own communication",
+          "Build listening endurance for long conversations",
+        ],
+        modules: [
+          { title: "Session 1: The Economist Podcast", description: "Follow rigorous analysis in spoken English" },
+          { title: "Session 2: HBR IdeaCast", description: "Leadership and management language" },
+          { title: "Session 3: How I Built This", description: "Narrative and entrepreneurship vocabulary" },
+          { title: "Session 4: The Tim Ferriss Show", description: "Long-form conversation and debate" },
+        ],
       },
     ],
   },

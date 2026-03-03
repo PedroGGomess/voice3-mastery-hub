@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { Trophy, RotateCcw } from "lucide-react";
+import { Trophy, RotateCcw, Zap } from "lucide-react";
 import PlatformLayout from "@/components/PlatformLayout";
 import LeaderboardCard, { type LeaderboardEntry } from "@/components/LeaderboardCard";
 import { useAuth } from "@/contexts/AuthContext";
+import { getLeaderboard, getUserPoints } from "@/lib/persistence";
 
 const pointCategories = [
   { label: "Drill Accuracy", description: "Precision in structured drills", max: 300 },
@@ -10,89 +11,6 @@ const pointCategories = [
   { label: "Structural Integrity Score", description: "ARRC framework application", max: 200 },
   { label: "Speed of Response", description: "Time-to-answer performance", max: 150 },
   { label: "Power Word Usage", description: "Executive vocabulary deployment", max: 100 },
-];
-
-const mockLeaderboard: LeaderboardEntry[] = [
-  {
-    position: 1,
-    name: "Ricardo Almeida",
-    initials: "RA",
-    authorityScore: 847,
-    weeklyChange: 12,
-    badges: ["Clarity Master", "ARRC Architect"],
-  },
-  {
-    position: 2,
-    name: "Catarina Ferreira",
-    initials: "CF",
-    authorityScore: 791,
-    weeklyChange: 5,
-    badges: ["Zero-Wobble"],
-  },
-  {
-    position: 3,
-    name: "Miguel Santos",
-    initials: "MS",
-    authorityScore: 734,
-    weeklyChange: -3,
-    badges: ["Objection Crusher"],
-  },
-  {
-    position: 4,
-    name: "Ana Rodrigues",
-    initials: "AR",
-    authorityScore: 712,
-    weeklyChange: 8,
-    badges: [],
-  },
-  {
-    position: 5,
-    name: "João Pereira",
-    initials: "JP",
-    authorityScore: 688,
-    weeklyChange: 0,
-    badges: ["Clarity Master"],
-  },
-  {
-    position: 6,
-    name: "Mariana Costa",
-    initials: "MC",
-    authorityScore: 651,
-    weeklyChange: -1,
-    badges: [],
-  },
-  {
-    position: 7,
-    name: "Tiago Oliveira",
-    initials: "TO",
-    authorityScore: 634,
-    weeklyChange: 14,
-    badges: [],
-  },
-  {
-    position: 8,
-    name: "Sofia Mendes",
-    initials: "SM",
-    authorityScore: 619,
-    weeklyChange: 3,
-    badges: ["Zero-Wobble"],
-  },
-  {
-    position: 9,
-    name: "Bruno Lopes",
-    initials: "BL",
-    authorityScore: 597,
-    weeklyChange: -2,
-    badges: [],
-  },
-  {
-    position: 10,
-    name: "Inês Carvalho",
-    initials: "IC",
-    authorityScore: 571,
-    weeklyChange: 7,
-    badges: [],
-  },
 ];
 
 // Next Monday reset date
@@ -108,23 +26,28 @@ function getNextMonday() {
 
 const Leaderboard = () => {
   const { currentUser } = useAuth();
+  const leaderboardData = getLeaderboard();
+  const { total: myPoints, breakdown } = currentUser ? getUserPoints(currentUser.id) : { total: 0, breakdown: [] };
 
-  const entries: LeaderboardEntry[] = mockLeaderboard.map((entry) => ({
-    ...entry,
-    isCurrentUser: entry.name === (currentUser?.name || ""),
+  // Build point totals by source
+  const sessionPts = breakdown.filter(e => e.source === "session").reduce((s, e) => s + e.points, 0);
+  const practicePts = breakdown.filter(e => e.source === "practice").reduce((s, e) => s + e.points, 0);
+  const toolkitPts = breakdown.filter(e => e.source === "toolkit").reduce((s, e) => s + e.points, 0);
+
+  // Convert leaderboard data to LeaderboardEntry format
+  const entries: LeaderboardEntry[] = leaderboardData.slice(0, 10).map((item) => ({
+    position: item.rank,
+    name: item.name,
+    initials: item.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase(),
+    authorityScore: item.points,
+    weeklyChange: 0,
+    badges: [],
+    isCurrentUser: item.userId === currentUser?.id,
   }));
 
-  const currentUserEntry = entries.find((e) => e.isCurrentUser) ?? {
-    ...entries[entries.length - 1],
-    isCurrentUser: true,
-    name: currentUser?.name || "You",
-    initials: (currentUser?.name || "U")
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase(),
-  };
+  // Find current user position
+  const myRank = leaderboardData.find(e => e.userId === currentUser?.id);
+  const myPosition = myRank?.rank ?? leaderboardData.length + 1;
 
   return (
     <PlatformLayout>
@@ -186,28 +109,40 @@ const Leaderboard = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="bg-[#243A5A]/20 border border-[#B89A5A]/20 rounded-xl p-5 flex flex-wrap items-center justify-between gap-4"
+          className="bg-[#243A5A]/20 border border-[#B89A5A]/20 rounded-xl p-5"
         >
-          <div>
-            <p className="text-[#B89A5A] text-xs tracking-[0.15em] uppercase font-medium mb-1">Your Position</p>
-            <p className="text-[#F4F2ED] font-serif text-2xl font-bold">#{currentUserEntry.position}</p>
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div>
+              <p className="text-[#B89A5A] text-xs tracking-[0.15em] uppercase font-medium mb-1">Your Position</p>
+              <p className="text-[#F4F2ED] font-serif text-2xl font-bold">#{myPosition}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-[#8E96A3] text-xs mb-1">Total Points</p>
+              <p className="text-[#B89A5A] font-serif font-bold text-2xl">{myPoints.toLocaleString()}</p>
+            </div>
           </div>
-          <div className="text-center">
-            <p className="text-[#8E96A3] text-xs mb-1">Authority Score</p>
-            <p className="text-[#B89A5A] font-serif font-bold text-2xl">{currentUserEntry.authorityScore.toLocaleString()}</p>
-          </div>
-          <div className="text-center">
-            <p className="text-[#8E96A3] text-xs mb-1">Weekly Change</p>
-            <p className={`font-bold text-lg ${currentUserEntry.weeklyChange >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-              {currentUserEntry.weeklyChange >= 0 ? "+" : ""}{currentUserEntry.weeklyChange}%
-            </p>
+          {/* Points breakdown */}
+          <div className="grid grid-cols-3 gap-3 pt-3 border-t border-white/5">
+            {[
+              { label: "Sessions", pts: sessionPts, icon: <Zap className="h-3.5 w-3.5" /> },
+              { label: "Practice", pts: practicePts, icon: <Trophy className="h-3.5 w-3.5" /> },
+              { label: "Toolkit", pts: toolkitPts, icon: <RotateCcw className="h-3.5 w-3.5" /> },
+            ].map(({ label, pts, icon }) => (
+              <div key={label} className="text-center">
+                <div className="flex items-center justify-center gap-1 text-[#8E96A3] mb-1">
+                  {icon}
+                  <span className="text-xs">{label}</span>
+                </div>
+                <p className="text-sm font-semibold text-[#F4F2ED]">{pts}</p>
+              </div>
+            ))}
           </div>
         </motion.div>
 
         {/* Top 10 list */}
         <div>
           <h2 className="text-[#8E96A3] text-xs tracking-[0.2em] uppercase font-medium mb-4">
-            Top 10 — This Week
+            Top 10 — All Time
           </h2>
           <div className="space-y-2">
             {entries.map((entry, i) => (
