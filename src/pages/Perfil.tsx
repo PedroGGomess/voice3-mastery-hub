@@ -1,12 +1,13 @@
 import PlatformLayout from "@/components/PlatformLayout";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User, Mail, Building, Trophy, Clock, Target, Flame, Lock, CheckCircle2, Star, Zap, BookOpen } from "lucide-react";
+import { User, Mail, Building, Trophy, Clock, Target, Flame, Lock, CheckCircle2, Star, Zap, BookOpen, Briefcase } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 interface Achievement {
   id: string;
@@ -67,6 +68,15 @@ const Perfil = () => {
 
   const initials = (currentUser?.name || "U").split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
 
+  let onboardingData: { industry?: string; seniority?: string; challenge?: string; tone?: string; completed?: boolean } | null = null;
+  try {
+    const stored = localStorage.getItem(`voice3_onboarding_${userId}`);
+    if (stored) onboardingData = JSON.parse(stored);
+  } catch (_e) {
+    // ignore
+  }
+  const onboardingCompleted = !!onboardingData?.completed;
+
   return (
     <PlatformLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -99,6 +109,33 @@ const Perfil = () => {
             </div>
           </div>
         </div>
+
+        {/* Executive Profile section */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="premium-card mb-6">
+          <h3 className="font-semibold mb-4 flex items-center gap-2"><Briefcase className="h-4 w-4 text-primary" /> Executive Profile</h3>
+          {onboardingCompleted && onboardingData ? (
+            <div className="grid sm:grid-cols-2 gap-3">
+              {[
+                { label: "Industry", value: onboardingData.industry },
+                { label: "Seniority Level", value: onboardingData.seniority },
+                { label: "Primary Challenge", value: onboardingData.challenge },
+                { label: "Communication Tone", value: onboardingData.tone },
+              ].map(item => item.value && (
+                <div key={item.label} className="flex flex-col gap-0.5 p-3 rounded-xl bg-[#B89A5A]/5 border border-[#B89A5A]/10">
+                  <span className="text-xs text-muted-foreground">{item.label}</span>
+                  <span className="text-sm font-medium text-[#F4F2ED]">{item.value}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <p className="text-sm text-muted-foreground flex-1">Complete your Executive Profile to unlock personalised training tailored to your industry, role, and communication style.</p>
+              <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shrink-0">
+                <Link to="/onboarding">Complete Profile →</Link>
+              </Button>
+            </div>
+          )}
+        </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Edit profile */}

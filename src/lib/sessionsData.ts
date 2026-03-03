@@ -682,6 +682,197 @@ export const sessionsData: Session[] = [
     ],
     exercise: 'Record yourself (or write out) a 1-minute spoken response to: "Describe a challenging project you led and what you learned from it." Use at least 4 idiomatic expressions from this session. Focus on natural rhythm and pausing.',
   },
+  {
+    id: 9,
+    title: 'Negociação Estratégica',
+    objective: 'Técnicas de negociação e persuasão em inglês executivo',
+    time: '30 min',
+    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=80',
+    videoTitle: 'Strategic Negotiation in Executive English',
+    audioTitle: 'Exercício de Negociação Executiva',
+    audioTranscript: 'In this exercise, you will practice negotiation techniques used by senior executives in high-stakes business discussions. Focus on anchoring your position clearly, making calibrated concessions, and closing with authority. Listen to each scenario and respond as you would in a real boardroom setting.',
+    content: [
+      {
+        type: 'text',
+        title: 'The Art of Executive Negotiation',
+        body: 'Negotiation in English requires precision: anchoring your position, making calibrated concessions, and closing with authority. The best negotiators use structured frameworks like BATNA (Best Alternative to Negotiated Agreement) and ZOPA (Zone of Possible Agreement). Mastering these tools allows you to navigate high-stakes conversations with confidence and clarity.',
+      },
+      {
+        type: 'vocabulary',
+        title: 'Vocabulário de Negociação',
+        items: [
+          'Leverage — alavancagem',
+          'Concession — concessão',
+          'Counteroffer — contraproposta',
+          'Terms and conditions — termos e condições',
+          'Deal-breaker — fator decisivo',
+          'Win-win — benefício mútuo',
+          'BATNA — melhor alternativa',
+          'Bottom line — resultado final',
+        ],
+      },
+      {
+        type: 'phrases',
+        title: 'Frases de Negociação Executiva',
+        items: [
+          '"Our position is..."',
+          '"We\'d be willing to consider..."',
+          '"That\'s a fair point, however..."',
+          '"What if we structured it as..."',
+          '"Let me propose an alternative..."',
+          '"We need to see movement on..."',
+          '"This is our final offer."',
+          '"Let\'s summarise what we\'ve agreed."',
+        ],
+      },
+    ],
+    quiz: [
+      {
+        question: 'What does BATNA stand for?',
+        options: [
+          'Best Alternative to Negotiated Agreement',
+          'Business Assessment and Trade Negotiation Analysis',
+          'Baseline Agreement for Trade and Negotiations Act',
+          'Bottom-line Agreement and Terms Negotiation Approach',
+        ],
+        correct: 0,
+      },
+      {
+        question: 'What does "leverage" mean in a negotiation context?',
+        options: ['Alavancagem / vantagem negocial', 'Uma concessão menor', 'O valor final do contrato', 'Um tipo de acordo'],
+        correct: 0,
+      },
+      {
+        question: 'A "deal-breaker" is...',
+        options: [
+          'Uma pessoa que fecha negócios',
+          'Um fator que inviabiliza o acordo',
+          'Uma técnica de negociação',
+          'O resultado final de uma reunião',
+        ],
+        correct: 1,
+      },
+      {
+        question: 'ZOPA refers to...',
+        options: [
+          'A negotiation certification',
+          'The overlap between both parties\' acceptable outcomes',
+          'A type of counteroffer',
+          'The final agreed terms',
+        ],
+        correct: 1,
+      },
+      {
+        question: 'Which phrase is best for proposing an alternative without rejecting the other party?',
+        options: [
+          '"That\'s not acceptable."',
+          '"What if we structured it as..."',
+          '"This is our final offer."',
+          '"We disagree entirely."',
+        ],
+        correct: 1,
+      },
+    ],
+    exercise: 'Write a 4-sentence negotiation close where you summarise the agreement, confirm key terms, establish next steps, and end with a confident closing statement.',
+  },
+  {
+    id: 10,
+    title: 'Liderança & Influência',
+    objective: 'Comunicação de liderança e influência em inglês para executivos',
+    time: '30 min',
+    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?start=90',
+    videoTitle: 'Executive Leadership Communication: Influence & Presence',
+    audioTitle: 'Exercício de Comunicação de Liderança',
+    audioTranscript: 'This exercise focuses on the language of executive leadership. You will practice setting a vision, aligning teams, and navigating difficult conversations with both authority and empathy. Listen carefully to the prompts and respond with the confidence and clarity expected of senior leaders.',
+    content: [
+      {
+        type: 'text',
+        title: 'Leading with Language',
+        body: 'Executive leadership communication goes beyond giving instructions. It\'s about inspiring confidence, aligning teams around a vision, and navigating difficult conversations with authority and empathy. The best leaders calibrate their tone to the situation — assertive when clarity is needed, empathetic when trust must be built, and visionary when direction must be set.',
+      },
+      {
+        type: 'vocabulary',
+        title: 'Vocabulário de Liderança',
+        items: [
+          'Vision — visão',
+          'Alignment — alinhamento',
+          'Accountability — responsabilidade',
+          'Empowerment — capacitação',
+          'Strategic direction — direção estratégica',
+          'Stakeholder buy-in — adesão das partes interessadas',
+          'Change management — gestão de mudança',
+          'Executive presence — presença executiva',
+        ],
+      },
+      {
+        type: 'phrases',
+        title: 'Frases de Liderança Executiva',
+        items: [
+          '"I want to share our strategic direction for..."',
+          '"I take full accountability for..."',
+          '"Let me be clear about our priorities..."',
+          '"I need each of you to own this..."',
+          '"The vision I\'m setting is..."',
+          '"I want to empower you to..."',
+          '"We need to align on..."',
+          '"This is non-negotiable."',
+        ],
+      },
+    ],
+    quiz: [
+      {
+        question: 'What does "executive presence" mean?',
+        options: [
+          'Estar fisicamente no escritório',
+          'A qualidade de inspirar confiança e autoridade como líder',
+          'Um tipo de reunião executiva',
+          'Um certificado de liderança',
+        ],
+        correct: 1,
+      },
+      {
+        question: 'What does "stakeholder buy-in" mean?',
+        options: [
+          'Comprar ações de uma empresa',
+          'A adesão e apoio das partes interessadas',
+          'Uma técnica de apresentação',
+          'Um relatório financeiro',
+        ],
+        correct: 1,
+      },
+      {
+        question: 'Which phrase best conveys accountability?',
+        options: [
+          '"That was someone else\'s decision."',
+          '"I take full accountability for..."',
+          '"Let\'s wait and see."',
+          '"This is not my responsibility."',
+        ],
+        correct: 1,
+      },
+      {
+        question: 'What does "change management" refer to?',
+        options: [
+          'Gerir pequenas alterações de orçamento',
+          'O processo estruturado de liderar transformações organizacionais',
+          'Mudar de gestora',
+          'Rever os termos de um contrato',
+        ],
+        correct: 1,
+      },
+      {
+        question: 'Empowerment in a leadership context means...',
+        options: [
+          'Dar energia elétrica à equipa',
+          'Capacitar e dar autonomia às pessoas para tomarem decisões',
+          'Centralizar todas as decisões no líder',
+          'Implementar um novo sistema de avaliação',
+        ],
+        correct: 1,
+      },
+    ],
+    exercise: 'You\'ve just been appointed to lead a new international team. Write a 5-sentence opening speech that establishes your vision, acknowledges the team\'s expertise, sets clear expectations, inspires confidence, and ends with a call to action.',
+  },
 ];
 
 export default sessionsData;

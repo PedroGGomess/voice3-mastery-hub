@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { sessionsData } from "@/lib/sessionsData";
 
-const TOTAL_SESSIONS = 8;
+const TOTAL_SESSIONS = 10;
 
 const statusConfig = {
   done: { icon: CheckCircle2, color: "text-[#B89A5A]", bg: "bg-[#B89A5A]/10", label: "Concluída" },
@@ -29,6 +29,16 @@ const MeuCurso = () => {
     // ignore
   }
 
+  let onboardingData: { tone?: string; completed?: boolean } | null = null;
+  try {
+    const stored = localStorage.getItem(`voice3_onboarding_${userId}`);
+    if (stored) onboardingData = JSON.parse(stored);
+  } catch (_e) {
+    // ignore
+  }
+  const onboardingCompleted = !!onboardingData?.completed;
+  const userTone = onboardingData?.tone;
+
   const completedCount = Object.values(progress).filter(p => p.completed).length;
   const progressPercent = Math.round((completedCount / TOTAL_SESSIONS) * 100);
 
@@ -45,10 +55,10 @@ const MeuCurso = () => {
 
   // Build combined list
   const combinedList = [
-    ...sessionsData.slice(0, 4).map(s => ({ ...s, isTeacher: false })),
-    { id: 101, title: "📅 Aula com Professora #1", objective: "Completa as sessões 1-4 para desbloquear", time: "45 min", isTeacher: true, requiresSessions: 4 },
-    ...sessionsData.slice(4).map(s => ({ ...s, isTeacher: false })),
-    { id: 102, title: "📅 Aula com Professora #2", objective: "Completa todas as sessões para desbloquear", time: "45 min", isTeacher: true, requiresSessions: 8 },
+    ...sessionsData.slice(0, 5).map(s => ({ ...s, isTeacher: false })),
+    { id: 101, title: "📅 Aula com Professora #1", objective: "Completa as sessões 1-5 para desbloquear", time: "45 min", isTeacher: true, requiresSessions: 5 },
+    ...sessionsData.slice(5).map(s => ({ ...s, isTeacher: false })),
+    { id: 102, title: "📅 Aula com Professora #2", objective: "Completa todas as sessões para desbloquear", time: "45 min", isTeacher: true, requiresSessions: 10 },
   ];
 
   return (
@@ -56,9 +66,21 @@ const MeuCurso = () => {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
         <p className="text-xs text-[#B89A5A] tracking-[0.2em] uppercase font-medium mb-1">Executive Communication Programme</p>
-        <h1 className="font-serif text-2xl font-semibold text-[#F4F2ED] tracking-tight">
-          Bem-vindo de volta, <span className="text-[#B89A5A]">{firstName}</span>
-        </h1>
+        <div className="flex items-center gap-3 flex-wrap">
+          <h1 className="font-serif text-2xl font-semibold text-[#F4F2ED] tracking-tight">
+            Bem-vindo de volta, <span className="text-[#B89A5A]">{firstName}</span>
+          </h1>
+          {userTone && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#B89A5A]/10 border border-[#B89A5A]/30 text-xs font-semibold text-[#B89A5A]">
+              🎯 {userTone}
+            </span>
+          )}
+        </div>
+        {!onboardingCompleted && (
+          <Link to="/onboarding" className="inline-flex items-center gap-2 mt-3 px-4 py-2.5 rounded-xl bg-[#B89A5A]/10 border border-[#B89A5A]/30 text-sm text-[#F4F2ED] hover:bg-[#B89A5A]/20 transition-all">
+            <span className="text-[#B89A5A] font-semibold">Complete your Executive Profile</span> to unlock personalised training →
+          </Link>
+        )}
       </motion.div>
 
       {/* Hero + Progress row */}
