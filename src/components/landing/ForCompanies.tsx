@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, BarChart3, Users, TrendingUp, Globe } from "lucide-react";
+import { CheckCircle2, BarChart3, Users, TrendingUp, Globe, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import BusinessMasterModal from "./BusinessMasterModal";
 
 const benefits = [
@@ -51,6 +52,17 @@ const ForCompanies = () => {
               className="bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold rounded-lg h-12 px-8"
             >
               Agendar Demonstração
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-[#B89A5A]/40 text-[#F4F2ED] hover:bg-[#B89A5A]/10 hover:border-[#B89A5A]/70 h-12 px-8 rounded-lg"
+              asChild
+            >
+              <Link to="/for-companies">
+                Learn More
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </Button>
           </motion.div>
 
