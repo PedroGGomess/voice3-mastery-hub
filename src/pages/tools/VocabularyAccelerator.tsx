@@ -6,6 +6,8 @@ import PlatformLayout from "@/components/PlatformLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { getVocabProgress, markWordLearned, awardPoints } from "@/lib/persistence";
 
+const MS_PER_DAY = 86400000;
+
 interface WordEntry {
   id: string;
   word: string;
@@ -125,7 +127,7 @@ const VocabularyAccelerator = () => {
   const [bonusAwarded, setBonusAwarded] = useState(false);
   const [totalLearned, setTotalLearned] = useState(0);
 
-  const dayIndex = Math.floor(Date.now() / 86400000) % 12;
+  const dayIndex = Math.floor(Date.now() / MS_PER_DAY) % 12;
   const dailyWords = WORD_SETS[dayIndex];
 
   useEffect(() => {

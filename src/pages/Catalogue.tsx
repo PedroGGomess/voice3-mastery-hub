@@ -2,9 +2,12 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, Star, Clock, BookOpen, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PlatformLayout from "@/components/PlatformLayout";
+import ComingSoonModal from "@/components/ComingSoonModal";
 import { segmentsData } from "@/lib/segmentsData";
+import { useAuth } from "@/contexts/AuthContext";
+import { getUserProgrammes } from "@/lib/persistence";
 
 const LevelBadge = ({ level }: { level: string }) => (
   <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-[#B89A5A]/10 text-[#B89A5A] border border-[#B89A5A]/20 tracking-wider">
@@ -30,8 +33,20 @@ const StatusBadge = ({ status }: { status: string }) => {
 
 const Catalogue = () => {
   const [activeSegmentId, setActiveSegmentId] = useState(segmentsData[0].id);
+  const [comingSoon, setComingSoon] = useState<{ open: boolean; name: string; id: string } | null>(null);
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
+  const userProgrammes = currentUser ? getUserProgrammes(currentUser.id) : [];
   const activeSegment = segmentsData.find(s => s.id === activeSegmentId) || segmentsData[0];
+
+  const handleCardClick = (programme: typeof activeSegment.programmes[0]) => {
+    if (programme.status === "coming_soon") {
+      setComingSoon({ open: true, name: programme.title, id: programme.id });
+    } else {
+      navigate(`/app/catalogue/${programme.id}`);
+    }
+  };
 
   return (
     <PlatformLayout>
@@ -101,85 +116,112 @@ const Catalogue = () => {
 
         {/* Programme Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {activeSegment.programmes.map((programme, i) => (
-            <motion.div
-              key={programme.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.06 }}
-              className={`relative rounded-xl bg-[#1C1F26] border transition-all duration-200 p-5 flex flex-col ${
-                programme.isFlagship
-                  ? "border-[#B89A5A]/40 hover:border-[#B89A5A]/60"
-                  : programme.status === "available"
-                  ? "border-[#B89A5A]/20 hover:border-[#B89A5A]/40"
-                  : "border-white/5 hover:border-white/10"
-              }`}
-            >
-              {/* Flagship badge */}
-              {programme.isFlagship && (
-                <div className="absolute top-3 right-3">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#B89A5A] text-[#0B1A2A] tracking-wider uppercase">
-                    <Star className="h-2.5 w-2.5" />
-                    Flagship
-                  </span>
-                </div>
-              )}
-              {/* New badge */}
-              {programme.isNew && !programme.isFlagship && (
-                <div className="absolute top-3 right-3">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-[#B89A5A]/20 text-[#B89A5A] border border-[#B89A5A]/30 tracking-wider uppercase">
-                    NEW
-                  </span>
-                </div>
-              )}
+          {activeSegment.programmes.map((programme, i) => {
+            const userProg = userProgrammes.find(p => p.programmeId === programme.id);
+            const isInProgress = userProg && userProg.status === "active";
 
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <LevelBadge level={programme.level} />
-                  <StatusBadge status={programme.status} />
-                </div>
-                <h3 className={`font-semibold text-sm mb-2 mt-2 leading-snug ${programme.status === "coming_soon" ? "text-[#F4F2ED]/60" : "text-[#F4F2ED]"}`}>
-                  {programme.title}
-                </h3>
-                <p className={`text-xs leading-relaxed mb-4 ${programme.status === "coming_soon" ? "text-[#8E96A3]/60" : "text-[#8E96A3]"}`}>
-                  {programme.description}
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between mt-auto pt-3 border-t border-white/5">
-                <div className="flex items-center gap-3">
-                  <span className="flex items-center gap-1 text-xs text-[#8E96A3]">
-                    <BookOpen className="h-3 w-3" />
-                    {programme.sessions} sessions
-                  </span>
-                  <span className="flex items-center gap-1 text-xs text-[#8E96A3]">
-                    <Clock className="h-3 w-3" />
-                    {programme.duration}
-                  </span>
-                </div>
-
-                {programme.status === "available" ? (
-                  <Button
-                    size="sm"
-                    className="h-7 px-3 text-xs bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold rounded-lg"
-                    asChild
-                  >
-                    <Link to={programme.isFlagship ? "/app/sessoes" : "/app/catalogue"}>
-                      Start Programme
-                      <ArrowRight className="ml-1.5 h-3 w-3" />
-                    </Link>
-                  </Button>
-                ) : (
-                  <span className="text-xs text-[#8E96A3]/60 flex items-center gap-1">
-                    <Lock className="h-3 w-3" />
-                    Coming Soon
-                  </span>
+            return (
+              <motion.div
+                key={programme.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06 }}
+                onClick={() => handleCardClick(programme)}
+                className={`relative rounded-xl bg-[#1C1F26] border transition-all duration-200 p-5 flex flex-col cursor-pointer ${
+                  programme.isFlagship
+                    ? "border-[#B89A5A]/40 hover:border-[#B89A5A]/60"
+                    : programme.status === "available"
+                    ? "border-[#B89A5A]/20 hover:border-[#B89A5A]/40"
+                    : "border-white/5 hover:border-[#B89A5A]/30"
+                }`}
+              >
+                {/* Flagship badge */}
+                {programme.isFlagship && (
+                  <div className="absolute top-3 right-3">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#B89A5A] text-[#0B1A2A] tracking-wider uppercase">
+                      <Star className="h-2.5 w-2.5" />
+                      Flagship
+                    </span>
+                  </div>
                 )}
-              </div>
-            </motion.div>
-          ))}
+                {/* New badge */}
+                {programme.isNew && !programme.isFlagship && (
+                  <div className="absolute top-3 right-3">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-[#B89A5A]/20 text-[#B89A5A] border border-[#B89A5A]/30 tracking-wider uppercase">
+                      NEW
+                    </span>
+                  </div>
+                )}
+                {/* In Progress badge */}
+                {isInProgress && !programme.isFlagship && !programme.isNew && (
+                  <div className="absolute top-3 right-3">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 tracking-wider uppercase">
+                      IN PROGRESS
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <LevelBadge level={programme.level} />
+                    <StatusBadge status={programme.status} />
+                    {isInProgress && (programme.isFlagship || programme.isNew) && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 tracking-wider uppercase">
+                        IN PROGRESS
+                      </span>
+                    )}
+                  </div>
+                  <h3 className={`font-semibold text-sm mb-2 mt-2 leading-snug ${programme.status === "coming_soon" ? "text-[#F4F2ED]/60" : "text-[#F4F2ED]"}`}>
+                    {programme.title}
+                  </h3>
+                  <p className={`text-xs leading-relaxed mb-4 ${programme.status === "coming_soon" ? "text-[#8E96A3]/60" : "text-[#8E96A3]"}`}>
+                    {programme.description}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between mt-auto pt-3 border-t border-white/5">
+                  <div className="flex items-center gap-3">
+                    <span className="flex items-center gap-1 text-xs text-[#8E96A3]">
+                      <BookOpen className="h-3 w-3" />
+                      {programme.sessions} sessions
+                    </span>
+                    <span className="flex items-center gap-1 text-xs text-[#8E96A3]">
+                      <Clock className="h-3 w-3" />
+                      {programme.duration}
+                    </span>
+                  </div>
+
+                  {programme.status === "available" ? (
+                    <Button
+                      size="sm"
+                      className="h-7 px-3 text-xs bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold rounded-lg"
+                      onClick={e => { e.stopPropagation(); handleCardClick(programme); }}
+                    >
+                      {isInProgress ? "Continue" : "Start Programme"}
+                      <ArrowRight className="ml-1.5 h-3 w-3" />
+                    </Button>
+                  ) : (
+                    <span className="text-xs text-[#8E96A3]/60 flex items-center gap-1">
+                      <Lock className="h-3 w-3" />
+                      Coming Soon
+                    </span>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </motion.div>
+
+      {comingSoon && (
+        <ComingSoonModal
+          open={comingSoon.open}
+          onOpenChange={open => setComingSoon(prev => prev ? { ...prev, open } : null)}
+          moduleName={comingSoon.name}
+          moduleId={comingSoon.id}
+          moduleType="programme"
+        />
+      )}
     </PlatformLayout>
   );
 };

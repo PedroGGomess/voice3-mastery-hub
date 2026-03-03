@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Clock } from "lucide-react";
+import { toast } from "sonner";
 import PlatformLayout from "@/components/PlatformLayout";
+import { useAuth } from "@/contexts/AuthContext";
+import { savePracticeAttempt, getPracticeHistory, awardPoints } from "@/lib/persistence";
 
 const QUESTIONS = [
   "Your quarterly results are disappointing. Explain yourself.",
@@ -29,6 +33,7 @@ function detectFillers(text: string): string[] {
 }
 
 const HostileQA = () => {
+  const { currentUser } = useAuth();
   const [gameState, setGameState] = useState<GameState>("idle");
   const [currentQ, setCurrentQ] = useState(0);
   const [lives, setLives] = useState(3);
@@ -37,7 +42,10 @@ const HostileQA = () => {
   const [feedback, setFeedback] = useState<{ fillers: string[]; lost: boolean } | null>(null);
   const [totalFillers, setTotalFillers] = useState(0);
   const [answeredCount, setAnsweredCount] = useState(0);
+  const [cleanAnswers, setCleanAnswers] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const history = currentUser ? getPracticeHistory(currentUser.id, "hostile-qa") : [];
 
   const clearTimer = () => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -58,7 +66,6 @@ const HostileQA = () => {
     }, 1000);
   };
 
-  // Keep timer-based callback stable
   const handleTimeUp = () => {
     clearTimer();
     setFeedback({ fillers: [], lost: true });
@@ -84,6 +91,7 @@ const HostileQA = () => {
     setFeedback(null);
     setTotalFillers(0);
     setAnsweredCount(0);
+    setCleanAnswers(0);
     setGameState("playing");
     startTimer();
   };
@@ -95,6 +103,7 @@ const HostileQA = () => {
     const lostLife = fillers.length > 0;
     setTotalFillers(prev => prev + fillers.length);
     setAnsweredCount(prev => prev + 1);
+    if (!lostLife) setCleanAnswers(prev => prev + 1);
     if (lostLife) {
       setLives(prev => {
         const next = prev - 1;
@@ -118,6 +127,48 @@ const HostileQA = () => {
     setGameState("playing");
     startTimer();
   };
+
+  // Save when game ends
+  useEffect(() => {
+    if (gameState === "gameover" && currentUser) {
+      const livesRemaining = lives;
+      const basePoints = 50;
+      const lifeBonus = livesRemaining * 10;
+      const cleanBonus = cleanAnswers * 5;
+      const totalPoints = basePoints + lifeBonus + cleanBonus;
+
+      const score = Math.min(100, Math.round(
+        (answeredCount / QUESTIONS.length) * 40 +
+        (livesRemaining / 3) * 30 +
+        (cleanAnswers / Math.max(answeredCount, 1)) * 30
+      ));
+
+      savePracticeAttempt(currentUser.id, {
+        practiceId: "hostile-qa",
+        practiceName: "Hostile Q&A Gauntlet",
+        score,
+        details: {
+          answeredCount,
+          livesRemaining,
+          totalFillers,
+          cleanAnswers,
+          points: totalPoints,
+        },
+      });
+
+      awardPoints(currentUser.id, {
+        source: "practice",
+        sourceId: "hostile-qa",
+        sourceName: "Hostile Q&A Gauntlet",
+        points: totalPoints,
+      });
+
+      toast.success(`+${totalPoints} points earned!`, {
+        description: `Score: ${score}/100 — ${cleanAnswers} clean answers, ${livesRemaining} lives remaining.`,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameState]);
 
   const timerPercent = (timeLeft / TIMER_SECONDS) * 100;
 
@@ -165,7 +216,12 @@ const HostileQA = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               {[0, 1, 2].map(i => (
-                <span key={i} className={`text-xl ${i < lives ? "opacity-100" : "opacity-20"}`}>⭐</span>
+                <motion.span
+                  key={i}
+                  animate={{ scale: i >= lives ? 0.7 : 1 }}
+                  transition={{ duration: 0.2 }}
+                  className={`text-xl ${i < lives ? "opacity-100" : "opacity-20"}`}
+                >⭐</motion.span>
               ))}
             </div>
             <span className="text-xs text-[#8E96A3]">
@@ -284,7 +340,7 @@ const HostileQA = () => {
           <h2 className="font-serif text-xl font-semibold text-[#F4F2ED] mb-4">
             {lives > 0 ? "Gauntlet Complete!" : "Eliminated"}
           </h2>
-          <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="grid grid-cols-3 gap-3 mb-4">
             <div className="rounded-lg bg-[#0B1A2A] p-3">
               <p className="text-2xl font-bold text-[#B89A5A]">{answeredCount}</p>
               <p className="text-xs text-[#8E96A3] mt-0.5">Answered</p>
@@ -294,8 +350,28 @@ const HostileQA = () => {
               <p className="text-xs text-[#8E96A3] mt-0.5">Lives Left</p>
             </div>
             <div className="rounded-lg bg-[#0B1A2A] p-3">
-              <p className={`text-2xl font-bold ${lives <= 0 ? "text-red-400" : "text-[#B89A5A]"}`}>{totalFillers}</p>
+              <p className={`text-2xl font-bold ${totalFillers > 0 ? "text-red-400" : "text-[#B89A5A]"}`}>{totalFillers}</p>
               <p className="text-xs text-[#8E96A3] mt-0.5">Filler Words</p>
+            </div>
+          </div>
+          {/* Score breakdown */}
+          <div className="rounded-lg bg-[#0B1A2A]/80 p-3 mb-4 text-left space-y-1">
+            <p className="text-xs font-semibold text-[#8E96A3] uppercase tracking-wider mb-2">Points Earned</p>
+            <div className="flex justify-between text-xs">
+              <span className="text-[#8E96A3]">Base completion</span>
+              <span className="text-[#B89A5A] font-semibold">+50</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-[#8E96A3]">Lives remaining ({lives} × 10)</span>
+              <span className="text-[#B89A5A] font-semibold">+{lives * 10}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-[#8E96A3]">Clean answers ({cleanAnswers} × 5)</span>
+              <span className="text-[#B89A5A] font-semibold">+{cleanAnswers * 5}</span>
+            </div>
+            <div className="flex justify-between text-xs pt-1 border-t border-white/10">
+              <span className="text-[#F4F2ED] font-semibold">Total</span>
+              <span className="text-[#B89A5A] font-bold">+{50 + lives * 10 + cleanAnswers * 5}</span>
             </div>
           </div>
           <button
@@ -304,6 +380,38 @@ const HostileQA = () => {
           >
             🔄 Try Again
           </button>
+        </motion.div>
+      )}
+
+      {/* Past Attempts */}
+      {history.length > 0 && gameState === "idle" && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mt-8"
+        >
+          <h2 className="text-sm font-semibold text-[#8E96A3] uppercase tracking-wider mb-3">Past Attempts</h2>
+          <div className="space-y-2">
+            {history.slice(0, 5).map(attempt => (
+              <div key={attempt.id} className="rounded-xl bg-[#1C1F26] border border-white/5 p-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-[#F4F2ED]">Score: {attempt.score}/100</p>
+                  <p className="text-xs text-[#8E96A3] flex items-center gap-1 mt-0.5">
+                    <Clock className="h-3 w-3" />
+                    {new Date(attempt.createdAt).toLocaleDateString("en-GB", {
+                      day: "numeric", month: "short", year: "numeric",
+                    })}
+                    {" · "}
+                    {(attempt.details as Record<string, unknown>).answeredCount as number} answered
+                    {" · "}
+                    {(attempt.details as Record<string, unknown>).livesRemaining as number} lives left
+                  </p>
+                </div>
+                <span className="text-lg font-bold text-[#B89A5A]">+{(attempt.details as Record<string, unknown>).points as number}</span>
+              </div>
+            ))}
+          </div>
         </motion.div>
       )}
     </PlatformLayout>
