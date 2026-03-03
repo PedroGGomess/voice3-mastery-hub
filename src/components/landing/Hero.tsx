@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 
 function useCountUp(target: number, duration: number, started: boolean) {
@@ -43,11 +43,49 @@ const Hero = () => {
     if (statsRef.current) observer.observe(statsRef.current);
     return () => observer.disconnect();
   }, []);
+
+  const containerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.15 } },
+  };
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+  };
+
   return (
     <section
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden grain-overlay"
       style={{ backgroundColor: "#0B1A2A" }}
     >
+      {/* Background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80')",
+        }}
+      />
+
+      {/* Background video */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover opacity-[0.15] pointer-events-none"
+        aria-hidden="true"
+      >
+        <source src="https://cdn.coverr.co/videos/coverr-typing-on-laptop-4088/1080p.mp4" type="video/mp4" />
+      </video>
+
+      {/* Dark overlay gradient */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "linear-gradient(to bottom, rgba(11,26,42,0.85), rgba(11,26,42,0.95))",
+        }}
+      />
+
       {/* Radial glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#B89A5A]/5 blur-[120px]" />
@@ -55,45 +93,67 @@ const Hero = () => {
 
       <div className="relative z-10 container text-center px-4 py-32">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
         >
           {/* Logo badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#B89A5A]/20 bg-[#B89A5A]/5 text-sm text-[#8E96A3] mb-10 tracking-[0.15em] uppercase">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B89A5A]" />
-            Executive Communication Programme
-          </div>
+          <motion.div variants={itemVariants}>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#B89A5A]/20 bg-[#B89A5A]/5 text-sm text-[#8E96A3] mb-10 tracking-[0.15em] uppercase">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#B89A5A]" />
+              Executive Communication Programme
+            </div>
+          </motion.div>
 
-          <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-semibold leading-[1.05] tracking-tight text-[#F4F2ED] mb-8 max-w-5xl mx-auto">
+          <motion.h1
+            variants={itemVariants}
+            className="font-serif text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.05] tracking-wide text-[#F4F2ED] mb-6 max-w-5xl mx-auto"
+          >
             You will not improve your English.{" "}
             <em className="not-italic text-[#B89A5A]">You will perform with precision.</em>
-          </h1>
+          </motion.h1>
 
-          <p className="text-xl text-[#F4F2ED]/60 max-w-2xl mx-auto mb-12 leading-relaxed font-light">
+          {/* Gold divider line */}
+          <motion.div variants={itemVariants} className="flex justify-center mb-8">
+            <div className="w-20 h-0.5 bg-[#B89A5A]" />
+          </motion.div>
+
+          <motion.p
+            variants={itemVariants}
+            className="text-xl text-[#F4F2ED]/60 max-w-2xl mx-auto mb-12 leading-relaxed font-light"
+          >
             Executive communication training for professionals who operate under pressure.
-          </p>
+          </motion.p>
 
-          <div className="flex flex-wrap justify-center gap-4">
+          <motion.div variants={itemVariants} className="flex flex-wrap justify-center gap-4">
             <Button
               size="lg"
-              className="bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold px-10 h-13 text-base rounded-lg shadow-[0_0_30px_rgba(184,154,90,0.25)] transition-all duration-300"
+              className="bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold px-10 py-4 text-base rounded-xl shadow-lg shadow-[#B89A5A]/20 hover:shadow-xl hover:shadow-[#B89A5A]/30 transition-all duration-300 ease-in-out"
               asChild
             >
               <Link to="/login">
-                Apply for VOICE³
+                Apply for VOICE<sup className="text-[#B89A5A]">³</sup>
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-[#B89A5A]/40 text-[#F4F2ED] hover:bg-[#B89A5A]/10 hover:border-[#B89A5A]/70 px-10 h-13 text-base rounded-lg"
+              className="border-2 border-[#B89A5A]/40 text-[#F4F2ED] hover:border-[#B89A5A] hover:bg-[#B89A5A]/10 px-10 py-4 text-base rounded-xl transition-all duration-300 ease-in-out"
               asChild
             >
-              <a href="#empresas">For Companies</a>
+              <Link to="/for-companies">For Companies</Link>
             </Button>
-          </div>
+          </motion.div>
+
+          {/* Trust indicators */}
+          <motion.div variants={itemVariants} className="mt-8 flex flex-wrap justify-center items-center gap-2 text-sm text-[#8E96A3]">
+            <span>200+ Executives Trained</span>
+            <span className="text-[#B89A5A]/40">·</span>
+            <span>4.9/5 Satisfaction</span>
+            <span className="text-[#B89A5A]/40">·</span>
+            <span>12 Countries</span>
+          </motion.div>
 
           {/* Animated stats */}
           <div ref={statsRef} className="flex flex-wrap justify-center items-center gap-0 mt-16">
@@ -115,6 +175,21 @@ const Hero = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1 text-[#8E96A3]/60"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.5, duration: 0.6 }}
+      >
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
+        >
+          <ChevronDown className="h-5 w-5" />
+        </motion.div>
+      </motion.div>
 
       {/* Gold divider */}
       <div className="absolute bottom-0 left-0 right-0">

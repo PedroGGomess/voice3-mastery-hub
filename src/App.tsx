@@ -26,6 +26,9 @@ import CallProfessor from "./pages/CallProfessor";
 import Materiais from "./pages/Materiais";
 import Desempenho from "./pages/Desempenho";
 import NotFound from "./pages/NotFound";
+import HowItWorksPage from "./pages/HowItWorksPage";
+import ForCompaniesPage from "./pages/ForCompaniesPage";
+import ContactPage from "./pages/ContactPage";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +44,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<AuthPage />} />
             <Route path="/packs" element={<PacksPage />} />
+            <Route path="/how-it-works" element={<HowItWorksPage />} />
+            <Route path="/for-companies" element={<ForCompaniesPage />} />
+            <Route path="/contact" element={<ContactPage />} />
 
             {/* Student routes */}
             <Route path="/app" element={<ProtectedRoute requiredRole="student"><MeuCurso /></ProtectedRoute>} />
