@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, BookOpen, MessageSquare, HelpCircle, Trophy, ArrowRight, Lock } from "lucide-react";
+import { CheckCircle2, Trophy, ArrowRight, Lock, ClipboardList, Target, Building2, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SessionAIChat from "@/components/SessionAIChat";
 import SessionQuiz from "@/components/SessionQuiz";
@@ -16,10 +16,10 @@ interface SessionDetailProps {
 }
 
 const PHASES: { key: Phase; icon: React.ElementType; label: string }[] = [
-  { key: "learn", icon: BookOpen, label: "Learn" },
-  { key: "practice", icon: MessageSquare, label: "Practice" },
-  { key: "quiz", icon: HelpCircle, label: "Quiz" },
-  { key: "complete", icon: Trophy, label: "Complete" },
+  { key: "learn", icon: ClipboardList, label: "Intake" },
+  { key: "practice", icon: Target, label: "Drill" },
+  { key: "quiz", icon: Building2, label: "Simulation" },
+  { key: "complete", icon: BarChart3, label: "Debrief" },
 ];
 
 const phaseIndex = (p: Phase) => PHASES.findIndex((ph) => ph.key === p);
@@ -76,6 +76,13 @@ const SessionDetail = ({ session, alreadyCompleted = false, existingScore = null
               exit={{ opacity: 0, y: -16 }}
               className="space-y-6"
             >
+              <div className="rounded-xl bg-[#1C1F26] border border-[#B89A5A]/10 p-5">
+                <div className="flex items-center gap-2 mb-1">
+                  <ClipboardList className="h-4 w-4 text-[#B89A5A]" />
+                  <p className="text-xs text-[#B89A5A] tracking-[0.15em] uppercase font-medium">Intake — Strategic Context</p>
+                </div>
+                <p className="text-[#8E96A3] text-sm">Review the strategic context and key frameworks for this session. Take notes — you'll apply everything in the simulation.</p>
+              </div>
               {session.content.map((block, i) => (
                 <div
                   key={i}
@@ -120,12 +127,16 @@ const SessionDetail = ({ session, alreadyCompleted = false, existingScore = null
               className="rounded-xl bg-[#1C1F26] border border-[#B89A5A]/10 p-6"
             >
               <div className="mb-5">
-                <p className="text-xs text-[#B89A5A] tracking-[0.15em] uppercase font-medium mb-1">
-                  AI Practice
-                </p>
+                <div className="flex items-center gap-2 mb-1">
+                  <Target className="h-4 w-4 text-[#B89A5A]" />
+                  <p className="text-xs text-[#B89A5A] tracking-[0.15em] uppercase font-medium">
+                    Drill — Targeted Practice
+                  </p>
+                </div>
                 <h3 className="font-serif text-xl font-semibold text-[#F4F2ED]">
                   Apply What You Learned
                 </h3>
+                <p className="text-[#8E96A3] text-sm mt-1">Practice specific phrases and structures. The AI will correct your executive tone in real time.</p>
               </div>
               <SessionAIChat
                 sessionTitle={session.title}
@@ -145,13 +156,16 @@ const SessionDetail = ({ session, alreadyCompleted = false, existingScore = null
               className="rounded-xl bg-[#1C1F26] border border-[#B89A5A]/10 p-6"
             >
               <div className="mb-5">
-                <p className="text-xs text-[#B89A5A] tracking-[0.15em] uppercase font-medium mb-1">
-                  Comprehension Quiz
-                </p>
+                <div className="flex items-center gap-2 mb-1">
+                  <Building2 className="h-4 w-4 text-[#B89A5A]" />
+                  <p className="text-xs text-[#B89A5A] tracking-[0.15em] uppercase font-medium">
+                    Simulation — High-Stakes Scenario
+                  </p>
+                </div>
                 <h3 className="font-serif text-xl font-semibold text-[#F4F2ED]">
-                  Test Your Knowledge
+                  Boardroom Test
                 </h3>
-                <p className="text-[#8E96A3] text-sm mt-1">You need 60% to complete this session.</p>
+                <p className="text-[#8E96A3] text-sm mt-1">This is your boardroom test. Answer as if your career depends on it. You need 60% to complete this session.</p>
               </div>
               <SessionQuiz questions={session.quiz} onComplete={handleQuizComplete} />
             </motion.div>
@@ -167,26 +181,30 @@ const SessionDetail = ({ session, alreadyCompleted = false, existingScore = null
               className="rounded-xl bg-[#1C1F26] border border-[#B89A5A]/20 p-8 text-center"
             >
               <div className="w-20 h-20 rounded-full bg-[#B89A5A]/10 border-2 border-[#B89A5A] flex items-center justify-center mx-auto mb-6">
-                <Trophy className="h-9 w-9 text-[#B89A5A]" />
+                <BarChart3 className="h-9 w-9 text-[#B89A5A]" />
               </div>
+              <p className="text-xs text-[#B89A5A] tracking-[0.15em] uppercase font-medium mb-2">Debrief — Performance Analysis</p>
               <p className="font-serif text-5xl font-bold text-[#B89A5A] mb-2">
                 {quizScore !== null ? `${quizScore}%` : "✓"}
               </p>
-              <h3 className="font-serif text-2xl font-semibold text-[#F4F2ED] mb-2">
-                Session Complete
+              <h3 className="font-serif text-2xl font-semibold text-[#F4F2ED] mb-1">
+                Your Authority Score: {quizScore !== null ? `${quizScore}/100` : "—"}
               </h3>
-              <p className="text-[#8E96A3] mb-6 max-w-sm mx-auto">
+              <p className="text-[#8E96A3] mb-2 max-w-sm mx-auto text-sm">
                 {session.title} — all phases completed. Your performance has been recorded.
+              </p>
+              <p className="text-xs text-[#8E96A3]/70 mb-6 max-w-xs mx-auto">
+                Authority Score measures your executive communication precision, vocabulary range, and strategic tone.
               </p>
               <div className="flex flex-wrap justify-center gap-3 text-xs text-[#8E96A3]">
                 {practiceScore !== null && (
                   <span className="px-3 py-1.5 rounded-lg bg-[#B89A5A]/10 border border-[#B89A5A]/20 text-[#B89A5A]">
-                    Practice: {practiceScore}%
+                    Drill: {practiceScore}%
                   </span>
                 )}
                 {quizScore !== null && (
                   <span className="px-3 py-1.5 rounded-lg bg-[#B89A5A]/10 border border-[#B89A5A]/20 text-[#B89A5A]">
-                    Quiz: {quizScore}%
+                    Simulation: {quizScore}%
                   </span>
                 )}
               </div>
@@ -250,13 +268,13 @@ const SessionDetail = ({ session, alreadyCompleted = false, existingScore = null
             <div className="mt-4 pt-4 border-t border-white/5 space-y-2">
               {practiceScore !== null && (
                 <div className="flex justify-between text-xs">
-                  <span className="text-[#8E96A3]">Practice</span>
+                  <span className="text-[#8E96A3]">Drill</span>
                   <span className="text-[#B89A5A] font-medium">{practiceScore}%</span>
                 </div>
               )}
               {quizScore !== null && (
                 <div className="flex justify-between text-xs">
-                  <span className="text-[#8E96A3]">Quiz</span>
+                  <span className="text-[#8E96A3]">Simulation</span>
                   <span className="text-[#B89A5A] font-medium">{quizScore}%</span>
                 </div>
               )}

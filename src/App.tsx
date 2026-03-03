@@ -26,6 +26,7 @@ import CallProfessor from "./pages/CallProfessor";
 import Materiais from "./pages/Materiais";
 import Desempenho from "./pages/Desempenho";
 import Leaderboard from "./pages/Leaderboard";
+import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import ForCompaniesPage from "./pages/ForCompaniesPage";
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/contact" element={<ContactPage />} />
 
             {/* Student routes */}
+            <Route path="/onboarding" element={<ProtectedRoute requiredRole="student"><Onboarding /></ProtectedRoute>} />
             <Route path="/app" element={<ProtectedRoute requiredRole="student"><MeuCurso /></ProtectedRoute>} />
             <Route path="/app/sessoes" element={<ProtectedRoute requiredRole="student"><Sessoes /></ProtectedRoute>} />
             <Route path="/app/sessao/:id" element={<ProtectedRoute requiredRole="student"><SessaoDetalhe /></ProtectedRoute>} />

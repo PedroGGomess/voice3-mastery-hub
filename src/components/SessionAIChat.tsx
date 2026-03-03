@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Bot, User, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ChatMessage {
   role: "ai" | "user";
@@ -13,6 +14,13 @@ interface SessionAIChatProps {
   scenario: string;
   onComplete: (score: number) => void;
 }
+
+const TONE_COLORS: Record<string, string> = {
+  "Diplomat": "#6EA8C8",
+  "Anchor": "#B89A5A",
+  "American Direct": "#E07B54",
+  "Collaborator": "#6BAF8B",
+};
 
 const MAX_EXCHANGES = 4;
 
@@ -52,11 +60,23 @@ function calculateScore(messages: ChatMessage[]): number {
 }
 
 const SessionAIChat = ({ sessionTitle, scenario, onComplete }: SessionAIChatProps) => {
+  const { currentUser } = useAuth();
+
+  const userTone = (() => {
+    try {
+      const userId = currentUser?.id || "guest";
+      const stored = localStorage.getItem(`voice3_onboarding_${userId}`);
+      if (stored) return JSON.parse(stored).tone as string | undefined;
+    } catch (_e) { /* ignore */ }
+    return undefined;
+  })();
+
+  const welcomeMsg = userTone
+    ? `Welcome to your practice session for **${sessionTitle}**.\n\n${scenario}\n\nBased on your Executive Profile, I'll be coaching you with a focus on your **${userTone}** communication style. Respond as you would in a real professional setting. I'll provide corrections and guidance after each exchange.`
+    : `Welcome to your practice session for **${sessionTitle}**.\n\n${scenario}\n\nRespond as you would in a real professional setting. I'll provide corrections and guidance after each exchange.`;
+
   const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      role: "ai",
-      text: `Welcome to your practice session for **${sessionTitle}**.\n\n${scenario}\n\nRespond as you would in a real professional setting. I'll provide corrections and guidance after each exchange.`,
-    },
+    { role: "ai", text: welcomeMsg },
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -118,6 +138,18 @@ const SessionAIChat = ({ sessionTitle, scenario, onComplete }: SessionAIChatProp
 
   return (
     <div className="flex flex-col h-full min-h-[420px]">
+      {/* Tone indicator */}
+      {userTone && (
+        <div className="flex items-center gap-2 mb-3 px-1">
+          <span
+            className="w-2 h-2 rounded-full shrink-0"
+            style={{ background: TONE_COLORS[userTone] || "#B89A5A" }}
+          />
+          <span className="text-xs text-[#8E96A3]">
+            Your tone: <span className="font-semibold" style={{ color: TONE_COLORS[userTone] || "#B89A5A" }}>{userTone}</span>
+          </span>
+        </div>
+      )}
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">

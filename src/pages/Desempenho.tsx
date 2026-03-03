@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { sessionsData } from "@/lib/sessionsData";
 import { CheckCircle2, AlertTriangle, Lock, Flame, Target, Clock, BarChart2, Star, Award, Zap, BookOpen, MessageSquare, TrendingUp, TrendingDown } from "lucide-react";
 
-const TOTAL_SESSIONS = 8;
+const TOTAL_SESSIONS = 10;
 
 const BADGES = [
   { id: 1, label: "First Step", icon: Star, desc: "Completa a 1ª sessão", req: (c: number, scores: number[]) => c >= 1 },
@@ -104,7 +104,7 @@ const Desempenho = () => {
       {/* Stats Row */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         {[
-          { label: "Pontuação Média", value: scores.length > 0 ? `${avgScore}%` : "—", icon: <Target className="h-5 w-5 text-[#B89A5A]" />, sub: scores.length > 0 ? "nos quizzes" : "Sem dados" },
+          { label: "Authority Score", value: scores.length > 0 ? `${avgScore}%` : "—", icon: <Target className="h-5 w-5 text-[#B89A5A]" />, sub: scores.length > 0 ? "executive communication precision" : "Sem dados" },
           { label: "Sessões Completas", value: `${completedCount}/${TOTAL_SESSIONS}`, icon: <CheckCircle2 className="h-5 w-5 text-[#B89A5A]" />, sub: `${Math.round((completedCount / TOTAL_SESSIONS) * 100)}% do curso` },
           { label: "Tempo Total", value: totalMinutes > 0 ? formatTime(totalMinutes) : "—", icon: <Clock className="h-5 w-5 text-[#B89A5A]" />, sub: "de aprendizagem" },
           { label: "Streak Atual", value: `${streakDays} dias`, icon: <Flame className="h-5 w-5 text-[#B89A5A]" />, sub: "consecutivos" },
@@ -173,7 +173,7 @@ const Desempenho = () => {
           <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/5">
             <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-[#B89A5A]" /><span className="text-xs text-[#8E96A3]">Concluída</span></div>
             <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-white/5" /><span className="text-xs text-[#8E96A3]">Por concluir</span></div>
-            {scores.length > 0 && <span className="ml-auto text-xs text-[#B89A5A] font-medium">Média: {avgScore}%</span>}
+            {scores.length > 0 && <span className="ml-auto text-xs text-[#B89A5A] font-medium">Authority Score Avg: {avgScore}%</span>}
           </div>
         </div>
       </motion.div>
@@ -322,9 +322,9 @@ const Desempenho = () => {
               <p className="text-[10px] text-[#8E96A3]">vs {lastWeekSessions} semana passada</p>
             </div>
             <div>
-              <p className="text-xs text-[#8E96A3] mb-1">Score médio</p>
+              <p className="text-xs text-[#8E96A3] mb-1">Authority Score</p>
               <p className="font-serif text-xl font-semibold text-[#F4F2ED]">{scores.length > 0 ? `${avgScore}%` : "—"}</p>
-              <p className="text-[10px] text-[#8E96A3]">nos quizzes</p>
+              <p className="text-[10px] text-[#8E96A3]">executive precision</p>
             </div>
             <div>
               <p className="text-xs text-[#8E96A3] mb-1">Tempo esta semana</p>
