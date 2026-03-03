@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       colors: {
@@ -69,6 +69,7 @@ export default {
         "voice3-gold": "#B89A5A",
         "voice3-steel": "#8E96A3",
         "voice3-blue": "#243A5A",
+        "voice3-executive-blue": "#243A5A",
         midnight: "#0B1A2A",
         charcoal: "#1C1F26",
         offwhite: "#F4F2ED",

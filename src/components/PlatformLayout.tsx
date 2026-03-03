@@ -2,7 +2,7 @@ import { ReactNode, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, BookOpen, FileText, BarChart2, Phone, MessageCircle,
-  GraduationCap, User, HelpCircle, LogOut, Bell, Menu, X,
+  GraduationCap, User, HelpCircle, LogOut, Bell, Menu, X, Trophy,
 } from "lucide-react";
 import SidebarRight from "./SidebarRight";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,6 +14,7 @@ const navItems = [
   { to: "/app/sessoes", icon: BookOpen, label: "Sessões" },
   { to: "/app/materiais", icon: FileText, label: "Materiais" },
   { to: "/app/desempenho", icon: BarChart2, label: "Desempenho" },
+  { to: "/app/leaderboard", icon: Trophy, label: "Leaderboard" },
   { to: "/app/call-professor", icon: Phone, label: "Call c/ Professor" },
   { to: "/app/chat", icon: MessageCircle, label: "Chat AI" },
   { to: "/app/aulas", icon: GraduationCap, label: "Aulas c/ Professora" },

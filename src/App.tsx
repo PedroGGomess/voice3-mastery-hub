@@ -25,6 +25,7 @@ import PacksPage from "./pages/PacksPage";
 import CallProfessor from "./pages/CallProfessor";
 import Materiais from "./pages/Materiais";
 import Desempenho from "./pages/Desempenho";
+import Leaderboard from "./pages/Leaderboard";
 import NotFound from "./pages/NotFound";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import ForCompaniesPage from "./pages/ForCompaniesPage";
@@ -59,6 +60,7 @@ const App = () => (
             <Route path="/app/call-professor" element={<ProtectedRoute requiredRole="student"><CallProfessor /></ProtectedRoute>} />
             <Route path="/app/materiais" element={<ProtectedRoute requiredRole="student"><Materiais /></ProtectedRoute>} />
             <Route path="/app/desempenho" element={<ProtectedRoute requiredRole="student"><Desempenho /></ProtectedRoute>} />
+            <Route path="/app/leaderboard" element={<ProtectedRoute requiredRole="student"><Leaderboard /></ProtectedRoute>} />
 
             {/* Company routes */}
             <Route path="/empresa" element={<ProtectedRoute requiredRole="company_admin"><CompanyDashboard /></ProtectedRoute>} />
