@@ -1,7 +1,7 @@
 import PlatformLayout from "@/components/PlatformLayout";
 import { motion } from "framer-motion";
 import ChatWidget from "@/components/ChatWidget";
-import { CheckCircle2, Play, Lock, Clock, ArrowRight, FolderOpen, Mic, ChevronRight } from "lucide-react";
+import { CheckCircle2, Play, Lock, Clock, ArrowRight, FolderOpen, Mic, ChevronRight, Library, Wrench, Swords } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -201,6 +201,65 @@ const MeuCurso = () => {
               </div>
             );
           })}
+        </div>
+      </motion.div>
+
+      {/* Explore VOICE³ Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.22 }}
+        className="mb-6"
+      >
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium">Explore VOICE³</h2>
+          <div className="h-px flex-1 bg-[#B89A5A]/20 mx-4" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {[
+            {
+              icon: Library,
+              title: "Programme Catalogue",
+              description: "Explore 35+ programmes across 7 segments",
+              cta: "Browse Catalogue →",
+              to: "/app/catalogue",
+            },
+            {
+              icon: Wrench,
+              title: "My Toolkit",
+              description: "On-demand tools for immediate challenges",
+              cta: "Open Toolkit →",
+              to: "/app/toolkit",
+            },
+            {
+              icon: Swords,
+              title: "Practice Arena",
+              description: "Pressure test your communication skills",
+              cta: "Start Practicing →",
+              to: "/app/practice",
+            },
+          ].map((card, i) => (
+            <motion.div
+              key={card.to}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.22 + i * 0.07 }}
+            >
+              <Link
+                to={card.to}
+                className="flex flex-col gap-3 p-5 rounded-xl bg-[#1C1F26] border border-[#B89A5A]/10 hover:border-[#B89A5A]/30 transition-all duration-200 group h-full"
+              >
+                <div className="w-9 h-9 rounded-lg bg-[#B89A5A]/10 flex items-center justify-center shrink-0">
+                  <card.icon className="h-4.5 w-4.5 text-[#B89A5A]" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-[#F4F2ED] group-hover:text-[#B89A5A] transition-colors">{card.title}</p>
+                  <p className="text-xs text-[#8E96A3] mt-0.5 leading-relaxed">{card.description}</p>
+                </div>
+                <span className="text-xs text-[#B89A5A] font-medium mt-auto">{card.cta}</span>
+              </Link>
+            </motion.div>
+          ))}
         </div>
       </motion.div>
 

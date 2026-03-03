@@ -2,24 +2,37 @@ import { ReactNode, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, BookOpen, FileText, BarChart2, Phone, MessageCircle,
-  GraduationCap, User, HelpCircle, LogOut, Bell, Menu, X, Trophy,
+  GraduationCap, User, HelpCircle, LogOut, Bell, Menu, Trophy,
+  Library, Wrench, Swords,
 } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 import SidebarRight from "./SidebarRight";
 import { useAuth } from "@/contexts/AuthContext";
 import NotificationPanel from "./NotificationPanel";
 import { useNotifications } from "@/hooks/use-notifications";
 
-const navItems = [
-  { to: "/app", icon: LayoutDashboard, label: "Dashboard", end: true },
-  { to: "/app/sessoes", icon: BookOpen, label: "Sessões" },
-  { to: "/app/materiais", icon: FileText, label: "Materiais" },
-  { to: "/app/desempenho", icon: BarChart2, label: "Desempenho" },
-  { to: "/app/leaderboard", icon: Trophy, label: "Leaderboard" },
-  { to: "/app/call-professor", icon: Phone, label: "Call c/ Professor" },
-  { to: "/app/chat", icon: MessageCircle, label: "Chat AI" },
-  { to: "/app/aulas", icon: GraduationCap, label: "Aulas c/ Professora" },
-  { to: "/app/perfil", icon: User, label: "Perfil" },
-  { to: "/app/suporte", icon: HelpCircle, label: "Suporte" },
+type NavItem =
+  | { type: "separator"; label: string }
+  | { type: "link"; to: string; icon: LucideIcon; label: string; end?: boolean; isNew?: boolean };
+
+const navItems: NavItem[] = [
+  { type: "link", to: "/app", icon: LayoutDashboard, label: "Dashboard", end: true },
+  { type: "separator", label: "LEARN" },
+  { type: "link", to: "/app/sessoes", icon: BookOpen, label: "My Programme" },
+  { type: "link", to: "/app/catalogue", icon: Library, label: "Catalogue", isNew: true },
+  { type: "separator", label: "TOOLS & PRACTICE" },
+  { type: "link", to: "/app/toolkit", icon: Wrench, label: "My Toolkit", isNew: true },
+  { type: "link", to: "/app/practice", icon: Swords, label: "My Practice", isNew: true },
+  { type: "link", to: "/app/chat", icon: MessageCircle, label: "AI Coach" },
+  { type: "separator", label: "PROGRESS" },
+  { type: "link", to: "/app/desempenho", icon: BarChart2, label: "My Progress" },
+  { type: "link", to: "/app/leaderboard", icon: Trophy, label: "Leaderboard" },
+  { type: "separator", label: "SUPPORT" },
+  { type: "link", to: "/app/call-professor", icon: Phone, label: "Live Sessions" },
+  { type: "link", to: "/app/aulas", icon: GraduationCap, label: "Professor Classes" },
+  { type: "link", to: "/app/materiais", icon: FileText, label: "Materials" },
+  { type: "link", to: "/app/perfil", icon: User, label: "Profile" },
+  { type: "link", to: "/app/suporte", icon: HelpCircle, label: "Support" },
 ];
 
 const PlatformLayout = ({ children }: { children: ReactNode }) => {
@@ -52,31 +65,48 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
 
       {/* Nav items */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-        {navItems.map((item) => (
-          <NavLink
-            key={`${item.to}-${item.label}`}
-            to={item.to}
-            end={item.end}
-            onClick={() => setMobileSidebarOpen(false)}
-            className={({ isActive }) =>
-              `group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 relative ${
-                isActive
-                  ? "bg-[#243A5A] text-[#B89A5A]"
-                  : "text-[#8E96A3] hover:bg-[#243A5A]/60 hover:text-[#F4F2ED]"
-              }`
-            }
-          >
-            {({ isActive }) => (
-              <>
-                {isActive && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-[#B89A5A] rounded-r" />
-                )}
-                <item.icon className={`h-4 w-4 shrink-0 ${isActive ? "text-[#B89A5A]" : "text-[#8E96A3] group-hover:text-[#F4F2ED]"}`} />
-                <span className="font-medium">{item.label}</span>
-              </>
-            )}
-          </NavLink>
-        ))}
+        {navItems.map((item, idx) => {
+          if (item.type === "separator") {
+            return (
+              <div
+                key={`sep-${idx}`}
+                className="text-[#8E96A3]/50 text-[10px] tracking-[0.15em] uppercase px-3 pt-4 pb-1"
+              >
+                {item.label}
+              </div>
+            );
+          }
+          return (
+            <NavLink
+              key={`${item.to}-${item.label}`}
+              to={item.to}
+              end={item.end}
+              onClick={() => setMobileSidebarOpen(false)}
+              className={({ isActive }) =>
+                `group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 relative ${
+                  isActive
+                    ? "bg-[#243A5A] text-[#B89A5A]"
+                    : "text-[#8E96A3] hover:bg-[#243A5A]/60 hover:text-[#F4F2ED]"
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-[#B89A5A] rounded-r" />
+                  )}
+                  <item.icon className={`h-4 w-4 shrink-0 ${isActive ? "text-[#B89A5A]" : "text-[#8E96A3] group-hover:text-[#F4F2ED]"}`} />
+                  <span className="font-medium flex-1">{item.label}</span>
+                  {item.isNew && (
+                    <span className="text-[10px] bg-[#B89A5A]/20 text-[#B89A5A] px-1.5 py-0.5 rounded-full font-semibold">
+                      NEW
+                    </span>
+                  )}
+                </>
+              )}
+            </NavLink>
+          );
+        })}
       </nav>
 
       {/* User section */}
