@@ -8,6 +8,8 @@ import { getAllPeerDebates, postPeerDebate, respondToPeerDebate, savePracticeAtt
 import type { PeerDebatePost } from "@/lib/persistence";
 
 const MAX_POSITION_PREVIEW_LENGTH = 200;
+
+function scoreText(text: string): number {
   const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
   const words = text.split(/\s+/).filter(w => w.length > 0);
   const avgLen = sentences.length > 0 ? words.length / sentences.length : 0;

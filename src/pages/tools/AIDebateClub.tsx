@@ -320,6 +320,8 @@ const AIDebateClub = () => {
     });
     setActiveInterval(id);
   }
+
+  function resetDebate() {
     setStage("topic_selection");
     setTopics(getRandomTopics(3));
     setSelectedTopic(null);
