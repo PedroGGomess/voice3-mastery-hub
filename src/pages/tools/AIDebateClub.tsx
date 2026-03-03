@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import PlatformLayout from "@/components/PlatformLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { savePracticeAttempt, getPracticeHistory, awardPoints } from "@/lib/persistence";
+import { scoreExecutiveText } from "@/lib/scoringUtils";
 
 type Stage = "topic_selection" | "opening_statement" | "ai_counter" | "rebuttal" | "ai_final" | "scoring";
 type Side = "For" | "Against";
@@ -195,39 +196,6 @@ function getRandomTopics(count: number): Topic[] {
   return shuffled.slice(0, count);
 }
 
-function scoreText(text: string): { clarity: number; structure: number; authority: number; fillerPenalty: number; total: number } {
-  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
-  const words = text.split(/\s+/).filter(w => w.length > 0);
-  const avgLen = sentences.length > 0 ? words.length / sentences.length : 0;
-
-  let clarity = 0;
-  if (avgLen >= 10 && avgLen <= 25) clarity = 25;
-  else if (avgLen < 10) clarity = Math.round((avgLen / 10) * 25);
-  else clarity = Math.max(0, Math.round(25 - ((avgLen - 25) / 25) * 25));
-
-  const transitionWords = ["however", "therefore", "furthermore", "in conclusion", "firstly", "additionally", "consequently", "moreover"];
-  const lower = text.toLowerCase();
-  let structure = 0;
-  for (const tw of transitionWords) {
-    if (lower.includes(tw)) structure = Math.min(25, structure + 5);
-  }
-
-  const hedgingWords = ["maybe", "perhaps", "i think", "kind of", "sort of", "i guess", "i feel like"];
-  let authority = 25;
-  for (const hw of hedgingWords) {
-    if (lower.includes(hw)) authority = Math.max(0, authority - 5);
-  }
-
-  const fillers = ["um", "uh", "like,", "you know", "basically", "actually"];
-  let fillerPenalty = 25;
-  for (const f of fillers) {
-    if (lower.includes(f)) fillerPenalty = Math.max(0, fillerPenalty - 5);
-  }
-
-  const total = clarity + structure + authority + fillerPenalty;
-  return { clarity, structure, authority, fillerPenalty, total };
-}
-
 const AIDebateClub = () => {
   const { currentUser } = useAuth();
   const [stage, setStage] = useState<Stage>("topic_selection");
@@ -238,7 +206,7 @@ const AIDebateClub = () => {
   const [rebuttalText, setRebuttalText] = useState("");
   const [aiCounterDisplay, setAiCounterDisplay] = useState("");
   const [aiFinalDisplay, setAiFinalDisplay] = useState("");
-  const [scores, setScores] = useState<ReturnType<typeof scoreText> | null>(null);
+  const [scores, setScores] = useState<ReturnType<typeof scoreExecutiveText> | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [activeInterval, setActiveInterval] = useState<ReturnType<typeof setInterval> | null>(null);
   const history = currentUser ? getPracticeHistory(currentUser.id, "ai-debate") : [];
@@ -249,10 +217,11 @@ const AIDebateClub = () => {
 
   function typeText(text: string, setter: (s: string) => void, onDone?: () => void) {
     let i = 0;
+    const BATCH = 4; // render 4 characters per tick for smoother performance
     setter("");
     const interval = setInterval(() => {
-      setter(text.slice(0, i + 1));
-      i++;
+      i = Math.min(i + BATCH, text.length);
+      setter(text.slice(0, i));
       if (i >= text.length) {
         clearInterval(interval);
         onDone?.();
@@ -289,8 +258,8 @@ const AIDebateClub = () => {
     const final = finals[0];
     if (activeInterval) clearInterval(activeInterval);
     const id = typeText(final, setAiFinalDisplay, () => {
-      const openingScore = scoreText(openingText);
-      const rebuttalScore = scoreText(rebuttalText);
+      const openingScore = scoreExecutiveText(openingText);
+      const rebuttalScore = scoreExecutiveText(rebuttalText);
       const combined = {
         clarity: Math.round((openingScore.clarity + rebuttalScore.clarity) / 2),
         structure: Math.round((openingScore.structure + rebuttalScore.structure) / 2),

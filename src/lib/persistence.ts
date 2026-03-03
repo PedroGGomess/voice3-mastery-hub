@@ -1,10 +1,12 @@
 // VOICE³ Persistence Layer — localStorage-based per-user storage
 
+let idCounter = 0;
+
 function generateId(): string {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  return `${Date.now()}-${++idCounter}-${Math.random().toString(36).slice(2)}`;
 }
 
 function getStore<T>(key: string, userId: string): T | null {

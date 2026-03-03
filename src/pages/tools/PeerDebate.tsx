@@ -6,40 +6,9 @@ import PlatformLayout from "@/components/PlatformLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { getAllPeerDebates, postPeerDebate, respondToPeerDebate, savePracticeAttempt, awardPoints } from "@/lib/persistence";
 import type { PeerDebatePost } from "@/lib/persistence";
+import { scoreTextSimple } from "@/lib/scoringUtils";
 
 const MAX_POSITION_PREVIEW_LENGTH = 200;
-
-function scoreText(text: string): number {
-  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
-  const words = text.split(/\s+/).filter(w => w.length > 0);
-  const avgLen = sentences.length > 0 ? words.length / sentences.length : 0;
-
-  let clarity = 0;
-  if (avgLen >= 10 && avgLen <= 25) clarity = 25;
-  else if (avgLen < 10) clarity = Math.round((avgLen / 10) * 25);
-  else clarity = Math.max(0, Math.round(25 - ((avgLen - 25) / 25) * 25));
-
-  const lower = text.toLowerCase();
-  const transitionWords = ["however", "therefore", "furthermore", "in conclusion", "firstly", "additionally", "consequently", "moreover"];
-  let structure = 0;
-  for (const tw of transitionWords) {
-    if (lower.includes(tw)) structure = Math.min(25, structure + 5);
-  }
-
-  const hedgingWords = ["maybe", "perhaps", "i think", "kind of", "sort of", "i guess", "i feel like"];
-  let authority = 25;
-  for (const hw of hedgingWords) {
-    if (lower.includes(hw)) authority = Math.max(0, authority - 5);
-  }
-
-  const fillers = ["um", "uh", "like,", "you know", "basically", "actually"];
-  let fillerPenalty = 25;
-  for (const f of fillers) {
-    if (lower.includes(f)) fillerPenalty = Math.max(0, fillerPenalty - 5);
-  }
-
-  return clarity + structure + authority + fillerPenalty;
-}
 
 const PeerDebate = () => {
   const { currentUser } = useAuth();
@@ -79,7 +48,7 @@ const PeerDebate = () => {
     if (responseText.trim().length < 20) { toast.error("Response must be at least 20 characters."); return; }
     setSubmittingResponse(true);
     setTimeout(() => {
-      const score = scoreText(responseText);
+      const score = scoreTextSimple(responseText);
       respondToPeerDebate(postId, currentUser.id, currentUser.name, responseText.trim(), score);
       savePracticeAttempt(currentUser.id, {
         practiceId: "peer-debate-response",

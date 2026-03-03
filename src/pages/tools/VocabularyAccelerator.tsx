@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, CheckCircle, ChevronRight, Star, Trophy } from "lucide-react";
 import { toast } from "sonner";
@@ -119,6 +119,8 @@ const WORD_SETS: WordEntry[][] = [
   ],
 ];
 
+const dayIndex = Math.floor(new Date().setHours(0, 0, 0, 0) / MS_PER_DAY) % 12;
+
 const VocabularyAccelerator = () => {
   const { currentUser } = useAuth();
   const [drillInputs, setDrillInputs] = useState<Record<string, string>>({});
@@ -127,7 +129,6 @@ const VocabularyAccelerator = () => {
   const [bonusAwarded, setBonusAwarded] = useState(false);
   const [totalLearned, setTotalLearned] = useState(0);
 
-  const dayIndex = useMemo(() => Math.floor(Date.now() / MS_PER_DAY) % 12, []);
   const dailyWords = WORD_SETS[dayIndex];
 
   useEffect(() => {
@@ -137,7 +138,7 @@ const VocabularyAccelerator = () => {
       const todayLearned = dailyWords.filter(w => progress.learnedWords.includes(w.id)).map(w => w.id);
       setLearnedToday(todayLearned);
     }
-  }, [currentUser, dayIndex]);
+  }, [currentUser]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleDrillSubmit(word: WordEntry) {
     const input = (drillInputs[word.id] || "").trim().toLowerCase();
