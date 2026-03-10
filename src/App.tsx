@@ -102,7 +102,8 @@ const App = () => (
           <Routes>
             {/* Public */}
             <Route path="/" element={<Index />} />
-            <Route path="/login" element={<AuthPage />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/login" element={<Navigate to="/auth" replace />} />
             <Route path="/packs" element={<PacksPage />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/for-companies" element={<ForCompaniesPage />} />

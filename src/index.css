@@ -225,4 +225,39 @@ html {
     opacity: 1;
     transform: translateY(0);
   }
+
+  /* Auth page slide animations */
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .slide-in-left  { animation: slideInLeft  0.6s ease-out both; }
+  .slide-in-right { animation: slideInRight 0.6s ease-out 0.15s both; }
+
+  /* Pulse animation (badge dot) */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(1.4); }
+  }
+
+  /* Bounce animation (scroll chevron) */
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(8px); }
+  }
+
+  /* Fade-up for scroll reveal */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+  .fade-up.in-view { opacity: 1; transform: none; }
+  .fade-up.d1 { transition-delay: 0.1s; }
+  .fade-up.d2 { transition-delay: 0.2s; }
+  .fade-up.d3 { transition-delay: 0.3s; }
 }
