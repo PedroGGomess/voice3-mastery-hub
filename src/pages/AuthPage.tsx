@@ -220,6 +220,7 @@ const AuthPage = () => {
           <div className="mt-12 p-5 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(184,154,90,0.2)" }}>
             <p className="text-xs mb-3 font-medium tracking-wide uppercase" style={{ color: "#B89A5A" }}>Credenciais Demo</p>
             <p className="text-xs mb-1" style={{ color: "#8E96A3" }}><span style={{ color: "#F4F2ED" }}>Aluno:</span> demo@voice3.pt / demo123</p>
+            <p className="text-xs mb-1" style={{ color: "#8E96A3" }}><span style={{ color: "#F4F2ED" }}>Professor:</span> professor@voice3.pt / prof123</p>
             <p className="text-xs" style={{ color: "#8E96A3" }}><span style={{ color: "#F4F2ED" }}>Empresa:</span> empresa@voice3.pt / empresa123</p>
           </div>
         </div>
