@@ -24,6 +24,10 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
       return <Navigate to="/empresa" replace />;
     }
     if (currentUser?.role === 'professor' || currentUser?.role === 'admin') {
+      // Avoid infinite loop: if already targeting professor/dashboard routes, go to /app fallback
+      if (location.pathname.startsWith('/professor')) {
+        return <Navigate to="/app" replace />;
+      }
       return <Navigate to="/professor/dashboard" replace />;
     }
     return <Navigate to="/app" replace />;

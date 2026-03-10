@@ -136,6 +136,14 @@ export default function DiagnosticSession() {
       localStorage.setItem(chapKey, JSON.stringify(existing));
     } catch (_e) {}
 
+    // Mark the diagnostic session (ch1-s1) as completed in session progress
+    try {
+      const sessKey = `voice3_session_progress_${userId}`;
+      const sessExisting = localStorage.getItem(sessKey) ? JSON.parse(localStorage.getItem(sessKey)!) : {};
+      sessExisting['ch1-s1'] = { status: 'completed', score: 100, completedAt: new Date().toISOString() };
+      localStorage.setItem(sessKey, JSON.stringify(sessExisting));
+    } catch (_e) {}
+
     setIsProcessing(false);
     setCurrentStep(6);
   };

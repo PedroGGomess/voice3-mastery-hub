@@ -55,7 +55,7 @@ const MeuCurso = () => {
   } catch (_e) {}
 
   // Load chapter-level progress
-  let chapterProgress: Record<string, string> = {};
+  let chapterProgress: Record<string, { status: string; completedAt?: string }> = {};
   try {
     const stored = localStorage.getItem(`voice3_chapter_progress_${userId}`);
     if (stored) chapterProgress = JSON.parse(stored);
@@ -131,7 +131,7 @@ const MeuCurso = () => {
             </span>
           )}
         </div>
-        {!onboardingCompleted && !diagnosticCompleted && (
+        {!aiEval && !diagnosticCompleted && chapterProgress['ch1']?.status !== 'completed' && (
           <Link to="/onboarding" className="inline-flex items-center gap-2 mt-3 px-4 py-2.5 rounded-xl bg-[#B89A5A]/10 border border-[#B89A5A]/30 text-sm text-[#F4F2ED] hover:bg-[#B89A5A]/20 transition-all">
             <span className="text-[#B89A5A] font-semibold">Complete your Executive Profile</span> to unlock personalised training →
           </Link>
@@ -270,11 +270,13 @@ const MeuCurso = () => {
         </div>
         <div className="flex gap-3 overflow-x-auto pb-2">
           {chaptersData.map((chapter) => {
-            const chStatus = chapterProgress[chapter.id] || (chapter.id === 'ch1' ? 'available' : 'locked');
-            const sessionsDone = sessionsDoneByChapter[chapter.id] ?? 0;
+            const chStatus = chapterProgress[chapter.id]?.status || (chapter.id === 'ch1' ? 'available' : 'locked');
+            const isCompleted = chStatus === 'completed';
+            const sessionsDone = isCompleted
+              ? chapter.totalSessions
+              : (sessionsDoneByChapter[chapter.id] ?? 0);
             const total = chapter.totalSessions;
             const pct = total > 0 ? (sessionsDone / total) * 100 : 0;
-            const isCompleted = chStatus === 'completed' || (total > 0 && sessionsDone >= total);
             const isActive = chStatus === 'in_progress' || chStatus === 'available';
             const isLocked = chStatus === 'locked' && sessionsDone === 0;
             return (
