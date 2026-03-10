@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import PlatformLayout from "@/components/PlatformLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { savePracticeAttempt, getPracticeHistory, awardPoints } from "@/lib/persistence";
+import { useAICoach } from "@/hooks/useAICoach";
+import LoadingAI from "@/components/LoadingAI";
 
 const QUESTIONS = [
   "Your quarterly results are disappointing. Explain yourself.",
@@ -34,6 +36,7 @@ function detectFillers(text: string): string[] {
 
 const HostileQA = () => {
   const { currentUser } = useAuth();
+  const { sendMessage } = useAICoach();
   const [gameState, setGameState] = useState<GameState>("idle");
   const [currentQ, setCurrentQ] = useState(0);
   const [lives, setLives] = useState(3);
@@ -43,6 +46,10 @@ const HostileQA = () => {
   const [totalFillers, setTotalFillers] = useState(0);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [cleanAnswers, setCleanAnswers] = useState(0);
+  const [aiChatHistory, setAiChatHistory] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
+  const [currentAIQuestion, setCurrentAIQuestion] = useState("");
+  const [isAILoading, setIsAILoading] = useState(false);
+  const [aiFeedback, setAiFeedback] = useState("");
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const history = currentUser ? getPracticeHistory(currentUser.id, "hostile-qa") : [];
@@ -92,8 +99,24 @@ const HostileQA = () => {
     setTotalFillers(0);
     setAnsweredCount(0);
     setCleanAnswers(0);
+    setAiChatHistory([]);
+    setCurrentAIQuestion("");
+    setAiFeedback("");
     setGameState("playing");
     startTimer();
+
+    // Try AI for first question
+    setIsAILoading(true);
+    sendMessage(
+      [{ role: "user", content: "Start the Hostile Q&A Gauntlet. Fire the first hard executive question now. Just the question, nothing else." }],
+      "qa-gauntlet"
+    ).then(q => {
+      setCurrentAIQuestion(q);
+      setAiChatHistory([{ role: "assistant", content: q }]);
+      setAnswer("");
+    }).catch(() => {
+      // Use static questions as fallback
+    }).finally(() => setIsAILoading(false));
   };
 
   const handleSubmit = () => {
@@ -113,6 +136,18 @@ const HostileQA = () => {
     }
     setFeedback({ fillers, lost: lostLife });
     setGameState("feedback");
+
+    // Try AI feedback + next question
+    if (aiChatHistory.length > 0) {
+      const updatedHistory = [...aiChatHistory, { role: "user" as const, content: answer }];
+      sendMessage(updatedHistory, "qa-gauntlet").then(fb => {
+        setAiFeedback(fb);
+        const newHistory = [...updatedHistory, { role: "assistant" as const, content: fb }];
+        setAiChatHistory(newHistory);
+      }).catch(() => {
+        // Keep original history unchanged on error
+      });
+    }
   };
 
   const handleNext = () => {
@@ -124,8 +159,24 @@ const HostileQA = () => {
     setCurrentQ(nextQ);
     setAnswer("");
     setFeedback(null);
+    setAiFeedback("");
+    setCurrentAIQuestion("");
     setGameState("playing");
     startTimer();
+
+    // Request next AI question if we're in AI mode
+    if (aiChatHistory.length > 0) {
+      setIsAILoading(true);
+      sendMessage(
+        [...aiChatHistory, { role: "user", content: "Next question please. Just the question, nothing else." }],
+        "qa-gauntlet"
+      ).then(q => {
+        setCurrentAIQuestion(q);
+        setAiChatHistory(prev => [...prev, { role: "assistant", content: q }]);
+      }).catch(() => {
+        // Fall back to static questions
+      }).finally(() => setIsAILoading(false));
+    }
   };
 
   // Save when game ends
@@ -241,9 +292,13 @@ const HostileQA = () => {
               <p className="text-xs text-[#B89A5A] uppercase tracking-wider font-semibold mb-3">
                 🎯 Hostile Question
               </p>
-              <p className="font-serif text-lg font-semibold text-[#F4F2ED] leading-relaxed">
-                "{QUESTIONS[currentQ]}"
-              </p>
+              {isAILoading ? (
+                <LoadingAI message="AI is preparing your question..." />
+              ) : (
+                <p className="font-serif text-lg font-semibold text-[#F4F2ED] leading-relaxed">
+                  "{currentAIQuestion || QUESTIONS[currentQ]}"
+                </p>
+              )}
             </motion.div>
           </AnimatePresence>
 
@@ -325,6 +380,16 @@ const HostileQA = () => {
               >
                 {currentQ + 1 >= QUESTIONS.length ? "See Results →" : "Next Question →"}
               </button>
+              {aiFeedback && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 rounded-lg bg-[#0B1A2A] border border-[#B89A5A]/20 p-4"
+                >
+                  <p className="text-xs font-bold text-[#B89A5A] uppercase tracking-wider mb-2">🤖 AI Coach Feedback</p>
+                  <p className="text-sm text-[#F4F2ED]/80 leading-relaxed whitespace-pre-line">{aiFeedback}</p>
+                </motion.div>
+              )}
             </motion.div>
           )}
         </div>

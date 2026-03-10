@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import PlatformLayout from "@/components/PlatformLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { saveToolkitEntry, getToolkitHistory, awardPoints } from "@/lib/persistence";
+import { useAICoach } from "@/hooks/useAICoach";
+import LoadingAI from "@/components/LoadingAI";
 
 const grammarTopics = [
   {
@@ -239,14 +241,49 @@ function CopyButton({ text }: { text: string }) {
 
 const GrammarOnDemand = () => {
   const { currentUser } = useAuth();
+  const { sendMessage } = useAICoach();
   const [search, setSearch] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"transform" | "reference" | "history">("transform");
   const [inputText, setInputText] = useState("");
   const [transformed, setTransformed] = useState<{ direct: string; diplomatic: string; formal: string } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [grammarInput, setGrammarInput] = useState("");
+  const [grammarContext, setGrammarContext] = useState("General");
+  const [grammarResult, setGrammarResult] = useState("");
+  const [grammarLoading, setGrammarLoading] = useState(false);
 
   const history = currentUser ? getToolkitHistory(currentUser.id, "grammar-on-demand") : [];
+
+  const handleAnalyse = async () => {
+    if (!grammarInput.trim()) return;
+    setGrammarLoading(true);
+    try {
+      const reply = await sendMessage(
+        [{ role: "user", content: `Context: ${grammarContext}. Grammar question: "${grammarInput}"` }],
+        "grammar"
+      );
+      setGrammarResult(reply);
+      if (currentUser) {
+        saveToolkitEntry(currentUser.id, {
+          toolId: "grammar-on-demand",
+          toolName: "Grammar On Demand",
+          inputs: { text: grammarInput, context: grammarContext },
+          outputs: { analysis: reply },
+        });
+        awardPoints(currentUser.id, {
+          source: "toolkit",
+          sourceId: "grammar-on-demand",
+          sourceName: "Grammar On Demand",
+          points: 15,
+        });
+      }
+    } catch {
+      setGrammarResult("Unable to reach AI Grammar Coach. Please try again later.");
+    } finally {
+      setGrammarLoading(false);
+    }
+  };
 
   const handleTransform = () => {
     if (!inputText.trim()) return;
@@ -291,6 +328,64 @@ const GrammarOnDemand = () => {
           📚 Grammar On Demand
         </h1>
         <p className="text-[#8E96A3] text-sm">Executive Grammar Library</p>
+      </motion.div>
+
+      {/* AI Grammar Analysis */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="rounded-xl bg-[#1C1F26] border border-[#B89A5A]/20 p-5 mb-6"
+      >
+        <h2 className="text-sm font-bold text-[#B89A5A] uppercase tracking-wider mb-4">
+          🤖 Ask the AI Grammar Coach
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+          <div>
+            <label className="block text-xs font-semibold text-[#8E96A3] uppercase tracking-wider mb-1.5">
+              Context
+            </label>
+            <select
+              value={grammarContext}
+              onChange={e => setGrammarContext(e.target.value)}
+              className="w-full bg-[#0B1A2A] border border-white/10 rounded-lg px-3 py-2 text-sm text-[#F4F2ED] focus:outline-none focus:border-[#B89A5A]/50 transition-colors"
+            >
+              {["General", "Meeting", "Email", "Presentation", "Negotiation"].map(opt => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+          </div>
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-semibold text-[#8E96A3] uppercase tracking-wider mb-1.5">
+              Grammar Question
+            </label>
+            <input
+              type="text"
+              value={grammarInput}
+              onChange={e => setGrammarInput(e.target.value)}
+              placeholder='e.g. When should I use "which" vs "that"?'
+              className="w-full bg-[#0B1A2A] border border-white/10 rounded-lg px-3 py-2 text-sm text-[#F4F2ED] placeholder-[#8E96A3]/50 focus:outline-none focus:border-[#B89A5A]/50 transition-colors"
+            />
+          </div>
+        </div>
+        <button
+          onClick={handleAnalyse}
+          disabled={grammarLoading || !grammarInput.trim()}
+          className="px-5 py-2.5 rounded-lg bg-[#B89A5A] text-[#0B1A2A] font-semibold text-sm hover:bg-[#d4ba6a] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+        >
+          {grammarLoading ? "Analysing..." : "✨ Analyse"}
+        </button>
+        {grammarLoading && <LoadingAI message="Analysing..." />}
+        {grammarResult && !grammarLoading && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 rounded-lg bg-[#0B1A2A] border border-[#B89A5A]/30 p-4"
+          >
+            <p className="text-xs font-bold text-[#B89A5A] uppercase tracking-wider mb-2">AI Analysis</p>
+            <p className="text-sm text-[#F4F2ED] leading-relaxed whitespace-pre-line">{grammarResult}</p>
+          </motion.div>
+        )}
       </motion.div>
 
       {/* Tabs */}
