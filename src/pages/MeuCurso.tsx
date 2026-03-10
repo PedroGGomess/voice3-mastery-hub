@@ -1,7 +1,7 @@
 import PlatformLayout from "@/components/PlatformLayout";
 import { motion } from "framer-motion";
 import ChatWidget from "@/components/ChatWidget";
-import { CheckCircle2, Play, Lock, Clock, ArrowRight, FolderOpen, Mic, ChevronRight, Library, Wrench, Swords } from "lucide-react";
+import { CheckCircle2, Play, Lock, Clock, ArrowRight, FolderOpen, Mic, ChevronRight, Library, Wrench, Swords, BookOpen, Target, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -38,6 +38,21 @@ const MeuCurso = () => {
   }
   const onboardingCompleted = !!onboardingData?.completed;
   const userTone = onboardingData?.tone;
+
+  // Load AI evaluation
+  let aiEval: any = null;
+  try {
+    const stored = localStorage.getItem(`voice3_ai_evaluation_${userId}`);
+    if (stored) aiEval = JSON.parse(stored);
+  } catch (_e) {}
+
+  // Load professor assignments
+  let assignments: any[] = [];
+  try {
+    const stored = localStorage.getItem(`voice3_student_assignments_${userId}`);
+    if (stored) assignments = JSON.parse(stored);
+  } catch (_e) {}
+  const pendingAssignments = assignments.filter((a: any) => a.status !== 'completed');
 
   const completedCount = Object.values(progress).filter(p => p.completed).length;
   const progressPercent = Math.round((completedCount / TOTAL_SESSIONS) * 100);
@@ -262,6 +277,92 @@ const MeuCurso = () => {
           ))}
         </div>
       </motion.div>
+
+      {/* Diagnostic Results Card */}
+      {aiEval && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.23 }}
+          className="mb-6"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium">Resultados do Diagnóstico</h2>
+            <div className="h-px flex-1 bg-[#B89A5A]/20 mx-4" />
+          </div>
+          <div className="rounded-xl bg-[#1C1F26] border border-[#B89A5A]/20 p-5">
+            <div className="flex items-start gap-4">
+              <div className="w-14 h-14 rounded-full bg-[#B89A5A]/10 border border-[#B89A5A]/20 flex items-center justify-center shrink-0">
+                <span className="text-xl font-bold text-[#B89A5A]">{aiEval.level}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap mb-2">
+                  <span className="text-sm font-semibold text-[#F4F2ED]">Nível {aiEval.level}</span>
+                  {aiEval.teachingStyle && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-[#B89A5A]/10 border border-[#B89A5A]/20 text-[#B89A5A] font-medium">
+                      {aiEval.teachingStyle}
+                    </span>
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  {Object.entries(aiEval.weakPoints || {}).sort(([,a]: any, [,b]: any) => b - a).slice(0, 3).map(([key, val]: [string, any]) => (
+                    <div key={key} className="flex items-center gap-2">
+                      <span className="text-xs text-[#8E96A3] w-24 capitalize">{key}</span>
+                      <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full bg-[#B89A5A]" style={{ width: `${(val / 10) * 100}%` }} />
+                      </div>
+                      <span className="text-xs text-[#B89A5A] w-8 text-right">{val}/10</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 flex justify-end">
+              <Link to="/sessoes/diagnostico" className="text-xs text-[#B89A5A] hover:text-[#d4ba6a] transition-colors">
+                Ver análise completa →
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Professor Assignments */}
+      {pendingAssignments.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.24 }}
+          className="mb-6"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium">👨‍🏫 Tarefas do Professor</h2>
+            <div className="h-px flex-1 bg-[#B89A5A]/20 mx-4" />
+          </div>
+          <div className="rounded-xl bg-[#1C1F26] border border-amber-400/20 overflow-hidden">
+            <div className="divide-y divide-white/[0.04]">
+              {pendingAssignments.slice(0, 3).map((a: any, i: number) => (
+                <div key={a.id || i} className="flex items-center gap-3 px-5 py-3">
+                  <div className="w-8 h-8 rounded-lg bg-amber-400/10 flex items-center justify-center shrink-0">
+                    <BookOpen className="h-3.5 w-3.5 text-amber-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-medium text-sm text-[#F4F2ED]">{a.title}</h3>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 font-medium">
+                        👨‍🏫 Professor Assigned
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#8E96A3]">Prazo: {a.dueDate}</p>
+                  </div>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${a.status === 'pending' ? 'bg-yellow-400/10 text-yellow-400' : 'bg-blue-400/10 text-blue-400'}`}>
+                    {a.status === 'pending' ? 'Pendente' : 'Em progresso'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Materials Section */}
       <motion.div
