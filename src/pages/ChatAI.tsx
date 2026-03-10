@@ -1,7 +1,7 @@
 import PlatformLayout from "@/components/PlatformLayout";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
-import { Send, User, Trash2 } from "lucide-react";
+import { Send, User, Trash2, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -12,10 +12,12 @@ interface Message {
 }
 
 const quickQuestions = [
-  "Como melhorar em reuniões?",
-  "Dicas para emails formais",
-  "Vocabulário de apresentações",
-  "Exercício de pronúncia",
+  "Analyse my writing",
+  "Give me a drill",
+  "Explain this grammar",
+  "Practise a scenario",
+  "Review my last session",
+  "Vocabulary help",
 ];
 
 function getBotResponse(text: string): string {
@@ -98,6 +100,20 @@ const ChatAI = () => {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Read AI evaluation data for personalised system message
+  const aiEval = (() => {
+    try {
+      const raw = localStorage.getItem(`voice3_ai_evaluation_${userId}`);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  })();
+
+  const levelDetail = aiEval?.level && aiEval?.teachingStyle
+    ? ` (${aiEval.level}), teaching style (${aiEval.teachingStyle}),`
+    : ",";
+  const systemMessage = `Your AI Coach knows your level${levelDetail} and weak points. Ask anything about your sessions, get feedback on your writing, or request a drill.`;
 
   useEffect(() => {
     try {
@@ -151,6 +167,11 @@ const ChatAI = () => {
     }, 1000);
   };
 
+  const handleChipClick = (text: string) => {
+    setInput(text);
+    inputRef.current?.focus();
+  };
+
   const handleClear = () => {
     const initial: Message[] = [{
       role: "bot",
@@ -176,6 +197,12 @@ const ChatAI = () => {
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-1">
+          {/* System message card */}
+          <div className="border-l-2 border-[#B89A5A] bg-[#B89A5A]/5 rounded-r-xl px-4 py-3">
+            <p className="text-xs text-[#B89A5A] font-semibold mb-0.5 uppercase tracking-wider">AI Coach</p>
+            <p className="text-sm text-[#F4F2ED]/80">{systemMessage}</p>
+          </div>
+
           <AnimatePresence initial={false}>
             {messages.map((msg, i) => (
               <motion.div
@@ -193,7 +220,7 @@ const ChatAI = () => {
                   <div className={`px-4 py-3 rounded-2xl text-sm whitespace-pre-line ${
                     msg.role === "user"
                       ? "bg-primary text-primary-foreground rounded-br-sm"
-                      : "bg-secondary rounded-bl-sm"
+                      : "bg-secondary rounded-bl-sm border-l-2 border-[#B89A5A]/40"
                   }`}>
                     {msg.text}
                   </div>
@@ -214,11 +241,11 @@ const ChatAI = () => {
               <div className="w-8 h-8 rounded-full bg-[#B89A5A]/20 border border-[#B89A5A]/40 flex items-center justify-center shrink-0">
                 <span className="text-[10px] font-bold text-[#B89A5A] leading-none">V³</span>
               </div>
-              <div className="bg-secondary px-4 py-3 rounded-2xl rounded-bl-sm flex items-center gap-1">
-                <span className="text-xs text-muted-foreground">VOICE³ Coach está a escrever</span>
-                <span className="flex gap-0.5">
+              <div className="bg-secondary px-4 py-3 rounded-2xl rounded-bl-sm border-l-2 border-[#B89A5A]/40 flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">VOICE³ Coach is typing</span>
+                <span className="flex gap-1">
                   {[0, 1, 2].map(i => (
-                    <motion.span key={i} className="w-1 h-1 rounded-full bg-primary/60 inline-block"
+                    <motion.span key={i} className="w-1.5 h-1.5 rounded-full bg-[#B89A5A]/60 inline-block"
                       animate={{ y: [0, -4, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.2 }} />
                   ))}
                 </span>
@@ -228,26 +255,32 @@ const ChatAI = () => {
           <div ref={bottomRef} />
         </div>
 
-        {/* Quick reply chips */}
-        <div className="flex gap-2 mb-3 flex-wrap">
+        {/* Quick reply chips — 2 rows of 3 */}
+        <div className="grid grid-cols-3 gap-2 mb-3">
           {quickQuestions.map((q, i) => (
-            <button key={i} onClick={() => sendMessage(q)}
-              className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white/80 transition-colors">
+            <button key={i} onClick={() => handleChipClick(q)}
+              className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:bg-[#B89A5A]/10 hover:border-[#B89A5A]/30 hover:text-[#B89A5A] transition-colors truncate">
               {q}
             </button>
           ))}
         </div>
 
         {/* Input */}
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <input
+            ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage(input)}
-            placeholder="Escreve a tua mensagem..."
+            placeholder="Ask your AI Coach..."
             className="flex-1 px-5 py-3 rounded-xl bg-secondary text-sm outline-none placeholder:text-muted-foreground border border-border focus:border-primary transition-colors"
           />
+          <Button variant="ghost" size="icon"
+            className="h-12 w-12 rounded-xl text-white/40 hover:text-[#B89A5A] hover:bg-[#B89A5A]/10 border border-border"
+            title="Voice input (coming soon)" disabled>
+            <Mic className="h-4 w-4" />
+          </Button>
           <Button onClick={() => sendMessage(input)} disabled={!input.trim() || isTyping}
             className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl h-12 w-12">
             <Send className="h-4 w-4" />

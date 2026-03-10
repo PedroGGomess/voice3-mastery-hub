@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import PlatformLayout from "@/components/PlatformLayout";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -94,6 +94,55 @@ const Desempenho = () => {
 
   const allScores = sessionsData.map(s => progress[s.id]?.score || 0);
 
+  // Count-up animation hook
+  function useCountUp(target: number, duration = 1500) {
+    const [value, setValue] = useState(0);
+    useEffect(() => {
+      if (target === 0) { setValue(0); return; }
+      let start: number | null = null;
+      const step = (ts: number) => {
+        if (!start) start = ts;
+        const progress = Math.min((ts - start) / duration, 1);
+        setValue(Math.round(progress * target));
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }, [target, duration]);
+    return value;
+  }
+
+  const animatedAvgScore = useCountUp(avgScore);
+  const animatedCompleted = useCountUp(completedCount);
+  const animatedMinutes = useCountUp(totalMinutes);
+  const animatedStreak = useCountUp(streakDays);
+
+  // 30-day streak calendar
+  const calendarDays = useMemo(() => {
+    const activeDates = new Set(
+      completedSessions
+        .map(s => progress[s.id]?.completedAt)
+        .filter(Boolean)
+        .map(d => new Date(d).toDateString())
+    );
+    // Demo: show a plausible activity pattern (days 1,3,4,7,8,10,14,15,21,22 ago) when
+    // no real sessions exist yet, so the calendar isn't visually empty on first visit.
+    const demoOffsets = completedCount === 0 ? [1, 3, 4, 7, 8, 10, 14, 15, 21, 22] : [];
+    const today = new Date();
+    return Array.from({ length: 30 }, (_, i) => {
+      const d = new Date(today);
+      d.setDate(today.getDate() - (29 - i));
+      const active = activeDates.has(d.toDateString()) || demoOffsets.includes(29 - i);
+      return { date: d, active, isToday: i === 29 };
+    });
+  }, [completedSessions, progress, completedCount]);
+
+  // Next milestone
+  const nextMilestoneText = useMemo(() => {
+    if (completedCount < 5) return `Complete ${5 - completedCount} more session${5 - completedCount !== 1 ? "s" : ""} to unlock Chapter 2`;
+    if (completedCount < TOTAL_SESSIONS) return `${TOTAL_SESSIONS - completedCount} more session${TOTAL_SESSIONS - completedCount !== 1 ? "s" : ""} to complete the course`;
+    return "You've completed the programme! 🎉";
+  }, [completedCount]);
+
   return (
     <PlatformLayout>
       {/* Header */}
@@ -104,12 +153,12 @@ const Desempenho = () => {
       </motion.div>
 
       {/* Stats Row */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         {[
-          { label: "Authority Score", value: scores.length > 0 ? `${avgScore}%` : "—", icon: <Target className="h-5 w-5 text-[#B89A5A]" />, sub: scores.length > 0 ? "executive communication precision" : "Sem dados" },
-          { label: "Sessões Completas", value: `${completedCount}/${TOTAL_SESSIONS}`, icon: <CheckCircle2 className="h-5 w-5 text-[#B89A5A]" />, sub: `${Math.round((completedCount / TOTAL_SESSIONS) * 100)}% do curso` },
-          { label: "Tempo Total", value: totalMinutes > 0 ? formatTime(totalMinutes) : "—", icon: <Clock className="h-5 w-5 text-[#B89A5A]" />, sub: "de aprendizagem" },
-          { label: "Streak Atual", value: `${streakDays} dias`, icon: <Flame className="h-5 w-5 text-[#B89A5A]" />, sub: "consecutivos" },
+          { label: "Authority Score", value: scores.length > 0 ? `${animatedAvgScore}%` : "—", icon: <Target className="h-5 w-5 text-[#B89A5A]" />, sub: scores.length > 0 ? "executive communication precision" : "Sem dados" },
+          { label: "Sessões Completas", value: `${animatedCompleted}/${TOTAL_SESSIONS}`, icon: <CheckCircle2 className="h-5 w-5 text-[#B89A5A]" />, sub: `${Math.round((completedCount / TOTAL_SESSIONS) * 100)}% do curso` },
+          { label: "Tempo Total", value: totalMinutes > 0 ? formatTime(animatedMinutes) : "—", icon: <Clock className="h-5 w-5 text-[#B89A5A]" />, sub: "de aprendizagem" },
+          { label: "Streak Atual", value: `${animatedStreak} dias`, icon: <Flame className="h-5 w-5 text-[#B89A5A]" />, sub: "consecutivos" },
         ].map((stat, i) => (
           <div key={i} className="rounded-xl bg-[#1C1F26] border border-white/5 p-4">
             <div className="flex items-center justify-between mb-2">
@@ -120,6 +169,55 @@ const Desempenho = () => {
             <p className="text-xs text-[#8E96A3] mt-0.5">{stat.sub}</p>
           </div>
         ))}
+      </motion.div>
+
+      {/* Next Milestone */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="mb-4">
+        <div className="rounded-xl border border-[#B89A5A]/20 bg-[#B89A5A]/5 px-5 py-3 flex items-center gap-3">
+          <span className="text-xl shrink-0">🎯</span>
+          <div>
+            <p className="text-xs text-[#B89A5A] font-semibold uppercase tracking-wider mb-0.5">Next Milestone</p>
+            <p className="text-sm text-[#F4F2ED]">{nextMilestoneText}</p>
+          </div>
+          <div className="ml-auto shrink-0">
+            <div className="w-16 h-1.5 rounded-full bg-white/10">
+              <div
+                className="h-full rounded-full bg-[#B89A5A] transition-all duration-1000"
+                style={{ width: `${Math.round((completedCount / TOTAL_SESSIONS) * 100)}%` }}
+              />
+            </div>
+            <p className="text-[10px] text-[#8E96A3] text-right mt-0.5">{Math.round((completedCount / TOTAL_SESSIONS) * 100)}%</p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* 30-Day Streak Calendar */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.13 }} className="mb-6">
+        <div className="flex items-center gap-3 mb-3">
+          <h2 className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium">30-Day Activity</h2>
+          <div className="h-px flex-1 bg-[#B89A5A]/20" />
+        </div>
+        <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-5">
+          <div className="grid grid-cols-7 gap-1.5">
+            {calendarDays.map((day, i) => (
+              <div
+                key={i}
+                title={day.date.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                className={`w-full aspect-square rounded-sm transition-colors ${
+                  day.active
+                    ? "bg-emerald-500/70"
+                    : day.isToday
+                    ? "bg-[#B89A5A]/30 ring-1 ring-[#B89A5A]/50"
+                    : "bg-white/5"
+                }`}
+              />
+            ))}
+          </div>
+          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/5">
+            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-emerald-500/70" /><span className="text-xs text-[#8E96A3]">Active day</span></div>
+            <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-white/5" /><span className="text-xs text-[#8E96A3]">No activity</span></div>
+          </div>
+        </div>
       </motion.div>
 
       {/* Bar Chart */}
