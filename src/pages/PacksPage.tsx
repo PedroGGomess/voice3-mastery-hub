@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
@@ -5,8 +6,21 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import ChatWidget from "@/components/ChatWidget";
+import { supabase } from "@/integrations/supabase/client";
 
-const packs = [
+type Pack = {
+  id: string;
+  name: string;
+  slug: string | null;
+  price: number;
+  sessionsIncluded: number;
+  badge: string | null;
+  tagline: string;
+  promise: string;
+  features: string[];
+};
+
+const staticPacks: Pack[] = [
   {
     id: "starter",
     name: "Starter",
@@ -115,6 +129,61 @@ function CellValue({ v, colIdx }: { v: boolean | string; colIdx: number }) {
 }
 
 export default function PacksPage() {
+  const [packs, setPacks] = useState<Pack[]>(staticPacks);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const extractFeatures = (
+      rawFeatures: unknown,
+      fallback: string[]
+    ): string[] => {
+      if (Array.isArray(rawFeatures)) {
+        const filtered = (rawFeatures as unknown[]).filter(
+          (f): f is string => typeof f === "string"
+        );
+        if (filtered.length > 0) return filtered;
+      }
+      return fallback;
+    };
+
+    const loadPacks = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("packs")
+          .select("*")
+          .eq("status", "active")
+          .order("sort_order");
+
+        if (controller.signal.aborted) return;
+        if (error || !data || data.length === 0) return;
+
+        // Merge DB data with static metadata (tagline, promise, features)
+        const merged: Pack[] = data.map((dbPack) => {
+          const staticFallback = staticPacks.find((p) => p.slug === dbPack.slug);
+          return {
+            id: dbPack.id,
+            name: dbPack.name,
+            slug: dbPack.slug,
+            price: dbPack.price,
+            sessionsIncluded: dbPack.sessions_included,
+            badge: dbPack.badge,
+            tagline: staticFallback?.tagline ?? "",
+            promise: staticFallback?.promise ?? "",
+            features: extractFeatures(dbPack.features, staticFallback?.features ?? []),
+          };
+        });
+
+        setPacks(merged);
+      } catch {
+        // Silently fall back to static data
+      }
+    };
+
+    loadPacks();
+    return () => controller.abort();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#0B1A2A]">
       <Navbar />
@@ -137,7 +206,7 @@ export default function PacksPage() {
       <section className="px-6 pb-24 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-start">
           {packs.map((pack, i) => {
-            const isPro = pack.id === "pro";
+            const isPro = pack.slug === "pro";
             return (
               <motion.div
                 key={pack.id}
@@ -157,7 +226,7 @@ export default function PacksPage() {
                 whileHover={!isPro ? { borderColor: "rgba(184,154,90,0.3)" } : undefined}
               >
                 {/* Badge */}
-                {isPro && (
+                {pack.badge && (
                   <div
                     className="absolute -top-px left-1/2 -translate-x-1/2 px-5 py-1.5 rounded-b-xl font-black text-[11px]"
                     style={{
@@ -166,11 +235,11 @@ export default function PacksPage() {
                       letterSpacing: "0.08em",
                     }}
                   >
-                    MOST POPULAR
+                    {pack.badge.toUpperCase()}
                   </div>
                 )}
 
-                <div className={isPro ? "pt-4" : ""}>
+                <div className={pack.badge ? "pt-4" : ""}>
                   <h3 className="text-xl font-bold text-[#F4F2ED] mb-1">{pack.name}</h3>
                   <p className="text-[13px] italic text-[#8E96A3] mb-5">{pack.tagline}</p>
 
@@ -219,7 +288,7 @@ export default function PacksPage() {
 
                   {/* CTA */}
                   <Link to={`/auth?pack=${pack.slug}`}>
-                    {pack.id === "starter" && (
+                    {pack.slug === "starter" && (
                       <Button
                         variant="outline"
                         className="w-full h-11 text-sm font-bold rounded-xl border-white/30 text-white hover:bg-white/5"
@@ -235,7 +304,7 @@ export default function PacksPage() {
                         Get Started <ArrowRight className="ml-1 w-4 h-4" />
                       </Button>
                     )}
-                    {(pack.id === "advanced" || pack.id === "business-master") && (
+                    {(pack.slug === "advanced" || pack.slug === "business-master") && (
                       <Button
                         variant="outline"
                         className="w-full h-11 text-sm font-bold rounded-xl text-[#F4F2ED] hover:border-[#C9A84C]"
