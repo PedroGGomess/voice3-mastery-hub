@@ -151,7 +151,7 @@ export default function ChaptersOverview() {
                     {!isLocked && (
                       <p className={`text-xs mt-0.5 ${isLocked ? 'text-white/20' : 'text-[#8E96A3]'}`}>
                         {completedSessions}/{chapter.totalSessions} sessões
-                        {status !== 'locked' && status !== 'available' && <> · {sessionPct}%</>}
+                        {status === 'in_progress' || status === 'completed' ? <> · {sessionPct}%</> : null}
                       </p>
                     )}
                     {isLocked && (
