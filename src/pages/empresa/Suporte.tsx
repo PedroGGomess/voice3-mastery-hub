@@ -93,12 +93,12 @@ const EmpresaSuporte = () => {
                   return (
                     <div key={ticket.id as string} className="p-4 rounded-xl bg-white/5 border border-white/10">
                       <div className="flex items-start justify-between mb-1">
-                        <p className="font-medium text-sm">{ticket.subject}</p>
+                        <p className="font-medium text-sm">{ticket.subject as string}</p>
                         <span className={`text-xs px-2 py-0.5 rounded-full ${ticket.status === "resolved" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>
                           {ticket.status === "resolved" ? "Resolvido" : "Em análise"}
                         </span>
                       </div>
-                      <p className="text-xs text-muted-foreground line-clamp-2">{ticket.message}</p>
+                      <p className="text-xs text-muted-foreground line-clamp-2">{ticket.message as string}</p>
                       <p className="text-xs text-white/30 mt-1">{new Date(ticket.createdAt as string).toLocaleDateString("pt-PT")}</p>
                     </div>
                   );
