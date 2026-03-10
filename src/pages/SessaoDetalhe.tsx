@@ -3,9 +3,10 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import PlatformLayout from "@/components/PlatformLayout";
 import SessionDetail from "@/components/SessionDetail";
-import { ArrowLeft, Clock } from "lucide-react";
+import { ArrowLeft, ArrowRight, Clock, BookOpen } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { sessionsData } from "@/lib/sessionsData";
+import { chaptersData, sessionTypeLabels, sessionTypeColors } from "@/lib/chaptersData";
 import { toast } from "sonner";
 
 const SessaoDetalhe = () => {
@@ -15,7 +16,26 @@ const SessaoDetalhe = () => {
   const userId = currentUser?.id || "";
 
   const sessionId = parseInt(id || "0");
-  const session = sessionsData.find((s) => s.id === sessionId);
+  const sessionIndex = sessionsData.findIndex((s) => s.id === sessionId);
+  const session = sessionIndex !== -1 ? sessionsData[sessionIndex] : undefined;
+
+  // Find matching chapter session by title for rich metadata
+  const chapterSessionMatch = (() => {
+    if (!session) return null;
+    for (const chapter of chaptersData) {
+      const s = chapter.sessions.find(
+        (cs) => cs.title.toLowerCase() === session.title.toLowerCase()
+      );
+      if (s) return { chapter, chapterSession: s };
+    }
+    return null;
+  })();
+
+  const chapter = chapterSessionMatch?.chapter ?? null;
+  const chapterSession = chapterSessionMatch?.chapterSession ?? null;
+
+  const prevSession = sessionIndex > 0 ? sessionsData[sessionIndex - 1] : null;
+  const nextSession = sessionIndex !== -1 && sessionIndex < sessionsData.length - 1 ? sessionsData[sessionIndex + 1] : null;
 
   const [alreadyCompleted, setAlreadyCompleted] = useState(false);
   const [existingScore, setExistingScore] = useState<number | null>(null);
@@ -117,7 +137,19 @@ const SessaoDetalhe = () => {
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 mb-1">
+            {/* Chapter breadcrumb */}
+            {chapter && (
+              <p className="text-xs text-[#B89A5A] tracking-[0.12em] uppercase font-medium mb-1.5">
+                <BookOpen className="inline h-3 w-3 mr-1 opacity-70" />
+                {chapter.title}
+                {chapterSession && (
+                  <span className="text-[#8E96A3] font-normal ml-1">
+                    · Session {chapterSession.number} of {chapter.totalSessions}
+                  </span>
+                )}
+              </p>
+            )}
+            <div className="flex items-center flex-wrap gap-2 mb-1">
               <span className="text-xs text-[#B89A5A] tracking-[0.15em] uppercase font-medium border border-[#B89A5A]/30 px-2.5 py-0.5 rounded">
                 Session {session.id}
               </span>
@@ -125,9 +157,15 @@ const SessaoDetalhe = () => {
                 <Clock className="h-3 w-3" />
                 {session.time}
               </span>
+              {/* Session type badge */}
+              {chapterSession && (
+                <span className={`text-xs font-medium px-2.5 py-0.5 rounded ${sessionTypeColors[chapterSession.sessionType]}`}>
+                  {sessionTypeLabels[chapterSession.sessionType]}
+                </span>
+              )}
               {alreadyCompleted && existingScore !== null && (
-                <span className="text-xs text-[#B89A5A] font-semibold">
-                  Score: {existingScore}%
+                <span className="text-xs text-emerald-400 font-semibold bg-emerald-400/10 px-2 py-0.5 rounded">
+                  ✓ {existingScore}%
                 </span>
               )}
             </div>
@@ -135,6 +173,32 @@ const SessaoDetalhe = () => {
               {session.title}
             </h1>
             <p className="text-sm text-[#8E96A3] mt-1">{session.objective}</p>
+
+            {/* Progress indicator within chapter */}
+            {chapter && chapterSession && (
+              <div className="mt-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs text-[#8E96A3]">
+                    Progress in {chapter.title}
+                  </span>
+                  <span className="text-xs text-[#B89A5A] font-semibold">
+                    {chapterSession.number}/{chapter.totalSessions}
+                  </span>
+                </div>
+                <div className="flex gap-1">
+                  {Array.from({ length: chapter.totalSessions }).map((_, i) => (
+                    <div
+                      key={i}
+                      className={`h-1 flex-1 rounded-full transition-colors ${
+                        i < chapterSession.number
+                          ? 'bg-[#B89A5A]'
+                          : 'bg-white/10'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -145,6 +209,38 @@ const SessaoDetalhe = () => {
           existingScore={existingScore}
           onComplete={handleComplete}
         />
+
+        {/* Previous / Next navigation */}
+        <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/5">
+          {prevSession ? (
+            <Link
+              to={`/app/sessoes/${prevSession.id}`}
+              className="flex items-center gap-2 text-sm text-[#8E96A3] hover:text-[#F4F2ED] transition-colors group"
+            >
+              <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
+              <div>
+                <div className="text-xs text-[#8E96A3]/60 mb-0.5">Previous</div>
+                <div className="font-medium truncate max-w-[200px]">{prevSession.title}</div>
+              </div>
+            </Link>
+          ) : (
+            <div />
+          )}
+          {nextSession ? (
+            <Link
+              to={`/app/sessoes/${nextSession.id}`}
+              className="flex items-center gap-2 text-sm text-[#8E96A3] hover:text-[#F4F2ED] transition-colors group text-right"
+            >
+              <div>
+                <div className="text-xs text-[#8E96A3]/60 mb-0.5">Next</div>
+                <div className="font-medium truncate max-w-[200px]">{nextSession.title}</div>
+              </div>
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+          ) : (
+            <div />
+          )}
+        </div>
       </motion.div>
     </PlatformLayout>
   );

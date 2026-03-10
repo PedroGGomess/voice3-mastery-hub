@@ -395,70 +395,100 @@ export default function DiagnosticSession() {
         {/* ── STEP 4: Survey ── */}
         {currentStep === 4 && (
           <motion.div key="step4" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} className="max-w-2xl">
-            <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-6 mb-4 space-y-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-lg bg-pink-400/10 flex items-center justify-center">
-                  <span className="text-lg">💭</span>
-                </div>
-                <div>
-                  <h2 className="font-semibold text-[#F4F2ED]">Confiança & Objectivos</h2>
-                  <p className="text-xs text-[#8E96A3]">Passo 4 de 5</p>
-                </div>
+            {/* Section header */}
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-lg bg-pink-400/10 flex items-center justify-center shrink-0">
+                <span className="text-lg">💭</span>
               </div>
-
               <div>
-                <label className="text-sm font-medium text-[#F4F2ED] mb-3 block">
-                  Quão confiante te sentes a falar inglês em reuniões? <span className="text-[#B89A5A] font-bold">{confidence}/5</span>
+                <h2 className="font-semibold text-[#F4F2ED]">Confiança & Objectivos</h2>
+                <p className="text-xs text-[#8E96A3]">Passo 4 de 5</p>
+              </div>
+            </div>
+
+            <div className="space-y-4 mb-4">
+              {/* Confidence slider sub-card */}
+              <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-5">
+                <label className="text-sm font-semibold text-[#F4F2ED] mb-4 block">
+                  Quão confiante te sentes a falar inglês em reuniões?
                 </label>
-                <div className="flex gap-2">
-                  {[1, 2, 3, 4, 5].map(v => (
-                    <button key={v} onClick={() => setConfidence(v)}
-                      className={`flex-1 py-3 rounded-lg border text-sm font-semibold transition-all ${confidence === v ? 'bg-[#B89A5A] border-[#B89A5A] text-[#0B1A2A]' : 'bg-white/5 border-white/10 text-[#8E96A3] hover:border-white/20'}`}>
-                      {v}
-                    </button>
-                  ))}
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-2xl select-none">😟</span>
+                  <div className="flex gap-2 flex-1">
+                    {[1, 2, 3, 4, 5].map(v => (
+                      <button key={v} onClick={() => setConfidence(v)}
+                        className={`flex-1 py-4 rounded-xl border text-base font-bold transition-all duration-150 ${confidence === v ? 'bg-[#B89A5A] border-[#B89A5A] text-[#0B1A2A] shadow-lg scale-105' : 'bg-white/5 border-white/10 text-[#8E96A3] hover:border-[#B89A5A]/40 hover:bg-[#B89A5A]/5 hover:text-[#F4F2ED]'}`}>
+                        {v}
+                      </button>
+                    ))}
+                  </div>
+                  <span className="text-2xl select-none">😎</span>
                 </div>
-                <div className="flex justify-between text-xs text-[#8E96A3] mt-1">
-                  <span>Pouco confiante</span><span>Muito confiante</span>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-[#F4F2ED] mb-3 block">Qual é o teu maior desafio?</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {['Fluência oral', 'Vocabulário técnico', 'Pronúncia', 'Confiança', 'Estrutura das ideias', 'Interagir sob pressão'].map(opt => (
-                    <button key={opt} onClick={() => setChallenge(opt)}
-                      className={`py-2.5 px-3 rounded-lg border text-sm text-left transition-all ${challenge === opt ? 'bg-[#B89A5A]/10 border-[#B89A5A]/40 text-[#B89A5A]' : 'bg-white/5 border-white/10 text-[#F4F2ED] hover:border-white/20'}`}>
-                      {opt}
-                    </button>
-                  ))}
+                <div className="text-center text-xs text-[#B89A5A] font-semibold mt-1">
+                  {confidence === 1 && 'Ainda pouco confiante'}
+                  {confidence === 2 && 'Em desenvolvimento'}
+                  {confidence === 3 && 'Razoavelmente confiante'}
+                  {confidence === 4 && 'Bastante confiante'}
+                  {confidence === 5 && 'Muito confiante!'}
                 </div>
               </div>
 
-              <div>
-                <label className="text-sm font-medium text-[#F4F2ED] mb-3 block">Quantas horas por semana podes dedicar?</label>
-                <div className="flex gap-2">
+              {/* Challenge sub-card */}
+              <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-5">
+                <label className="text-sm font-semibold text-[#F4F2ED] mb-4 block">Qual é o teu maior desafio?</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { label: 'Fluência oral', icon: '🗣️' },
+                    { label: 'Vocabulário técnico', icon: '📚' },
+                    { label: 'Pronúncia', icon: '🔊' },
+                    { label: 'Confiança', icon: '💪' },
+                    { label: 'Estrutura das ideias', icon: '🧠' },
+                    { label: 'Interagir sob pressão', icon: '⚡' },
+                  ].map(({ label, icon }) => (
+                    <button key={label} onClick={() => setChallenge(label)}
+                      className={`py-4 px-4 rounded-xl border text-sm text-left transition-all duration-150 group ${challenge === label ? 'bg-[#B89A5A]/15 border-[#B89A5A]/50 text-[#B89A5A]' : 'bg-white/5 border-white/10 text-[#F4F2ED] hover:border-[#B89A5A]/30 hover:bg-[#B89A5A]/5'}`}>
+                      <span className="text-lg block mb-1.5">{icon}</span>
+                      <span className="font-medium leading-tight">{label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Hours/week sub-card */}
+              <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-5">
+                <label className="text-sm font-semibold text-[#F4F2ED] mb-4 block">Quantas horas por semana podes dedicar?</label>
+                <div className="flex gap-3">
                   {['1-2', '3-5', '5-8', '8+'].map(h => (
                     <button key={h} onClick={() => setHoursPerWeek(h)}
-                      className={`flex-1 py-2.5 rounded-lg border text-sm font-medium transition-all ${hoursPerWeek === h ? 'bg-[#B89A5A]/10 border-[#B89A5A]/40 text-[#B89A5A]' : 'bg-white/5 border-white/10 text-[#8E96A3] hover:border-white/20'}`}>
+                      className={`flex-1 py-4 rounded-xl border text-sm font-semibold transition-all duration-150 ${hoursPerWeek === h ? 'bg-[#B89A5A]/15 border-[#B89A5A]/50 text-[#B89A5A]' : 'bg-white/5 border-white/10 text-[#8E96A3] hover:border-[#B89A5A]/30 hover:bg-[#B89A5A]/5 hover:text-[#F4F2ED]'}`}>
                       {h}h
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div>
-                <label className="text-sm font-medium text-[#F4F2ED] mb-3 block">Qual é o teu objectivo principal?</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {['Apresentações de impacto', 'Reuniões eficazes', 'Confiança oral', 'Pronúncia nativa', 'Vocabulário avançado', 'Negociação'].map(g => (
-                    <button key={g} onClick={() => setMainGoal(g)}
-                      className={`py-2.5 px-3 rounded-lg border text-sm text-left transition-all ${mainGoal === g ? 'bg-[#B89A5A]/10 border-[#B89A5A]/40 text-[#B89A5A]' : 'bg-white/5 border-white/10 text-[#F4F2ED] hover:border-white/20'}`}>
-                      {g}
+              {/* Main goal sub-card */}
+              <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-5">
+                <label className="text-sm font-semibold text-[#F4F2ED] mb-4 block">Qual é o teu objectivo principal?</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { label: 'Apresentações de impacto', icon: '🎤' },
+                    { label: 'Reuniões eficazes', icon: '📋' },
+                    { label: 'Confiança oral', icon: '🌟' },
+                    { label: 'Pronúncia nativa', icon: '🎯' },
+                    { label: 'Vocabulário avançado', icon: '📖' },
+                    { label: 'Negociação', icon: '🤝' },
+                  ].map(({ label, icon }) => (
+                    <button key={label} onClick={() => setMainGoal(label)}
+                      className={`py-4 px-4 rounded-xl border text-sm text-left transition-all duration-150 ${mainGoal === label ? 'bg-[#B89A5A]/15 border-[#B89A5A]/50 text-[#B89A5A]' : 'bg-white/5 border-white/10 text-[#F4F2ED] hover:border-[#B89A5A]/30 hover:bg-[#B89A5A]/5'}`}>
+                      <span className="text-lg block mb-1.5">{icon}</span>
+                      <span className="font-medium leading-tight">{label}</span>
                     </button>
                   ))}
                 </div>
               </div>
             </div>
+
             <div className="flex gap-3">
               <Button variant="ghost" className="flex-1 text-[#8E96A3] border border-white/10 h-11" onClick={() => setCurrentStep(3)}>
                 <ArrowLeft className="mr-2 h-4 w-4" />Voltar
