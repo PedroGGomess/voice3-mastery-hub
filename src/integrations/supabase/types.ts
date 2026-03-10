@@ -269,6 +269,72 @@ export type Database = {
         }
         Relationships: []
       }
+      packs: {
+        Row: {
+          id: string
+          name: string
+          slug: string | null
+          price: number
+          sessions_included: number
+          features: Json | null
+          badge: string | null
+          description: string | null
+          status: string
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          slug?: string | null
+          price: number
+          sessions_included?: number
+          features?: Json | null
+          badge?: string | null
+          description?: string | null
+          status?: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          slug?: string | null
+          price?: number
+          sessions_included?: number
+          features?: Json | null
+          badge?: string | null
+          description?: string | null
+          status?: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      tools_config: {
+        Row: {
+          id: string
+          tool_slug: string | null
+          name: string | null
+          is_active: boolean
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          tool_slug?: string | null
+          name?: string | null
+          is_active?: boolean
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          tool_slug?: string | null
+          name?: string | null
+          is_active?: boolean
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
