@@ -51,8 +51,9 @@ function seedDemoData() {
         { id: 'cs5', name: 'Sofia Nunes', email: 'sofia@empresa.pt', pack: 'Pro', completedSessions: 0, totalSessions: 10, status: 'Nova', teacherStatus: '—' },
       ]));
 
-      // Demo students assigned to professor
+      // Demo students assigned to professor (including demo student João Silva)
       localStorage.setItem('voice3_professor_students_demo-professor', JSON.stringify([
+        { id: 'demo-student', name: 'João Silva', email: 'demo@voice3.pt', pack: 'Pro', completedChapters: 2, totalChapters: 10, nextSession: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], level: 'B2', teachingStyle: 'Intensive' },
         { id: 'cs1', name: 'Ana Costa', email: 'ana@empresa.pt', pack: 'Pro', completedChapters: 3, totalChapters: 10, nextSession: '2026-03-15', level: 'B2', teachingStyle: 'Balanced' },
         { id: 'cs2', name: 'Pedro Lopes', email: 'pedro@empresa.pt', pack: 'Advanced', completedChapters: 6, totalChapters: 10, nextSession: '2026-03-18', level: 'C1', teachingStyle: 'Rigorous' },
         { id: 'cs3', name: 'Maria Silva', email: 'maria@empresa.pt', pack: 'Starter', completedChapters: 1, totalChapters: 10, nextSession: null, level: 'B1', teachingStyle: 'Soft' },
@@ -99,6 +100,24 @@ function seedDemoData() {
 
       localStorage.setItem('voice3_bookings_demo-student', JSON.stringify([
         { id: 'b1', date: '2026-02-20', time: '18:00', duration: '45 min', topic: 'Introdução e avaliação inicial', notes: 'Nível B1 confirmado. Foco em fluência oral.', status: 'past' },
+      ]));
+
+      // Professor assignment for demo student
+      localStorage.setItem('voice3_professor_assignment_demo-student', JSON.stringify({
+        name: 'Sandra Stuttaford',
+        title: 'Executive English Coach',
+        professorId: 'demo-professor',
+      }));
+
+      // Assignments from professor to demo student
+      localStorage.setItem('voice3_student_assignments_demo-student', JSON.stringify([
+        {
+          id: 'a1',
+          title: 'Record yourself in a mock board meeting',
+          description: 'Use the PREP framework. Record 2 minutes. Submit the transcript.',
+          dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          status: 'pending',
+        },
       ]));
     }
   } catch (e) {
