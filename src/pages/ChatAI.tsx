@@ -112,8 +112,10 @@ const ChatAI = () => {
 
   const levelDetail = aiEval?.level && aiEval?.teachingStyle
     ? ` (${aiEval.level}), teaching style (${aiEval.teachingStyle}),`
-    : ",";
-  const systemMessage = `Your AI Coach knows your level${levelDetail} and weak points. Ask anything about your sessions, get feedback on your writing, or request a drill.`;
+    : "";
+  const systemMessage = aiEval?.level
+    ? `Your AI Coach knows your level${levelDetail} and weak points. Ask anything about your sessions, get feedback on your writing, or request a drill.`
+    : "Your AI Coach is ready to help. Ask anything about your sessions, get feedback on your writing, or request a drill.";
 
   useEffect(() => {
     try {

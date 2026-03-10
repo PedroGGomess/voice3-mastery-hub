@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import PlatformLayout from "@/components/PlatformLayout";
+import { RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer } from "recharts";
 
 const TEACHING_STYLES = [
   { id: 'rigorous', emoji: '🔴', label: 'Rigorous', description: 'Direct corrections, high standards' },
@@ -541,19 +542,41 @@ export default function DiagnosticSession() {
 
         {/* ── PROCESSING ── */}
         {isProcessing && (
-          <motion.div key="processing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl">
-            <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-12 text-center">
-              <div className="w-20 h-20 rounded-full bg-[#B89A5A]/10 flex items-center justify-center mx-auto mb-6">
-                <Brain className="h-10 w-10 text-[#B89A5A] animate-pulse" />
+          <motion.div key="processing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-2xl">
+            <div className="rounded-xl bg-gradient-to-br from-[#0B1A2A] to-[#1C1F26] border border-[#B89A5A]/20 p-12 text-center">
+              <div className="relative w-24 h-24 mx-auto mb-6">
+                <div className="absolute inset-0 rounded-full bg-[#B89A5A]/10 animate-ping" style={{ animationDuration: '2s' }} />
+                <div className="relative w-24 h-24 rounded-full bg-[#B89A5A]/10 border-2 border-[#B89A5A]/40 flex items-center justify-center">
+                  <span className="font-bold tracking-[0.1em] text-[#B89A5A] text-lg">
+                    V<sup className="text-xs">³</sup>
+                  </span>
+                </div>
               </div>
-              <h2 className="font-serif text-xl font-semibold text-[#F4F2ED] mb-2">A IA está a analisar o teu perfil...</h2>
-              <p className="text-sm text-[#8E96A3] mb-8">Isto pode demorar alguns segundos</p>
-              <div className="space-y-2 text-left max-w-sm mx-auto">
-                {['A analisar gravação de áudio...', 'A avaliar amostra de escrita...', 'A processar resultados de vocabulário...', 'A sintetizar perfil de aprendizagem...', 'A gerar recomendações personalizadas...'].map((step, i) => (
-                  <div key={i} className={`flex items-center gap-3 text-sm transition-all ${i <= processingStep ? 'text-[#F4F2ED]' : 'text-white/20'}`}>
-                    {i < processingStep ? <CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" /> : i === processingStep ? <Loader2 className="h-4 w-4 text-[#B89A5A] animate-spin shrink-0" /> : <div className="w-4 h-4 rounded-full border border-white/20 shrink-0" />}
+              <h2 className="font-serif text-xl font-semibold text-[#F4F2ED] mb-2">Analysing your executive profile...</h2>
+              <p className="text-sm text-[#8E96A3] mb-8">Building a personalised learning path just for you</p>
+              <div className="space-y-3 text-left max-w-sm mx-auto">
+                {[
+                  'Voice patterns evaluated',
+                  'Writing clarity assessed',
+                  'Vocabulary profile mapped',
+                  'Learning path generated',
+                ].map((step, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: i <= processingStep ? 1 : 0.2, x: 0 }}
+                    transition={{ delay: i * 0.2 }}
+                    className={`flex items-center gap-3 text-sm ${i <= processingStep ? 'text-[#F4F2ED]' : 'text-white/20'}`}
+                  >
+                    {i < processingStep ? (
+                      <CheckCircle2 className="h-4 w-4 text-green-400 shrink-0" />
+                    ) : i === processingStep ? (
+                      <Loader2 className="h-4 w-4 text-[#B89A5A] animate-spin shrink-0" />
+                    ) : (
+                      <div className="w-4 h-4 rounded-full border border-white/20 shrink-0" />
+                    )}
                     {step}
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
@@ -563,57 +586,99 @@ export default function DiagnosticSession() {
         {/* ── STEP 6: Results ── */}
         {currentStep === 6 && aiResult && !isProcessing && (
           <motion.div key="results" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl">
+            {/* Header */}
+            <div className="mb-2">
+              <p className="text-xs text-[#B89A5A] tracking-[0.2em] uppercase font-medium">Diagnóstico Concluído</p>
+              <h1 className="font-serif text-2xl font-semibold text-[#F4F2ED] mt-1">Your Executive Profile</h1>
+              <p className="text-xs text-[#8E96A3] mt-1">{currentUser?.name} · {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+            </div>
+
+            {/* Level badge */}
             <div className="rounded-xl bg-gradient-to-br from-[#1C1F26] to-[#0F1B2A] border border-[#B89A5A]/20 p-6 mb-4 text-center">
               <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2, type: 'spring' }}
                 className="w-24 h-24 rounded-full bg-[#B89A5A]/10 border-2 border-[#B89A5A]/30 flex items-center justify-center mx-auto mb-4">
                 <span className="text-4xl font-bold text-[#B89A5A]">{aiResult.level}</span>
               </motion.div>
-              <h2 className="font-serif text-2xl font-semibold text-[#F4F2ED] mb-1">O teu nível: {aiResult.level}</h2>
+              <h2 className="font-serif text-2xl font-semibold text-[#F4F2ED] mb-1">Level {aiResult.level}</h2>
               <p className="text-sm text-[#8E96A3] mb-4">
-                {aiResult.level === 'B1' && 'Nível intermédio — boas bases, muito potencial de crescimento'}
-                {aiResult.level === 'B2' && 'Nível intermédio-avançado — comunicação eficaz em muitos contextos'}
-                {aiResult.level === 'C1' && 'Nível avançado — fluência sólida, foco em refinamento'}
-                {aiResult.level === 'C2' && 'Nível de proficiência — domínio quase nativo'}
+                {aiResult.level === 'B1' && 'You communicate well in familiar contexts but lack precision under pressure.'}
+                {aiResult.level === 'B2' && 'You communicate with confidence but lack precision under pressure.'}
+                {aiResult.level === 'C1' && 'You communicate with fluency and precision across professional contexts.'}
+                {aiResult.level === 'C2' && 'You communicate at near-native level with exceptional executive presence.'}
               </p>
 
-              <div className="flex justify-center gap-3 mb-6">
+              <div className="flex justify-center gap-3 mb-2">
                 <span className={`text-sm px-3 py-1 rounded-full border font-semibold ${aiResult.level === 'B1' ? 'bg-blue-400/10 border-blue-400/20 text-blue-400' : aiResult.level === 'B2' ? 'bg-purple-400/10 border-purple-400/20 text-purple-400' : aiResult.level === 'C1' ? 'bg-orange-400/10 border-orange-400/20 text-orange-400' : 'bg-green-400/10 border-green-400/20 text-green-400'}`}>
                   {aiResult.level}
                 </span>
                 <span className="text-sm px-3 py-1 rounded-full bg-[#B89A5A]/10 border border-[#B89A5A]/20 text-[#B89A5A] font-semibold">
-                  {TEACHING_STYLES.find(s => s.id === aiResult.teachingStyle)?.emoji} {TEACHING_STYLES.find(s => s.id === aiResult.teachingStyle)?.label}
+                  {TEACHING_STYLES.find(s => s.id === aiResult.teachingStyle)?.emoji} {TEACHING_STYLES.find(s => s.id === aiResult.teachingStyle)?.label} Learner
                 </span>
               </div>
             </div>
 
+            {/* Radar Chart */}
             <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-5 mb-4">
-              <h3 className="text-xs text-[#8E96A3] uppercase tracking-wider mb-3">Mensagem Personalizada da IA</h3>
+              <h3 className="text-xs text-[#8E96A3] uppercase tracking-wider mb-4">Communication Profile</h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <RadarChart data={[
+                  { axis: 'Pronunciation', value: aiResult.weakPoints.pronunciation },
+                  { axis: 'Structure', value: aiResult.weakPoints.structure },
+                  { axis: 'Vocabulary', value: aiResult.weakPoints.vocabulary },
+                  // Confidence is 1-5; scale to 1-10 to match other axes
+                  { axis: 'Confidence', value: aiResult.weakPoints.confidence * 2 },
+                  { axis: 'Clarity', value: aiResult.weakPoints.clarity },
+                  // Filler words score is inverted: higher = more fillers = worse
+                  { axis: 'Filler Words', value: 10 - aiResult.weakPoints.filler },
+                ]}>
+                  <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                  <PolarAngleAxis dataKey="axis" tick={{ fill: '#8E96A3', fontSize: 11 }} />
+                  <Radar dataKey="value" stroke="#B89A5A" fill="#B89A5A" fillOpacity={0.2} />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* AI Conclusions */}
+            <div className="rounded-xl bg-[#1C1F26] border-l-4 border-l-[#B89A5A]/50 border border-white/5 p-5 mb-4">
+              <h3 className="text-xs text-[#8E96A3] uppercase tracking-wider mb-3">AI Analysis</h3>
               <p className="text-sm text-[#F4F2ED] leading-relaxed">{aiResult.aiConclusions}</p>
             </div>
 
+            {/* Top 3 focus areas */}
             <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-5 mb-4">
-              <h3 className="text-xs text-[#8E96A3] uppercase tracking-wider mb-3">Top 3 Áreas de Melhoria</h3>
-              <div className="space-y-2">
+              <h3 className="text-xs text-[#8E96A3] uppercase tracking-wider mb-3">Top 3 Priority Areas</h3>
+              <div className="space-y-3">
                 {Object.entries(aiResult.weakPoints).sort(([,a]: any, [,b]: any) => b - a).slice(0, 3).map(([key, value]: [string, any], i) => (
-                  <div key={key} className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-[#8E96A3] w-4">{i + 1}.</span>
-                    <span className="text-sm text-[#F4F2ED] flex-1 capitalize">{key}</span>
-                    <div className="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                  <div key={key} className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/[0.05]">
+                    <div className="w-8 h-8 rounded-lg bg-[#B89A5A]/10 flex items-center justify-center shrink-0">
+                      <span className="text-sm font-bold text-[#B89A5A]">{i + 1}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-[#F4F2ED] capitalize">{key}</p>
+                      <p className="text-xs text-[#8E96A3]">
+                        {key === 'pronunciation' && 'Clarity of speech for international listeners'}
+                        {key === 'structure' && 'Logical flow and message organisation'}
+                        {key === 'vocabulary' && 'Breadth and precision of professional vocabulary'}
+                        {key === 'confidence' && 'Assertiveness and executive presence'}
+                        {key === 'filler' && 'Removing hesitations that undermine credibility'}
+                        {key === 'clarity' && 'Precision and impact of your communication'}
+                      </p>
+                    </div>
+                    <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
                       <div className="h-full rounded-full bg-[#B89A5A]" style={{ width: `${(value / 10) * 100}%` }} />
                     </div>
-                    <span className="text-xs text-[#B89A5A] font-medium w-8 text-right">{value}/10</span>
                   </div>
                 ))}
               </div>
             </div>
 
             <div className="p-4 rounded-xl bg-[#B89A5A]/5 border border-[#B89A5A]/20 mb-4">
-              <p className="text-xs text-[#B89A5A] font-semibold uppercase tracking-wider mb-1">✨ O teu percurso foi personalizado</p>
-              <p className="text-sm text-[#F4F2ED]">O teu programa foi adaptado com base nos resultados do diagnóstico. O Capítulo 2 está desbloqueado!</p>
+              <p className="text-xs text-[#B89A5A] font-semibold uppercase tracking-wider mb-1">✨ Your path has been personalised</p>
+              <p className="text-sm text-[#F4F2ED]">Your programme has been tailored based on your diagnostic results. Chapter 2 is now unlocked!</p>
             </div>
 
             <Button onClick={() => navigate('/capitulos')} className="w-full bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold h-12 text-base">
-              Começar a Jornada <ArrowRight className="ml-2 h-5 w-5" />
+              Begin Chapter 2 — Voice Foundations <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </motion.div>
         )}

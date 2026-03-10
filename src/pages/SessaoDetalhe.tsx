@@ -158,8 +158,8 @@ const SessaoDetalhe = () => {
                 {session.time}
               </span>
               {/* Session type badge */}
-              {chapterSession && (
-                <span className={`text-xs font-medium px-2.5 py-0.5 rounded ${sessionTypeColors[chapterSession.sessionType]}`}>
+              {chapterSession && sessionTypeLabels[chapterSession.sessionType] && (
+                <span className={`text-xs font-medium px-2.5 py-0.5 rounded ${sessionTypeColors[chapterSession.sessionType] || 'bg-white/10 text-white/60'}`}>
                   {sessionTypeLabels[chapterSession.sessionType]}
                 </span>
               )}
