@@ -149,7 +149,7 @@ function getBotResponse(text: string): string {
     return "Here's a targeted drill for executive communication:\n\n**DRILL: Diplomatic Disagreement**\nTransform these blunt statements into professional, diplomatic versions:\n\n1. 'That's wrong.' → ?\n2. 'I don't agree.' → ?\n3. 'We can't do that.' → ?\n\n*Model answers:*\n1. 'I see this slightly differently — could we explore...'\n2. 'I appreciate that perspective, however...'\n3. 'That presents some challenges. What if we were to...'\n\nTry writing your own versions! 💪";
   }
 
-  if (lower.includes("grammar point") || lower.includes("explain") && lower.includes("grammar")) {
+  if (lower.includes("grammar point") || (lower.includes("explain") && lower.includes("grammar"))) {
     return "**Grammar Focus: Conditional Sentences in Business English**\n\nConditionals are essential for professional communication — proposals, negotiations, and hypotheticals.\n\n**Type 1** (real possibility): 'If we confirm by Friday, *we will* meet the deadline.'\n**Type 2** (hypothetical): 'If we *had* more budget, *we would* expand the team.'\n**Type 3** (past hypothetical): 'If we *had started* earlier, *we would have avoided* this delay.'\n\n**Business tip:** Use Type 2 for polite requests: 'It *would* be helpful *if you could* send the report by EOD.'";
   }
 
@@ -162,7 +162,7 @@ function getBotResponse(text: string): string {
   }
 
   if (lower.includes("vocabulary") || lower.includes("5 advanced") || lower.includes("business english vocabulary")) {
-    return "**5 Advanced Business English Expressions:**\n\n1. **To cascade** — to communicate information down through an organisation\n*'We need to cascade this decision to all team leads by tomorrow.'\n\n2. **To leverage** — to use something to maximum advantage\n*'We can leverage our existing client relationships for this expansion.'\n\n3. **Bandwidth** — capacity to take on more work\n*'I don't have the bandwidth for this project right now.'\n\n4. **To circle back** — to return to a topic later\n*'Let's circle back on the budget once we have the figures.'\n\n5. **Stakeholder alignment** — ensuring all relevant parties agree\n*'Before we proceed, we need full stakeholder alignment.'\n\nTry using one in a sentence! ✍️";
+    return "**5 Advanced Business English Expressions:**\n\n1. **To cascade** — to communicate information down through an organization\n*'We need to cascade this decision to all team leads by tomorrow.'\n\n2. **To leverage** — to use something to maximum advantage\n*'We can leverage our existing client relationships for this expansion.'\n\n3. **Bandwidth** — capacity to take on more work\n*'I don't have the bandwidth for this project right now.'\n\n4. **To circle back** — to return to a topic later\n*'Let's circle back on the budget once we have the figures.'\n\n5. **Stakeholder alignment** — ensuring all relevant parties agree\n*'Before we proceed, we need full stakeholder alignment.'\n\nTry using one in a sentence! ✍️";
   }
 
   return "Excelente pergunta! Na VOICE³, trabalhamos cada aspeto da comunicação executiva. Pode reformular a tua pergunta ou escolher um dos tópicos acima?\n\nPosso ajudar-te com: gramática, vocabulário, reuniões, emails, apresentações, pronúncia, confiança ou negociação. 😊";
