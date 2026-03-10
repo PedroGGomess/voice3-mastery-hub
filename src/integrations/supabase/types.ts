@@ -14,16 +14,286 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_evaluations: {
+        Row: {
+          ai_conclusions: string | null
+          created_at: string | null
+          id: string
+          level: string | null
+          professor_focus_points: Json | null
+          raw_responses: Json | null
+          recommended_path: Json | null
+          student_id: string
+          suggested_drills: Json | null
+          teaching_style: string | null
+          weak_points: Json | null
+        }
+        Insert: {
+          ai_conclusions?: string | null
+          created_at?: string | null
+          id?: string
+          level?: string | null
+          professor_focus_points?: Json | null
+          raw_responses?: Json | null
+          recommended_path?: Json | null
+          student_id: string
+          suggested_drills?: Json | null
+          teaching_style?: string | null
+          weak_points?: Json | null
+        }
+        Update: {
+          ai_conclusions?: string | null
+          created_at?: string | null
+          id?: string
+          level?: string | null
+          professor_focus_points?: Json | null
+          raw_responses?: Json | null
+          recommended_path?: Json | null
+          student_id?: string
+          suggested_drills?: Json | null
+          teaching_style?: string | null
+          weak_points?: Json | null
+        }
+        Relationships: []
+      }
+      assignments: {
+        Row: {
+          assignment_type: string | null
+          created_at: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          professor_id: string
+          status: string | null
+          student_id: string
+          title: string
+        }
+        Insert: {
+          assignment_type?: string | null
+          created_at?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          professor_id: string
+          status?: string | null
+          student_id: string
+          title: string
+        }
+        Update: {
+          assignment_type?: string | null
+          created_at?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          professor_id?: string
+          status?: string | null
+          student_id?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      bookings: {
+        Row: {
+          booked_date: string
+          cancellation_reason: string | null
+          created_at: string | null
+          end_time: string
+          id: string
+          professor_id: string
+          start_time: string
+          status: string | null
+          student_id: string
+        }
+        Insert: {
+          booked_date: string
+          cancellation_reason?: string | null
+          created_at?: string | null
+          end_time: string
+          id?: string
+          professor_id: string
+          start_time: string
+          status?: string | null
+          student_id: string
+        }
+        Update: {
+          booked_date?: string
+          cancellation_reason?: string | null
+          created_at?: string | null
+          end_time?: string
+          id?: string
+          professor_id?: string
+          start_time?: string
+          status?: string | null
+          student_id?: string
+        }
+        Relationships: []
+      }
+      professor_availability: {
+        Row: {
+          buffer_minutes: number | null
+          day_of_week: number | null
+          end_time: string
+          id: string
+          is_active: boolean | null
+          professor_id: string
+          slot_duration_minutes: number | null
+          start_time: string
+          timezone: string | null
+        }
+        Insert: {
+          buffer_minutes?: number | null
+          day_of_week?: number | null
+          end_time: string
+          id?: string
+          is_active?: boolean | null
+          professor_id: string
+          slot_duration_minutes?: number | null
+          start_time: string
+          timezone?: string | null
+        }
+        Update: {
+          buffer_minutes?: number | null
+          day_of_week?: number | null
+          end_time?: string
+          id?: string
+          is_active?: boolean | null
+          professor_id?: string
+          slot_duration_minutes?: number | null
+          start_time?: string
+          timezone?: string | null
+        }
+        Relationships: []
+      }
+      professor_notes: {
+        Row: {
+          action_plan: string | null
+          id: string
+          next_session_focus: Json | null
+          private_notes: string | null
+          professor_id: string
+          student_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          action_plan?: string | null
+          id?: string
+          next_session_focus?: Json | null
+          private_notes?: string | null
+          professor_id: string
+          student_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          action_plan?: string | null
+          id?: string
+          next_session_focus?: Json | null
+          private_notes?: string | null
+          professor_id?: string
+          student_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          company: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string | null
+          pack: string | null
+          timezone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          id: string
+          name?: string | null
+          pack?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+          pack?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      student_professor_assignments: {
+        Row: {
+          assigned_at: string | null
+          id: string
+          pack: string | null
+          professor_id: string
+          student_id: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          id?: string
+          pack?: string | null
+          professor_id: string
+          student_id: string
+        }
+        Update: {
+          assigned_at?: string | null
+          id?: string
+          pack?: string | null
+          professor_id?: string
+          student_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      book_professor_session: {
+        Args: {
+          p_date: string
+          p_end_time: string
+          p_professor_id: string
+          p_start_time: string
+          p_student_id: string
+        }
+        Returns: Json
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "student" | "professor" | "company_admin" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +420,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["student", "professor", "company_admin", "admin"],
+    },
   },
 } as const
