@@ -65,17 +65,17 @@ const SidebarRight = () => {
 
         <CalendarWidget />
 
-        <div className="p-3 flex gap-2 border-t border-white/5">
+        <div className="p-3 flex gap-2 border-t border-white/5 shrink-0">
           <Button
             size="sm"
-            className="flex-1 h-8 text-xs bg-[#B89A5A]/10 text-[#B89A5A] hover:bg-[#B89A5A]/20 border-0"
+            className="flex-1 h-8 text-xs bg-[#B89A5A]/10 text-[#B89A5A] hover:bg-[#B89A5A]/20 border-0 min-w-0"
             asChild
           >
             <Link to="/app/aulas">Ver Agenda</Link>
           </Button>
           <Button
             size="sm"
-            className="flex-1 h-8 text-xs bg-white/5 text-white/50 hover:bg-white/10 border-0"
+            className="flex-1 h-8 text-xs bg-white/5 text-white/50 hover:bg-white/10 border-0 min-w-0"
           >
             Confirmar
           </Button>

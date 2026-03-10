@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { sessionsData } from "@/lib/sessionsData";
+import { chaptersData } from "@/lib/chaptersData";
 
 const TOTAL_SESSIONS = 10;
 
@@ -46,6 +47,20 @@ const MeuCurso = () => {
     if (stored) aiEval = JSON.parse(stored);
   } catch (_e) {}
 
+  // Check if Chapter 1 diagnostic is completed
+  let diagnosticCompleted = false;
+  try {
+    const stored = localStorage.getItem(`voice3_diagnostic_completed_${userId}`);
+    if (stored) diagnosticCompleted = true;
+  } catch (_e) {}
+
+  // Load chapter-level progress
+  let chapterProgress: Record<string, string> = {};
+  try {
+    const stored = localStorage.getItem(`voice3_chapter_progress_${userId}`);
+    if (stored) chapterProgress = JSON.parse(stored);
+  } catch (_e) {}
+
   // Load professor assignments
   let assignments: any[] = [];
   try {
@@ -67,6 +82,31 @@ const MeuCurso = () => {
 
   // Find the next session in progress
   const nextSession = sessionsData.find(s => getSessionStatus(s.id) === "progress") || sessionsData[0];
+
+  // Chapter context for the hero card — sessions 1-5 → ch2, 6-10 → ch3
+  const getNextSessionChapterInfo = () => {
+    if (nextSession.id >= 1 && nextSession.id <= 5) {
+      const ch = chaptersData.find(c => c.id === 'ch2');
+      if (!ch) return null;
+      const done = [1,2,3,4,5].filter(id => progress[id]?.completed).length;
+      return { chapter: ch, indexInChapter: nextSession.id, totalInChapter: 5, done };
+    }
+    if (nextSession.id >= 6 && nextSession.id <= 10) {
+      const ch = chaptersData.find(c => c.id === 'ch3');
+      if (!ch) return null;
+      const done = [6,7,8,9,10].filter(id => progress[id]?.completed).length;
+      return { chapter: ch, indexInChapter: nextSession.id - 5, totalInChapter: 5, done };
+    }
+    return null;
+  };
+  const nextSessionChapterInfo = getNextSessionChapterInfo();
+
+  // Sessions done per chapter (for chapter cards)
+  const sessionsDoneByChapter: Record<string, number> = {
+    ch1: diagnosticCompleted ? 1 : 0,
+    ch2: [1,2,3,4,5].filter(id => progress[id]?.completed).length,
+    ch3: [6,7,8,9,10].filter(id => progress[id]?.completed).length,
+  };
 
   // Build combined list
   const combinedList = [
@@ -91,7 +131,7 @@ const MeuCurso = () => {
             </span>
           )}
         </div>
-        {!onboardingCompleted && (
+        {!onboardingCompleted && !diagnosticCompleted && (
           <Link to="/onboarding" className="inline-flex items-center gap-2 mt-3 px-4 py-2.5 rounded-xl bg-[#B89A5A]/10 border border-[#B89A5A]/30 text-sm text-[#F4F2ED] hover:bg-[#B89A5A]/20 transition-all">
             <span className="text-[#B89A5A] font-semibold">Complete your Executive Profile</span> to unlock personalised training →
           </Link>
@@ -122,10 +162,40 @@ const MeuCurso = () => {
               </span>
             </div>
 
+            {/* Chapter context label */}
+            {nextSessionChapterInfo && (
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-xs font-medium text-[#B89A5A]/90">
+                  Cap. {nextSessionChapterInfo.chapter.number} — {nextSessionChapterInfo.chapter.title}
+                </span>
+                <span className="text-xs text-[#8E96A3]">
+                  Sessão {nextSessionChapterInfo.indexInChapter} de {nextSessionChapterInfo.totalInChapter}
+                </span>
+              </div>
+            )}
+
             <h2 className="font-serif text-2xl font-semibold text-[#F4F2ED] mb-2 leading-tight">
               {nextSession.title}
             </h2>
-            <p className="text-[#8E96A3] text-sm mb-6 leading-relaxed">{nextSession.objective}</p>
+            <p className="text-[#8E96A3] text-sm mb-4 leading-relaxed">{nextSession.objective}</p>
+
+            {/* Chapter progress bar */}
+            {nextSessionChapterInfo && (
+              <div className="mb-5">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] text-[#8E96A3]">Progresso do capítulo</span>
+                  <span className="text-[10px] text-[#B89A5A] font-semibold">
+                    {nextSessionChapterInfo.done}/{nextSessionChapterInfo.totalInChapter}
+                  </span>
+                </div>
+                <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-[#B89A5A] to-[#d4ba6a]"
+                    style={{ width: `${(nextSessionChapterInfo.done / nextSessionChapterInfo.totalInChapter) * 100}%` }}
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="flex items-center gap-3">
               <Button
@@ -187,33 +257,57 @@ const MeuCurso = () => {
         </motion.div>
       </div>
 
-      {/* Course Progress Bar */}
+      {/* Chapter Progress Cards */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="rounded-xl bg-[#1C1F26] border border-white/5 p-5 mb-6"
+        className="mb-6"
       >
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium">Course Progress</span>
           <span className="text-xs text-[#B89A5A] font-semibold">{completedCount}/{TOTAL_SESSIONS} sessões · {progressPercent}%</span>
         </div>
-        <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full rounded-full bg-gradient-to-r from-[#B89A5A] to-[#d4ba6a]"
-            initial={{ width: 0 }}
-            animate={{ width: `${progressPercent}%` }}
-            transition={{ duration: 1.2, ease: "easeOut", delay: 0.4 }}
-          />
-        </div>
-        <div className="flex justify-between mt-3 gap-1">
-          {sessionsData.map((s) => {
-            const status = getSessionStatus(s.id);
+        <div className="flex gap-3 overflow-x-auto pb-2">
+          {chaptersData.map((chapter) => {
+            const chStatus = chapterProgress[chapter.id] || (chapter.id === 'ch1' ? 'available' : 'locked');
+            const sessionsDone = sessionsDoneByChapter[chapter.id] ?? 0;
+            const total = chapter.totalSessions;
+            const pct = total > 0 ? (sessionsDone / total) * 100 : 0;
+            const isCompleted = chStatus === 'completed' || (total > 0 && sessionsDone >= total);
+            const isActive = chStatus === 'in_progress' || chStatus === 'available';
+            const isLocked = chStatus === 'locked' && sessionsDone === 0;
             return (
-              <div key={s.id} className="flex-1 flex flex-col items-center gap-1">
-                <div className={`w-2 h-2 rounded-full ${status === "done" ? "bg-[#B89A5A]" : status === "progress" ? "bg-[#B89A5A]/60 animate-pulse" : "bg-white/10"}`} />
-                <span className={`text-[9px] font-medium hidden sm:block ${status === "todo" ? "text-white/20" : "text-[#8E96A3]"}`}>{s.id}</span>
-              </div>
+              <Link
+                key={chapter.id}
+                to="/capitulos"
+                className={`flex-shrink-0 w-44 p-3.5 rounded-xl border transition-all duration-200 ${
+                  isCompleted
+                    ? 'bg-[#0A2015] border-green-500/30 hover:border-green-500/50'
+                    : isActive
+                    ? 'bg-[#1C1F26] border-[#B89A5A]/30 hover:border-[#B89A5A]/50'
+                    : 'bg-[#1C1F26] border-white/5 opacity-60 hover:opacity-80'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-semibold text-[#8E96A3] uppercase tracking-wider">Ch {chapter.number}</span>
+                  {isCompleted && <span className="text-[10px] text-green-400 font-semibold">✅ Concluído</span>}
+                  {isActive && !isCompleted && <span className="text-[10px] text-[#B89A5A] font-semibold">🔵 Ativo</span>}
+                  {isLocked && <Lock className="h-3 w-3 text-white/20" />}
+                </div>
+                <p className={`text-xs font-medium leading-tight mb-2.5 line-clamp-2 ${isLocked ? 'text-white/30' : 'text-[#F4F2ED]'}`}>
+                  {chapter.title}
+                </p>
+                <div className="space-y-1">
+                  <span className="text-[10px] text-[#8E96A3]">{sessionsDone}/{total} sessões</span>
+                  <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${isCompleted ? 'bg-green-500' : 'bg-gradient-to-r from-[#B89A5A] to-[#d4ba6a]'}`}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                </div>
+              </Link>
             );
           })}
         </div>
@@ -236,21 +330,21 @@ const MeuCurso = () => {
               icon: Library,
               title: "Programme Catalogue",
               description: "Explore 35+ programmes across 7 segments",
-              cta: "Browse Catalogue →",
+              cta: "Browse Catalogue",
               to: "/app/catalogue",
             },
             {
               icon: Wrench,
               title: "My Toolkit",
               description: "On-demand tools for immediate challenges",
-              cta: "Open Toolkit →",
+              cta: "Open Toolkit",
               to: "/app/toolkit",
             },
             {
               icon: Swords,
               title: "Practice Arena",
               description: "Pressure test your communication skills",
-              cta: "Start Practicing →",
+              cta: "Start Practicing",
               to: "/app/practice",
             },
           ].map((card, i) => (
@@ -262,16 +356,19 @@ const MeuCurso = () => {
             >
               <Link
                 to={card.to}
-                className="flex flex-col gap-3 p-5 rounded-xl bg-[#1C1F26] border border-[#B89A5A]/10 hover:border-[#B89A5A]/30 transition-all duration-200 group h-full"
+                className="flex flex-col gap-4 p-5 rounded-xl bg-[#1C1F26] border border-[#B89A5A]/10 hover:border-[#B89A5A]/40 hover:shadow-[0_0_20px_rgba(184,154,90,0.1)] transition-all duration-300 group h-full"
               >
-                <div className="w-9 h-9 rounded-lg bg-[#B89A5A]/10 flex items-center justify-center shrink-0">
-                  <card.icon className="h-4.5 w-4.5 text-[#B89A5A]" />
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B89A5A]/20 to-[#B89A5A]/5 border border-[#B89A5A]/20 flex items-center justify-center shrink-0 group-hover:from-[#B89A5A]/30 transition-all">
+                  <card.icon className="h-5 w-5 text-[#B89A5A]" />
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-[#F4F2ED] group-hover:text-[#B89A5A] transition-colors">{card.title}</p>
-                  <p className="text-xs text-[#8E96A3] mt-0.5 leading-relaxed">{card.description}</p>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-[#F4F2ED] mb-1.5 group-hover:text-[#B89A5A] transition-colors">{card.title}</p>
+                  <p className="text-xs text-[#8E96A3] leading-relaxed">{card.description}</p>
                 </div>
-                <span className="text-xs text-[#B89A5A] font-medium mt-auto">{card.cta}</span>
+                <span className="inline-flex items-center gap-1.5 self-start px-3 py-1.5 rounded-full bg-[#B89A5A]/10 border border-[#B89A5A]/20 text-xs font-semibold text-[#B89A5A] group-hover:bg-[#B89A5A]/20 transition-all">
+                  {card.cta}
+                  <ChevronRight className="h-3 w-3" />
+                </span>
               </Link>
             </motion.div>
           ))}

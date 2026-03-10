@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Lock, Clock } from "lucide-react";
+import { ArrowRight, Lock, Clock, ChevronDown, ChevronUp } from "lucide-react";
 import PlatformLayout from "@/components/PlatformLayout";
 import ComingSoonModal from "@/components/ComingSoonModal";
 import { layersData } from "@/lib/layersData";
@@ -49,6 +49,7 @@ const Toolkit = () => {
   const { currentUser } = useAuth();
   const [comingSoon, setComingSoon] = useState<{ open: boolean; name: string; id: string } | null>(null);
   const [activeTab, setActiveTab] = useState<"tools" | "history">("tools");
+  const [expandedEntry, setExpandedEntry] = useState<string | null>(null);
 
   const history = currentUser ? getToolkitHistory(currentUser.id) : [];
 
@@ -168,29 +169,81 @@ const Toolkit = () => {
           className="space-y-3"
         >
           {history.length === 0 ? (
-            <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-8 text-center">
-              <p className="text-[#8E96A3] text-sm">No toolkit usage yet.</p>
-              <p className="text-xs text-[#8E96A3]/60 mt-1">Use a tool to see your history here.</p>
+            <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-10 text-center">
+              <div className="text-4xl mb-4">🛠️</div>
+              <p className="text-sm font-semibold text-[#F4F2ED] mb-1">No history yet</p>
+              <p className="text-xs text-[#8E96A3] mb-4">Use a tool to see your results here.</p>
+              <button
+                onClick={() => setActiveTab("tools")}
+                className="inline-flex items-center gap-1.5 text-xs text-[#B89A5A] hover:text-[#d4ba6a] transition-colors font-semibold"
+              >
+                Open a Tool <ArrowRight className="h-3 w-3" />
+              </button>
             </div>
           ) : (
-            history.map(entry => (
-              <div key={entry.id} className="rounded-xl bg-[#1C1F26] border border-white/5 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-[#F4F2ED]">{entry.toolName}</p>
-                    <p className="text-xs text-[#8E96A3] flex items-center gap-1 mt-0.5">
-                      <Clock className="h-3 w-3" />
-                      {new Date(entry.createdAt).toLocaleDateString("en-GB", {
-                        day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
-                      })}
-                    </p>
+            history.map(entry => {
+              const isExpanded = expandedEntry === entry.id;
+              const resultText = typeof entry.outputs?.result === "string"
+                ? entry.outputs.result
+                : JSON.stringify(entry.outputs, null, 2);
+              const preview = resultText.slice(0, 100) + (resultText.length > 100 ? "…" : "");
+
+              return (
+                <div key={entry.id} className="rounded-xl bg-[#1C1F26] border border-white/5 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-bold text-[#B89A5A] bg-[#B89A5A]/10 border border-[#B89A5A]/20 px-2 py-0.5 rounded">
+                          {entry.toolName}
+                        </span>
+                        <span className="text-xs text-[#8E96A3] flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {new Date(entry.createdAt).toLocaleDateString("en-GB", {
+                            day: "numeric", month: "short", year: "numeric",
+                          })}
+                          {" · "}
+                          {new Date(entry.createdAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#8E96A3] line-clamp-2">{isExpanded ? resultText : preview}</p>
+                    </div>
+                    <button
+                      onClick={() => setExpandedEntry(isExpanded ? null : entry.id)}
+                      className="shrink-0 flex items-center gap-1 text-xs text-[#B89A5A] hover:text-[#d4ba6a] transition-colors font-semibold"
+                    >
+                      {isExpanded ? (
+                        <><ChevronUp className="h-3.5 w-3.5" /> Hide</>
+                      ) : (
+                        <><ChevronDown className="h-3.5 w-3.5" /> View</>
+                      )}
+                    </button>
                   </div>
-                  <span className="text-xs text-[#B89A5A] bg-[#B89A5A]/10 px-2 py-1 rounded">
-                    {entry.toolId}
-                  </span>
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-3 pt-3 border-t border-white/5">
+                          {entry.inputs?.input && (
+                            <div className="mb-2">
+                              <p className="text-[10px] text-[#8E96A3] uppercase tracking-wider mb-1">Input</p>
+                              <p className="text-xs text-[#F4F2ED]/70 bg-white/[0.03] rounded px-3 py-2">{entry.inputs.input}</p>
+                            </div>
+                          )}
+                          <div>
+                            <p className="text-[10px] text-[#8E96A3] uppercase tracking-wider mb-1">Result</p>
+                            <p className="text-xs text-[#F4F2ED]/80 whitespace-pre-line bg-white/[0.03] rounded px-3 py-2">{resultText}</p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </motion.div>
       )}

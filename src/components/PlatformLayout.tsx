@@ -14,16 +14,16 @@ import { useNotifications } from "@/hooks/use-notifications";
 
 type NavItem =
   | { type: "separator"; label: string }
-  | { type: "link"; to: string; icon: LucideIcon; label: string; end?: boolean; isNew?: boolean };
+  | { type: "link"; to: string; icon: LucideIcon; label: string; end?: boolean };
 
 const navItems: NavItem[] = [
   { type: "link", to: "/app", icon: LayoutDashboard, label: "Dashboard", end: true },
   { type: "separator", label: "LEARN" },
   { type: "link", to: "/app/sessoes", icon: BookOpen, label: "My Programme" },
-  { type: "link", to: "/app/catalogue", icon: Library, label: "Catalogue", isNew: true },
+  { type: "link", to: "/app/catalogue", icon: Library, label: "Catalogue" },
   { type: "separator", label: "TOOLS & PRACTICE" },
-  { type: "link", to: "/app/toolkit", icon: Wrench, label: "My Toolkit", isNew: true },
-  { type: "link", to: "/app/practice", icon: Swords, label: "My Practice", isNew: true },
+  { type: "link", to: "/app/toolkit", icon: Wrench, label: "My Toolkit" },
+  { type: "link", to: "/app/practice", icon: Swords, label: "My Practice" },
   { type: "link", to: "/app/chat", icon: MessageCircle, label: "AI Coach" },
   { type: "separator", label: "PROGRESS" },
   { type: "link", to: "/app/desempenho", icon: BarChart2, label: "My Progress" },
@@ -111,11 +111,6 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
                   )}
                   <item.icon className={`h-4 w-4 shrink-0 ${isActive ? "text-[#B89A5A]" : "text-[#8E96A3] group-hover:text-[#F4F2ED]"}`} />
                   <span className="font-medium flex-1">{item.label}</span>
-                  {item.isNew && (
-                    <span className="text-[10px] bg-[#B89A5A]/20 text-[#B89A5A] px-1.5 py-0.5 rounded-full font-semibold">
-                      NEW
-                    </span>
-                  )}
                 </>
               )}
             </NavLink>
