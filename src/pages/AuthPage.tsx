@@ -83,7 +83,8 @@ const AuthPage = () => {
   if (isLoading) return null;
   if (isAuthenticated) {
     if (currentUser?.role === "company_admin") return <Navigate to="/empresa/dashboard" replace />;
-    if (currentUser?.role === "professor" || currentUser?.role === "admin") return <Navigate to="/professor/dashboard" replace />;
+    if (currentUser?.role === "admin") return <Navigate to="/admin/dashboard" replace />;
+    if (currentUser?.role === "professor") return <Navigate to="/professor/dashboard" replace />;
     return <Navigate to="/app" replace />;
   }
 
