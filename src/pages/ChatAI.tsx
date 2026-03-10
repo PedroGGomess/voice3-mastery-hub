@@ -1,9 +1,33 @@
 import PlatformLayout from "@/components/PlatformLayout";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
-import { Send, User, Trash2, Mic } from "lucide-react";
+import { Send, User, Trash2, Mic, MicOff, X, PenLine, Target, BookOpen, Users, ClipboardList, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+
+// SpeechRecognition type declarations
+interface SpeechRecognitionResult {
+  readonly [index: number]: { transcript: string; confidence: number };
+  readonly isFinal: boolean;
+  readonly length: number;
+}
+interface SpeechRecognitionResultList {
+  readonly [index: number]: SpeechRecognitionResult;
+  readonly length: number;
+}
+interface SpeechRecognitionEvent extends Event {
+  readonly results: SpeechRecognitionResultList;
+}
+interface SpeechRecognitionInstance extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onend: (() => void) | null;
+  onerror: ((event: Event) => void) | null;
+}
 
 interface Message {
   role: "bot" | "user";
@@ -11,19 +35,48 @@ interface Message {
   timestamp: string;
 }
 
-const quickQuestions = [
-  "Analyse my writing",
-  "Give me a drill",
-  "Explain this grammar",
-  "Practise a scenario",
-  "Review my last session",
-  "Vocabulary help",
+const quickActions = [
+  {
+    icon: PenLine,
+    emoji: "✍️",
+    label: "Analyse my writing",
+    type: "analyze" as const,
+  },
+  {
+    icon: Target,
+    emoji: "🎯",
+    label: "Give me a drill",
+    prompt: "Give me a targeted drill based on my weak points. Make it specific and give me clear instructions.",
+  },
+  {
+    icon: BookOpen,
+    emoji: "📖",
+    label: "Explain this grammar",
+    prompt: "Explain an important grammar point for professional business English with clear examples.",
+  },
+  {
+    icon: Users,
+    emoji: "🎭",
+    label: "Practise a scenario",
+    prompt: "Let's practise a professional scenario. You start the conversation as a colleague or client.",
+  },
+  {
+    icon: ClipboardList,
+    emoji: "📋",
+    label: "Review my last session",
+    prompt: "Based on my recent progress, what should I focus on to improve my executive communication?",
+  },
+  {
+    icon: GraduationCap,
+    emoji: "📚",
+    label: "Vocabulary help",
+    prompt: "Give me 5 advanced business English vocabulary words or expressions with example sentences in professional contexts.",
+  },
 ];
 
 function getBotResponse(text: string): string {
   const lower = text.toLowerCase();
 
-  // Greetings — check first
   if (lower.includes("olá") || lower.includes("ola") || lower.includes("hello") || lower.includes("hi ") || lower === "hi" || lower.includes("bom dia") || lower.includes("boa tarde")) {
     return "Olá! 👋 Sou o teu VOICE³ Performance Coach. Estou aqui para te ajudar a melhorar a tua comunicação executiva em inglês. Sobre o que queres falar hoje? Gramática, vocabulário, reuniões, apresentações?";
   }
@@ -88,6 +141,30 @@ function getBotResponse(text: string): string {
     return "Small talk em inglês de negócios — frases essenciais! 💬\n• 'How's everything going?' / 'How's business?'\n• 'Did you have a good weekend?'\n• 'How was your trip / the conference?'\n• Para terminar: 'It was great catching up! Let's connect again soon.'";
   }
 
+  if (lower.includes("analyse my writing") || lower.includes("analyze my writing")) {
+    return "I'd be happy to analyse your writing! Please paste the text you'd like me to review. I'll give you detailed feedback on grammar, vocabulary, professional tone, and structure.";
+  }
+
+  if (lower.includes("drill") || lower.includes("weak points")) {
+    return "Here's a targeted drill for executive communication:\n\n**DRILL: Diplomatic Disagreement**\nTransform these blunt statements into professional, diplomatic versions:\n\n1. 'That's wrong.' → ?\n2. 'I don't agree.' → ?\n3. 'We can't do that.' → ?\n\n*Model answers:*\n1. 'I see this slightly differently — could we explore...'\n2. 'I appreciate that perspective, however...'\n3. 'That presents some challenges. What if we were to...'\n\nTry writing your own versions! 💪";
+  }
+
+  if (lower.includes("grammar point") || lower.includes("explain") && lower.includes("grammar")) {
+    return "**Grammar Focus: Conditional Sentences in Business English**\n\nConditionals are essential for professional communication — proposals, negotiations, and hypotheticals.\n\n**Type 1** (real possibility): 'If we confirm by Friday, *we will* meet the deadline.'\n**Type 2** (hypothetical): 'If we *had* more budget, *we would* expand the team.'\n**Type 3** (past hypothetical): 'If we *had started* earlier, *we would have avoided* this delay.'\n\n**Business tip:** Use Type 2 for polite requests: 'It *would* be helpful *if you could* send the report by EOD.'";
+  }
+
+  if (lower.includes("scenario") || lower.includes("practise") || lower.includes("practice")) {
+    return "Let's practise! I'll be your client in this scenario:\n\n---\n*[Client — David Chen, Procurement Director]*\n'Good morning. I've been reviewing the proposal your team sent over, and while I find the solution interesting, I'm concerned about the implementation timeline. Can you walk me through how you'd handle that?'\n\n---\nYour turn! Respond professionally, address his concern directly, and show confidence. Remember to acknowledge his concern before presenting your solution. 🎭";
+  }
+
+  if (lower.includes("recent progress") || lower.includes("last session") || lower.includes("focus on")) {
+    return "Based on your learning profile, here's what I recommend focusing on next:\n\n**Priority 1: Hedging Language** — Softening statements for diplomatic communication\n*e.g., 'It seems that...', 'It might be worth considering...', 'Arguably...'\n\n**Priority 2: Signposting in Presentations** — Guiding your audience clearly\n*e.g., 'Let me turn now to...', 'As I mentioned earlier...', 'To recap...'\n\n**Priority 3: Concision** — Saying more with fewer words — a hallmark of executive communication.\n\nWould you like a drill on any of these? 🎯";
+  }
+
+  if (lower.includes("vocabulary") || lower.includes("5 advanced") || lower.includes("business english vocabulary")) {
+    return "**5 Advanced Business English Expressions:**\n\n1. **To cascade** — to communicate information down through an organisation\n*'We need to cascade this decision to all team leads by tomorrow.'\n\n2. **To leverage** — to use something to maximum advantage\n*'We can leverage our existing client relationships for this expansion.'\n\n3. **Bandwidth** — capacity to take on more work\n*'I don't have the bandwidth for this project right now.'\n\n4. **To circle back** — to return to a topic later\n*'Let's circle back on the budget once we have the figures.'\n\n5. **Stakeholder alignment** — ensuring all relevant parties agree\n*'Before we proceed, we need full stakeholder alignment.'\n\nTry using one in a sentence! ✍️";
+  }
+
   return "Excelente pergunta! Na VOICE³, trabalhamos cada aspeto da comunicação executiva. Pode reformular a tua pergunta ou escolher um dos tópicos acima?\n\nPosso ajudar-te com: gramática, vocabulário, reuniões, emails, apresentações, pronúncia, confiança ou negociação. 😊";
 }
 
@@ -99,10 +176,16 @@ const ChatAI = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [analyzeMode, setAnalyzeMode] = useState(false);
+  const [analyzeText, setAnalyzeText] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
 
-  // Read AI evaluation data for personalised system message
+  const SpeechRecognitionConstructor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+  const supportsSpeech = !!SpeechRecognitionConstructor;
+
   const aiEval = (() => {
     try {
       const raw = localStorage.getItem(`voice3_ai_evaluation_${userId}`);
@@ -169,9 +252,55 @@ const ChatAI = () => {
     }, 1000);
   };
 
-  const handleChipClick = (text: string) => {
-    setInput(text);
-    inputRef.current?.focus();
+  const handleAnalyzeSend = () => {
+    if (!analyzeText.trim()) return;
+    const prompt = `Please analyse my writing and give me detailed feedback on grammar, vocabulary, and professional tone:\n\n${analyzeText}`;
+    setAnalyzeMode(false);
+    setAnalyzeText("");
+    sendMessage(prompt);
+  };
+
+  const handleQuickAction = (action: typeof quickActions[0]) => {
+    if (action.type === "analyze") {
+      setAnalyzeMode(true);
+      return;
+    }
+    if (action.prompt) {
+      sendMessage(action.prompt);
+    }
+  };
+
+  const handleVoiceInput = () => {
+    if (!supportsSpeech) return;
+
+    if (isRecording) {
+      recognitionRef.current?.stop();
+      setIsRecording(false);
+      return;
+    }
+
+    const recognition: SpeechRecognitionInstance = new SpeechRecognitionConstructor();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = "en-GB";
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(prev => prev ? `${prev} ${transcript}` : transcript);
+      inputRef.current?.focus();
+    };
+
+    recognition.onend = () => {
+      setIsRecording(false);
+    };
+
+    recognition.onerror = () => {
+      setIsRecording(false);
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsRecording(true);
   };
 
   const handleClear = () => {
@@ -187,21 +316,35 @@ const ChatAI = () => {
   return (
     <PlatformLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col h-[calc(100vh-8rem)]">
+        {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="font-serif text-2xl font-bold">Chat AI</h1>
-            <p className="text-muted-foreground text-sm">Pratica, tira dúvidas e melhora o teu Inglês.</p>
+            <p style={{ letterSpacing: "0.12em" }} className="text-[10px] font-semibold uppercase text-[#C9A84C] mb-0.5">AI Coach</p>
+            <p className="text-xs text-[#8E96A3]">Your personal language intelligence — powered by Claude</p>
           </div>
-          <Button variant="ghost" size="sm" onClick={handleClear} className="text-white/40 hover:text-white/70">
-            <Trash2 className="h-4 w-4 mr-1" /> Limpar
-          </Button>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+              <span className="text-[11px] text-[#8E96A3]">Online · Ready to help</span>
+            </div>
+            <Button variant="ghost" size="sm" onClick={handleClear} className="text-white/40 hover:text-white/70">
+              <Trash2 className="h-4 w-4 mr-1" /> Limpar
+            </Button>
+          </div>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-1">
+        <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-1" style={{ background: "transparent" }}>
           {/* System message card */}
-          <div className="border-l-2 border-[#B89A5A] bg-[#B89A5A]/5 rounded-r-xl px-4 py-3">
-            <p className="text-xs text-[#B89A5A] font-semibold mb-0.5 uppercase tracking-wider">AI Coach</p>
+          <div
+            className="rounded-xl px-4 py-3"
+            style={{
+              background: "rgba(201,168,76,0.06)",
+              borderLeft: "2px solid #C9A84C",
+              backdropFilter: "blur(20px)",
+            }}
+          >
+            <p style={{ letterSpacing: "0.1em" }} className="text-[10px] text-[#C9A84C] font-semibold mb-0.5 uppercase">AI Coach</p>
             <p className="text-sm text-[#F4F2ED]/80">{systemMessage}</p>
           </div>
 
@@ -214,41 +357,66 @@ const ChatAI = () => {
                 className={`flex gap-3 ${msg.role === "user" ? "justify-end" : ""}`}
               >
                 {msg.role === "bot" && (
-                  <div className="w-8 h-8 rounded-full bg-[#B89A5A]/20 border border-[#B89A5A]/40 flex items-center justify-center shrink-0 mt-0.5">
-                    <span className="text-[10px] font-bold text-[#B89A5A] leading-none">V³</span>
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                    style={{ background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.35)" }}
+                  >
+                    <span className="text-[10px] font-bold text-[#C9A84C] leading-none">V³</span>
                   </div>
                 )}
                 <div className="flex flex-col gap-1 max-w-md">
-                  <div className={`px-4 py-3 rounded-2xl text-sm whitespace-pre-line ${
-                    msg.role === "user"
-                      ? "bg-primary text-primary-foreground rounded-br-sm"
-                      : "bg-secondary rounded-bl-sm border-l-2 border-[#B89A5A]/40"
-                  }`}>
-                    {msg.text}
-                  </div>
+                  {msg.role === "bot" ? (
+                    <div
+                      className="px-4 py-3 rounded-2xl rounded-bl-sm text-sm whitespace-pre-line text-[#F4F2ED]"
+                      style={{
+                        background: "rgba(255,255,255,0.05)",
+                        borderTop: "1px solid rgba(255,255,255,0.08)",
+                        borderRight: "1px solid rgba(255,255,255,0.08)",
+                        borderBottom: "1px solid rgba(255,255,255,0.08)",
+                        borderLeft: "2px solid rgba(201,168,76,0.4)",
+                        backdropFilter: "blur(20px)",
+                      }}
+                    >
+                      {msg.text}
+                    </div>
+                  ) : (
+                    <div
+                      className="px-4 py-3 rounded-2xl rounded-br-sm text-sm whitespace-pre-line font-medium"
+                      style={{ background: "linear-gradient(135deg, #C9A84C, #E8C97A)", color: "#0A0A0F" }}
+                    >
+                      {msg.text}
+                    </div>
+                  )}
                   <span className={`text-[10px] text-white/30 ${msg.role === "user" ? "text-right" : "text-left"}`}>
                     {new Date(msg.timestamp).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
                 {msg.role === "user" && (
-                  <div className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center shrink-0 mt-0.5">
-                    <User className="h-4 w-4" />
+                  <div className="w-8 h-8 rounded-full bg-white/10 border border-white/15 flex items-center justify-center shrink-0 mt-0.5">
+                    <User className="h-4 w-4 text-white/60" />
                   </div>
                 )}
               </motion.div>
             ))}
           </AnimatePresence>
+
           {isTyping && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#B89A5A]/20 border border-[#B89A5A]/40 flex items-center justify-center shrink-0">
-                <span className="text-[10px] font-bold text-[#B89A5A] leading-none">V³</span>
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                style={{ background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.35)" }}
+              >
+                <span className="text-[10px] font-bold text-[#C9A84C] leading-none">V³</span>
               </div>
-              <div className="bg-secondary px-4 py-3 rounded-2xl rounded-bl-sm border-l-2 border-[#B89A5A]/40 flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">VOICE³ Coach is typing</span>
+              <div
+                className="px-4 py-3 rounded-2xl rounded-bl-sm flex items-center gap-2"
+                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderLeft: "2px solid rgba(201,168,76,0.4)" }}
+              >
+                <span className="text-xs text-[#8E96A3]">VOICE³ Coach is typing</span>
                 <span className="flex gap-1">
-                  {[0, 1, 2].map(i => (
-                    <motion.span key={i} className="w-1.5 h-1.5 rounded-full bg-[#B89A5A]/60 inline-block"
-                      animate={{ y: [0, -4, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.2 }} />
+                  {[0, 1, 2].map(idx => (
+                    <motion.span key={idx} className="w-1.5 h-1.5 rounded-full bg-[#C9A84C]/60 inline-block"
+                      animate={{ y: [0, -4, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: idx * 0.2 }} />
                   ))}
                 </span>
               </div>
@@ -257,34 +425,111 @@ const ChatAI = () => {
           <div ref={bottomRef} />
         </div>
 
-        {/* Quick reply chips — 2 rows of 3 */}
+        {/* Analyse Writing Mode */}
+        <AnimatePresence>
+          {analyzeMode && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-3 overflow-hidden"
+            >
+              <div
+                className="rounded-xl p-4"
+                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(201,168,76,0.25)", backdropFilter: "blur(20px)" }}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span style={{ letterSpacing: "0.08em" }} className="text-[10px] text-[#C9A84C] uppercase font-semibold">Paste your writing below</span>
+                  <button onClick={() => { setAnalyzeMode(false); setAnalyzeText(""); }} className="text-white/30 hover:text-white/60 transition-colors">
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                <textarea
+                  value={analyzeText}
+                  onChange={e => setAnalyzeText(e.target.value)}
+                  placeholder="Paste your email, report, or any business writing here..."
+                  rows={4}
+                  className="w-full bg-transparent text-sm text-[#F4F2ED] placeholder:text-white/25 outline-none resize-none"
+                />
+                <div className="flex justify-end mt-2">
+                  <Button
+                    onClick={handleAnalyzeSend}
+                    disabled={!analyzeText.trim()}
+                    className="rounded-full h-8 px-5 text-xs font-semibold"
+                    style={{ background: "linear-gradient(135deg, #C9A84C, #E8C97A)", color: "#0A0A0F", border: "none" }}
+                  >
+                    Analyse →
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Quick action buttons — 3×2 grid */}
         <div className="grid grid-cols-3 gap-2 mb-3">
-          {quickQuestions.map((q, i) => (
-            <button key={i} onClick={() => handleChipClick(q)}
-              className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:bg-[#B89A5A]/10 hover:border-[#B89A5A]/30 hover:text-[#B89A5A] transition-colors truncate">
-              {q}
+          {quickActions.map((action, i) => (
+            <button
+              key={i}
+              onClick={() => handleQuickAction(action)}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-all duration-200 group hover:shadow-[0_0_12px_rgba(201,168,76,0.2)]"
+              style={{
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                backdropFilter: "blur(20px)",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.35)")}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
+            >
+              <span className="text-base shrink-0">{action.emoji}</span>
+              <span className="text-[11px] text-white/60 group-hover:text-[#C9A84C] transition-colors leading-tight">{action.label}</span>
             </button>
           ))}
         </div>
 
-        {/* Input */}
+        {/* Input bar */}
         <div className="flex gap-2">
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage(input)}
-            placeholder="Ask your AI Coach..."
-            className="flex-1 px-5 py-3 rounded-xl bg-secondary text-sm outline-none placeholder:text-muted-foreground border border-border focus:border-primary transition-colors"
-          />
-          <Button variant="ghost" size="icon"
-            className="h-12 w-12 rounded-xl text-white/40 hover:text-[#B89A5A] hover:bg-[#B89A5A]/10 border border-border"
-            title="Voice input (coming soon)" disabled>
-            <Mic className="h-4 w-4" />
-          </Button>
-          <Button onClick={() => sendMessage(input)} disabled={!input.trim() || isTyping}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl h-12 w-12">
+          <div
+            className="flex-1 flex items-center px-4 rounded-xl transition-all duration-200 focus-within:shadow-[0_0_0_1px_rgba(201,168,76,0.4)]"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(20px)" }}
+          >
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage(input)}
+              placeholder="Ask your AI Coach..."
+              className="flex-1 py-3 bg-transparent text-sm outline-none placeholder:text-white/25 text-[#F4F2ED]"
+            />
+          </div>
+          {supportsSpeech && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleVoiceInput}
+              className={`h-12 w-12 rounded-xl border transition-all duration-200 ${
+                isRecording
+                  ? "bg-red-500/15 border-red-500/40 text-red-400 shadow-[0_0_12px_rgba(239,68,68,0.25)]"
+                  : "text-white/40 hover:text-[#C9A84C] hover:bg-[#C9A84C]/10 border-white/10"
+              }`}
+              title={isRecording ? "Stop recording" : "Voice input"}
+            >
+              {isRecording ? (
+                <motion.div animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 0.8, repeat: Infinity }}>
+                  <MicOff className="h-4 w-4" />
+                </motion.div>
+              ) : (
+                <Mic className="h-4 w-4" />
+              )}
+            </Button>
+          )}
+          <Button
+            onClick={() => sendMessage(input)}
+            disabled={!input.trim() || isTyping}
+            className="h-12 w-12 rounded-xl disabled:opacity-40 transition-all duration-200"
+            style={{ background: "linear-gradient(135deg, #C9A84C, #E8C97A)", color: "#0A0A0F", border: "none" }}
+          >
             <Send className="h-4 w-4" />
           </Button>
         </div>
