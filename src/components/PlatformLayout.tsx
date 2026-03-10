@@ -19,7 +19,7 @@ type NavItem =
 const navItems: NavItem[] = [
   { type: "link", to: "/app", icon: LayoutDashboard, label: "Dashboard", end: true },
   { type: "separator", label: "LEARN" },
-  { type: "link", to: "/app/sessoes", icon: BookOpen, label: "My Programme" },
+  { type: "link", to: "/capitulos", icon: BookOpen, label: "My Programme" },
   { type: "link", to: "/app/catalogue", icon: Library, label: "Catalogue" },
   { type: "separator", label: "TOOLS & PRACTICE" },
   { type: "link", to: "/app/toolkit", icon: Wrench, label: "My Toolkit" },

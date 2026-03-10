@@ -320,7 +320,7 @@ const ChatAI = () => {
         <div className="flex items-center justify-between mb-4">
           <div>
             <p style={{ letterSpacing: "0.12em" }} className="text-[10px] font-semibold uppercase text-[#C9A84C] mb-0.5">AI Coach</p>
-            <p className="text-xs text-[#8E96A3]">Your personal language intelligence — powered by Claude</p>
+            <p className="text-xs text-[#8E96A3]">Your personal language intelligence — AI-powered coaching</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
