@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Trophy, RotateCcw, Zap } from "lucide-react";
 import PlatformLayout from "@/components/PlatformLayout";
@@ -26,6 +27,7 @@ function getNextMonday() {
 
 const Leaderboard = () => {
   const { currentUser } = useAuth();
+  const [activeTab, setActiveTab] = useState<'thisWeek' | 'allTime'>('thisWeek');
   const leaderboardData = getLeaderboard();
   const { total: myPoints, breakdown } = currentUser ? getUserPoints(currentUser.id) : { total: 0, breakdown: [] };
 
@@ -81,6 +83,28 @@ const Leaderboard = () => {
         >
           <RotateCcw className="h-3.5 w-3.5 text-[#B89A5A]" />
           <span>Resets on <span className="text-[#F4F2ED]/80">{getNextMonday()}</span></span>
+        </motion.div>
+
+        {/* This Week / All Time tab toggle */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.22 }}
+          className="flex gap-1 bg-[#1C1F26] border border-white/5 rounded-lg p-1 w-fit"
+        >
+          {(['thisWeek', 'allTime'] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${
+                activeTab === tab
+                  ? 'bg-[#B89A5A]/20 text-[#B89A5A] border border-[#B89A5A]/30'
+                  : 'text-[#8E96A3] hover:text-[#F4F2ED]'
+              }`}
+            >
+              {tab === 'thisWeek' ? 'This Week' : 'All Time'}
+            </button>
+          ))}
         </motion.div>
 
         {/* Points breakdown */}
@@ -139,10 +163,60 @@ const Leaderboard = () => {
           </div>
         </motion.div>
 
+        {/* Podium — top 3 */}
+        {entries.length >= 3 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-[#1C1F26] border border-white/5 rounded-xl p-6"
+          >
+            <p className="text-[#8E96A3] text-xs tracking-[0.2em] uppercase font-medium mb-6 text-center">Top Performers</p>
+            <div className="flex items-end justify-center gap-4">
+              {/* 2nd place */}
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-12 h-12 rounded-full bg-[#9CA3AF]/20 border-2 border-[#9CA3AF]/60 flex items-center justify-center">
+                  <span className="text-base font-bold text-[#9CA3AF]">{entries[1].initials}</span>
+                </div>
+                <div className="w-16 h-14 bg-[#9CA3AF]/10 border border-[#9CA3AF]/20 rounded-t-lg flex flex-col items-center justify-center gap-0.5">
+                  <span className="text-[#9CA3AF] font-bold text-lg">#2</span>
+                </div>
+                <p className="text-xs text-[#F4F2ED]/80 font-medium text-center">{entries[1].name.split(' ')[0]}</p>
+                <p className="text-[10px] text-[#8E96A3]">{entries[1].authorityScore} pts</p>
+              </div>
+              {/* 1st place — taller */}
+              <div className="flex flex-col items-center gap-2">
+                <div className="relative">
+                  <div className="w-14 h-14 rounded-full bg-[#B89A5A]/20 border-2 border-[#B89A5A] flex items-center justify-center">
+                    <span className="text-lg font-bold text-[#B89A5A]">{entries[0].initials}</span>
+                  </div>
+                  <span className="absolute -top-2 -right-1 text-base">👑</span>
+                </div>
+                <div className="w-16 h-20 bg-[#B89A5A]/10 border border-[#B89A5A]/30 rounded-t-lg flex items-center justify-center">
+                  <span className="text-[#B89A5A] font-bold text-xl">#1</span>
+                </div>
+                <p className="text-xs text-[#F4F2ED] font-semibold text-center">{entries[0].name.split(' ')[0]}</p>
+                <p className="text-[10px] text-[#B89A5A] font-semibold">{entries[0].authorityScore} pts</p>
+              </div>
+              {/* 3rd place */}
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-12 h-12 rounded-full bg-amber-700/20 border-2 border-amber-600/60 flex items-center justify-center">
+                  <span className="text-base font-bold text-amber-600">{entries[2].initials}</span>
+                </div>
+                <div className="w-16 h-10 bg-amber-700/10 border border-amber-600/20 rounded-t-lg flex items-center justify-center">
+                  <span className="text-amber-600 font-bold text-lg">#3</span>
+                </div>
+                <p className="text-xs text-[#F4F2ED]/80 font-medium text-center">{entries[2].name.split(' ')[0]}</p>
+                <p className="text-[10px] text-[#8E96A3]">{entries[2].authorityScore} pts</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Top 10 list */}
         <div>
           <h2 className="text-[#8E96A3] text-xs tracking-[0.2em] uppercase font-medium mb-4">
-            Top 10 — All Time
+            Top 10 — {activeTab === 'thisWeek' ? 'This Week' : 'All Time'}
           </h2>
           <div className="space-y-2">
             {entries.map((entry, i) => (
@@ -150,6 +224,79 @@ const Leaderboard = () => {
             ))}
           </div>
         </div>
+
+        {/* Your Ranking — pinned bottom card */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-[#0F2235] border border-[#B89A5A]/30 rounded-xl p-5 shadow-[0_0_30px_rgba(184,154,90,0.08)]"
+        >
+          <p className="text-[#B89A5A] text-xs tracking-[0.15em] uppercase font-medium mb-4 flex items-center gap-2">
+            <Trophy className="h-3.5 w-3.5" /> Your Ranking
+          </p>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-[#B89A5A]/15 border border-[#B89A5A]/30 flex items-center justify-center shrink-0">
+                <span className="text-[#B89A5A] font-bold text-lg">#{myPosition}</span>
+              </div>
+              <div>
+                <p className="text-[#F4F2ED] font-semibold text-sm">{currentUser?.name || 'You'}</p>
+                <p className="text-[#8E96A3] text-xs">{myPoints.toLocaleString()} pts</p>
+              </div>
+            </div>
+            {(() => {
+              const nextRanker = leaderboardData.find(e => e.rank === myPosition - 1);
+              const pointsBehind = nextRanker ? nextRanker.points - myPoints : 0;
+              return pointsBehind > 0 ? (
+                <div className="text-right">
+                  <p className="text-[#B89A5A] font-semibold text-sm">{pointsBehind} pts</p>
+                  <p className="text-[#8E96A3] text-xs">behind next rank</p>
+                </div>
+              ) : (
+                <p className="text-sm text-[#B89A5A] font-semibold">🏆 Top position!</p>
+              );
+            })()}
+          </div>
+        </motion.div>
+
+        {/* Weekly Challenges */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.55 }}
+        >
+          <h2 className="text-[#8E96A3] text-xs tracking-[0.2em] uppercase font-medium mb-4 flex items-center gap-2">
+            <Zap className="h-3.5 w-3.5 text-[#B89A5A]" /> Weekly Challenges
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-3">
+            {[
+              { emoji: '📚', title: 'Complete 2 sessions this week', reward: '+50 pts', progress: 0, total: 2 },
+              { emoji: '🎯', title: 'Score 100% on a vocabulary quiz', reward: '+30 pts', progress: 0, total: 1 },
+              { emoji: '🔧', title: 'Use a toolkit tool 3 times', reward: '+20 pts', progress: 0, total: 3 },
+            ].map((challenge, i) => (
+              <div key={i} className="bg-[#1C1F26] border border-white/5 hover:border-[#B89A5A]/20 hover:shadow-[0_0_20px_rgba(184,154,90,0.08)] rounded-xl p-4 transition-all duration-200">
+                <div className="flex items-start justify-between mb-3">
+                  <span className="text-2xl">{challenge.emoji}</span>
+                  <span className="text-xs font-bold text-[#B89A5A] bg-[#B89A5A]/10 border border-[#B89A5A]/20 px-2 py-0.5 rounded-full">{challenge.reward}</span>
+                </div>
+                <p className="text-xs font-medium text-[#F4F2ED] mb-3 leading-relaxed">{challenge.title}</p>
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-[10px] text-[#8E96A3]">
+                    <span>{challenge.progress}/{challenge.total}</span>
+                    <span>{Math.round((challenge.progress / challenge.total) * 100)}%</span>
+                  </div>
+                  <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-[#B89A5A] to-[#d4ba6a] rounded-full"
+                      style={{ width: `${(challenge.progress / challenge.total) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
       </div>
     </PlatformLayout>
   );

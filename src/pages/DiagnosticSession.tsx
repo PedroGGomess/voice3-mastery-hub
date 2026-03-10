@@ -32,14 +32,14 @@ const VOCAB_QUESTIONS = [
   { q: 'To "delegate" means:', options: ['To do all work yourself', 'To assign tasks to others', 'To cancel a task', 'To report to a superior'], correct: 1 },
 ];
 
-type Step = 1 | 2 | 3 | 4 | 5 | 6;
+type Step = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export default function DiagnosticSession() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const userId = currentUser?.id || '';
 
-  const [currentStep, setCurrentStep] = useState<Step>(1);
+  const [currentStep, setCurrentStep] = useState<Step>(0);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [audioRecorded, setAudioRecorded] = useState(false);
@@ -149,7 +149,7 @@ export default function DiagnosticSession() {
   };
 
   const canProceed = () => {
-    if (currentStep === 1) return audioRecorded || recordingTime > 10;
+    if (currentStep === 1) return audioRecorded;
     if (currentStep === 2) return wordCount >= 50;
     if (currentStep === 3) return vocabAnswers.every(a => a !== null);
     if (currentStep === 4) return !!challenge && !!mainGoal;
@@ -163,9 +163,9 @@ export default function DiagnosticSession() {
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <p className="text-xs text-[#B89A5A] tracking-[0.2em] uppercase font-medium mb-1">Capítulo 1 · Diagnóstico Inicial</p>
         <h1 className="font-serif text-2xl font-semibold text-[#F4F2ED] mb-4">
-          {currentStep <= 5 ? 'Vamos conhecer-te melhor' : 'Diagnóstico Concluído!'}
+          {currentStep === 0 ? 'Your Executive Diagnostic' : currentStep <= 5 ? 'Vamos conhecer-te melhor' : 'Diagnóstico Concluído!'}
         </h1>
-        {currentStep <= 5 && (
+        {currentStep >= 1 && currentStep <= 5 && (
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs text-[#8E96A3]">
               <span>Passo {currentStep} de 5</span>
@@ -177,6 +177,53 @@ export default function DiagnosticSession() {
       </motion.div>
 
       <AnimatePresence mode="wait">
+        {/* ── STEP 0: Welcome / Intro ── */}
+        {currentStep === 0 && (
+          <motion.div key="step0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -30 }} className="max-w-2xl">
+            <div className="rounded-xl bg-gradient-to-br from-[#1C1F26] to-[#0F1B2A] border border-[#B89A5A]/20 p-8 mb-6 text-center">
+              <div className="w-20 h-20 rounded-full bg-[#B89A5A]/10 border-2 border-[#B89A5A]/30 flex items-center justify-center mx-auto mb-6">
+                <Brain className="h-10 w-10 text-[#B89A5A]" />
+              </div>
+              <h2 className="font-serif text-3xl font-bold text-[#F4F2ED] mb-3">Your Executive Diagnostic</h2>
+              <p className="text-[#8E96A3] mb-6">5 steps · ~12 minutes · Personalises your entire journey</p>
+
+              {/* Timeline */}
+              <div className="space-y-3 text-left max-w-sm mx-auto mb-8">
+                {[
+                  { icon: '🎙️', name: 'Voice Baseline', desc: 'Record a 60–90s speaking sample' },
+                  { icon: '✍️', name: 'Writing Sample', desc: 'Write a short professional email' },
+                  { icon: '📚', name: 'Vocabulary Check', desc: '10 business English questions' },
+                  { icon: '🎯', name: 'Goals & Style', desc: 'Your objectives and challenges' },
+                  { icon: '🤖', name: 'AI Analysis', desc: 'Personalised profile generated' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <div className="flex flex-col items-center shrink-0">
+                      <div className="w-9 h-9 rounded-full bg-[#B89A5A]/10 border border-[#B89A5A]/20 flex items-center justify-center text-lg">
+                        {item.icon}
+                      </div>
+                      {i < 4 && <div className="w-px h-4 bg-[#B89A5A]/20 mt-1" />}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-[#F4F2ED]">{item.name}</p>
+                      <p className="text-xs text-[#8E96A3]">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Quote */}
+              <div className="p-4 rounded-lg bg-[#B89A5A]/5 border border-[#B89A5A]/20 mb-6 text-left">
+                <p className="text-sm text-[#F4F2ED] leading-relaxed italic">
+                  "The best executives don't just speak clearly. They speak with intent."
+                </p>
+              </div>
+            </div>
+            <Button onClick={() => setCurrentStep(1)} className="w-full bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold h-12 text-base">
+              Begin Your Diagnostic <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </motion.div>
+        )}
+
         {/* ── STEP 1: Audio Recording ── */}
         {currentStep === 1 && (
           <motion.div key="step1" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} className="max-w-2xl">
@@ -227,7 +274,12 @@ export default function DiagnosticSession() {
                 )}
               </div>
             </div>
-            <Button onClick={handleNext} disabled={!canProceed()} className="w-full bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold h-11">
+            <Button
+              onClick={handleNext}
+              disabled={!canProceed()}
+              title={!canProceed() ? "Record your baseline first" : undefined}
+              className="w-full bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold h-11 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
               Continuar <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </motion.div>
