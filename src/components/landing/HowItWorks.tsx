@@ -30,7 +30,7 @@ const steps = [
 
 const HowItWorks = () => {
   return (
-    <section className="py-28" style={{ backgroundColor: "#11263A" }} id="como-funciona">
+    <section className="py-28 fade-up" style={{ backgroundColor: "#11263A" }} id="como-funciona">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -39,57 +39,70 @@ const HowItWorks = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-20"
         >
-          <p className="text-[#B89A5A] tracking-[0.2em] uppercase text-sm mb-4 font-medium">Process</p>
+          <p className="text-[#C9A84C] tracking-[0.2em] uppercase text-sm mb-4 font-medium">Process</p>
           <h2 className="font-serif text-4xl md:text-5xl font-semibold text-[#F4F2ED]">How It Works</h2>
         </motion.div>
 
-        {/* Desktop: horizontal timeline */}
-        <div className="hidden md:block relative">
-          {/* Connector line */}
-          <div className="absolute top-[2.25rem] left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-[#B89A5A]/20 via-[#B89A5A]/40 to-[#B89A5A]/20" />
+        {/* Desktop: horizontal cards */}
+        <div className="hidden md:grid grid-cols-4 gap-6 relative">
+          {steps.map((step, i) => (
+            <motion.div
+              key={step.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.12 }}
+              className={"fade-up d" + (i + 1) + " relative group"}
+              style={{
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.07)",
+                borderRadius: 16,
+                padding: "36px 28px",
+                overflow: "hidden",
+                transition: "border-color 0.3s, transform 0.3s, box-shadow 0.3s",
+              }}
+              onMouseEnter={e => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.borderColor = "rgba(201,168,76,0.25)";
+                el.style.transform = "translateY(-5px)";
+                el.style.boxShadow = "0 16px 48px rgba(0,0,0,0.3)";
+              }}
+              onMouseLeave={e => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.borderColor = "rgba(255,255,255,0.07)";
+                el.style.transform = "";
+                el.style.boxShadow = "";
+              }}
+            >
+              {/* Large background number */}
+              <span style={{
+                position: "absolute", top: -16, right: 16,
+                fontSize: 96, fontFamily: "serif", fontWeight: 800,
+                color: "rgba(201,168,76,0.05)", lineHeight: 1, userSelect: "none",
+                pointerEvents: "none",
+              }}>{step.number}</span>
 
-          <div className="grid grid-cols-4 gap-8">
-            {steps.map((step, i) => (
-              <motion.div
-                key={step.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.12 }}
-                className="relative flex flex-col items-center text-center group"
-              >
-                {/* Gold dot on timeline */}
-                <div className="relative z-10 w-[4.5rem] h-[4.5rem] rounded-full bg-[#11263A] border-2 border-[#B89A5A]/40 flex items-center justify-center mb-6 group-hover:border-[#B89A5A] transition-colors">
-                  <step.icon className="h-6 w-6 text-[#B89A5A]" />
-                </div>
-                <div className="text-[#B89A5A]/30 text-5xl font-serif font-bold absolute top-16 opacity-20 select-none">{step.number}</div>
-                <h3 className="font-serif text-lg font-semibold text-[#F4F2ED] mb-2 mt-2">{step.title}</h3>
-                <p className="text-sm text-[#8E96A3] leading-relaxed">{step.desc}</p>
-              </motion.div>
-            ))}
-          </div>
+              {/* Icon */}
+              <div className="relative z-10 w-12 h-12 rounded-full border border-[#C9A84C]/40 flex items-center justify-center mb-5 group-hover:border-[#C9A84C] transition-colors"
+                style={{ background: "rgba(201,168,76,0.06)" }}>
+                <step.icon className="h-5 w-5 text-[#C9A84C]" />
+              </div>
 
-          {/* Executive images between steps */}
-          <div className="grid grid-cols-3 gap-8 mt-10 px-[12.5%]">
-            <img
-              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80"
-              alt=""
-              aria-hidden="true"
-              className="w-full h-32 object-cover rounded-xl brightness-[0.4] saturate-[0.6]"
-            />
-            <img
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80"
-              alt=""
-              aria-hidden="true"
-              className="w-full h-32 object-cover rounded-xl brightness-[0.4] saturate-[0.6]"
-            />
-            <img
-              src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=400&q=80"
-              alt=""
-              aria-hidden="true"
-              className="w-full h-32 object-cover rounded-xl brightness-[0.4] saturate-[0.6]"
-            />
-          </div>
+              <p className="text-[#C9A84C]/50 text-xs font-medium mb-2 relative z-10">{step.number}</p>
+              <h3 className="font-serif text-lg font-semibold text-[#F4F2ED] mb-2 relative z-10">{step.title}</h3>
+              <p className="text-sm text-[#8E96A3] leading-relaxed relative z-10">{step.desc}</p>
+
+              {/* Connector line (except last card) */}
+              {i < steps.length - 1 && (
+                <div style={{
+                  position: "absolute", top: 48, left: "calc(100% + 12px)",
+                  width: 24, height: 1,
+                  background: "rgba(201,168,76,0.2)",
+                  borderTop: "1px dashed rgba(201,168,76,0.3)",
+                }} />
+              )}
+            </motion.div>
+          ))}
         </div>
 
         {/* Mobile: vertical */}
@@ -101,13 +114,15 @@ const HowItWorks = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="flex gap-5 items-start bg-[#0B1A2A] rounded-xl p-5 border border-[#B89A5A]/10"
+              className="flex gap-5 items-start rounded-xl p-5"
+              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
             >
-              <div className="w-12 h-12 shrink-0 rounded-full bg-[#0B1A2A] border border-[#B89A5A]/40 flex items-center justify-center">
-                <step.icon className="h-5 w-5 text-[#B89A5A]" />
+              <div className="w-12 h-12 shrink-0 rounded-full border border-[#C9A84C]/40 flex items-center justify-center"
+                style={{ background: "rgba(201,168,76,0.06)" }}>
+                <step.icon className="h-5 w-5 text-[#C9A84C]" />
               </div>
               <div>
-                <p className="text-[#B89A5A]/60 text-xs font-medium mb-1">{step.number}</p>
+                <p className="text-[#C9A84C]/60 text-xs font-medium mb-1">{step.number}</p>
                 <h3 className="font-serif text-base font-semibold text-[#F4F2ED] mb-1">{step.title}</h3>
                 <p className="text-sm text-[#8E96A3]">{step.desc}</p>
               </div>
@@ -115,8 +130,7 @@ const HowItWorks = () => {
           ))}
         </div>
       </div>
-      {/* Section divider */}
-      <div className="h-px w-full mt-8" style={{ background: 'linear-gradient(90deg, transparent, #B89A5A33, transparent)' }} />
+      <div className="h-px w-full mt-8" style={{ background: "linear-gradient(90deg, transparent, #C9A84C33, transparent)" }} />
     </section>
   );
 };

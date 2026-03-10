@@ -19,17 +19,23 @@ const Navbar = () => {
   const dashboardLink = currentUser?.role === "company_admin" ? "/empresa" : "/app";
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled
-        ? "backdrop-blur-md bg-[#0B1A2A]/80 border-b border-white/5 shadow-lg"
-        : "backdrop-blur-md bg-[#0B1A2A]/80 border-b border-white/5"
-    }`}>
+    <nav
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      style={{
+        height: 64,
+        background: scrolled ? "rgba(4,10,20,0.97)" : "rgba(6,15,29,0.8)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(201,168,76,0.1)",
+        boxShadow: scrolled ? "0 4px 32px rgba(0,0,0,0.4)" : "none",
+        transition: "background 0.3s, box-shadow 0.3s",
+      }}>
       <div className="container flex items-center justify-between h-16">
         <Link to="/" className="flex items-center">
           <span className="font-sans font-bold tracking-[0.2em] text-[#F4F2ED] uppercase text-lg">
@@ -39,9 +45,13 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map(([label, href]) => (
-            <Link key={href} to={href} className="relative group text-sm text-[#8E96A3] hover:text-[#F4F2ED] transition-colors tracking-wider py-1">
+            <Link key={href} to={href}
+              className="nav-link relative text-sm tracking-wider py-1"
+              style={{ color: "rgba(255,255,255,0.7)", transition: "color 0.2s", letterSpacing: "0.03em" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.95)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}>
               {label}
-              <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#B89A5A] transition-all duration-300 group-hover:w-full" />
+              <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-[#C9A84C] transition-all duration-300 group-hover:w-full nav-underline" />
             </Link>
           ))}
         </div>

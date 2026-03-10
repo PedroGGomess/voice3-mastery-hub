@@ -1,10 +1,6 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Plus } from "lucide-react";
 
 const faqs = [
   {
@@ -50,6 +46,8 @@ const faqs = [
 ];
 
 const FAQ = () => {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   return (
     <section className="py-28" style={{ backgroundColor: "#0B1A2A" }} id="faq">
       <div className="container max-w-3xl">
@@ -57,38 +55,69 @@ const FAQ = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-16 fade-up"
         >
-          <p className="text-[#B89A5A] tracking-[0.2em] uppercase text-sm mb-4 font-medium">FAQ</p>
+          <p className="text-[#C9A84C] tracking-[0.2em] uppercase text-sm mb-4 font-medium">FAQ</p>
           <h2 className="font-serif text-4xl md:text-5xl font-semibold text-[#F4F2ED]">Frequently Asked Questions</h2>
         </motion.div>
 
-        <Accordion type="single" collapsible className="space-y-3">
-          {faqs.map((faq, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.04 }}
-            >
-              <AccordionItem
-                value={`faq-${i}`}
-                className="bg-[#11263A] border border-[#B89A5A]/10 rounded-xl px-6 hover:border-[#B89A5A]/30 transition-colors"
+        <div className="space-y-2">
+          {faqs.map((faq, i) => {
+            const isOpen = openIndex === i;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.04 }}
+                className="fade-up"
+                style={{
+                  border: isOpen ? "1px solid rgba(201,168,76,0.22)" : "1px solid rgba(255,255,255,0.07)",
+                  borderRadius: 12,
+                  background: isOpen ? "rgba(201,168,76,0.03)" : "rgba(255,255,255,0.02)",
+                  overflow: "hidden",
+                  transition: "border-color 0.25s, background 0.25s",
+                  marginBottom: 0,
+                }}
               >
-                <AccordionTrigger className="text-left font-medium text-[#F4F2ED] hover:no-underline py-5 hover:text-[#B89A5A] transition-colors [&[data-state=open]]:text-[#B89A5A]">
-                  {faq.q}
-                </AccordionTrigger>
-                <AccordionContent className="text-[#8E96A3] pb-5 leading-relaxed">
-                  {faq.a}
-                </AccordionContent>
-              </AccordionItem>
-            </motion.div>
-          ))}
-        </Accordion>
+                <button
+                  onClick={() => setOpenIndex(isOpen ? null : i)}
+                  style={{
+                    width: "100%",
+                    padding: "20px 24px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    fontSize: 15,
+                    fontWeight: 500,
+                    color: isOpen ? "#C9A84C" : "rgba(255,255,255,0.85)",
+                    background: "none",
+                    border: "none",
+                    textAlign: "left" as const,
+                    transition: "color 0.25s",
+                  }}
+                >
+                  <span>{faq.q}</span>
+                  <Plus
+                    className="h-5 w-5 shrink-0 ml-4 text-[#C9A84C]"
+                    style={{ transition: "transform 0.3s", transform: isOpen ? "rotate(45deg)" : "rotate(0deg)" }}
+                  />
+                </button>
+                <div style={{
+                  maxHeight: isOpen ? 300 : 0,
+                  overflow: "hidden",
+                  transition: "max-height 0.3s ease",
+                }}>
+                  <p style={{ padding: "0 24px 20px", color: "rgba(255,255,255,0.6)", lineHeight: 1.75 }}>{faq.a}</p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
-      {/* Section divider */}
-      <div className="h-px w-full mt-8" style={{ background: 'linear-gradient(90deg, transparent, #B89A5A33, transparent)' }} />
+      <div className="h-px w-full mt-8" style={{ background: "linear-gradient(90deg, transparent, #C9A84C33, transparent)" }} />
     </section>
   );
 };
