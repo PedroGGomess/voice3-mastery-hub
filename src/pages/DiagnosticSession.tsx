@@ -253,6 +253,7 @@ export default function DiagnosticSession() {
               </div>
               <div className="relative">
                 <textarea
+                  aria-label="Amostra de escrita — email profissional"
                   value={writingSample}
                   onChange={e => setWritingSample(e.target.value)}
                   className="w-full h-44 px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-[#F4F2ED] text-sm placeholder:text-[#8E96A3] resize-none focus:border-[#B89A5A]/40 focus:outline-none transition-colors"

@@ -407,6 +407,7 @@ export default function ProfessorStudentView() {
               <CardHeader><CardTitle className="text-sm text-[#8E96A3] uppercase tracking-wider">Notas Privadas</CardTitle></CardHeader>
               <CardContent>
                 <textarea
+                  aria-label="Notas privadas sobre o aluno"
                   value={notes.privateNotes}
                   onChange={e => setNotes({ ...notes, privateNotes: e.target.value })}
                   className="w-full h-40 px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-[#F4F2ED] text-sm placeholder:text-[#8E96A3] resize-none focus:border-[#B89A5A]/40 focus:outline-none transition-colors"
@@ -419,6 +420,7 @@ export default function ProfessorStudentView() {
               <CardHeader><CardTitle className="text-sm text-[#8E96A3] uppercase tracking-wider">Plano de Acção</CardTitle></CardHeader>
               <CardContent>
                 <textarea
+                  aria-label="Plano de acção"
                   value={notes.actionPlan}
                   onChange={e => setNotes({ ...notes, actionPlan: e.target.value })}
                   className="w-full h-40 px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-[#F4F2ED] text-sm placeholder:text-[#8E96A3] resize-none focus:border-[#B89A5A]/40 focus:outline-none transition-colors"
