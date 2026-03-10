@@ -99,10 +99,10 @@ const Packs = () => {
                   const item = h as Record<string, unknown>;
                   return (
                     <tr key={item.id as string} className="border-b border-border/30">
-                      <td className="py-3 text-sm font-medium">{item.pack}</td>
-                      <td className="py-3 text-sm">{item.price}</td>
-                      <td className="py-3 text-sm text-muted-foreground">{item.date}</td>
-                      <td className="py-3"><span className="text-xs px-2 py-0.5 rounded-full bg-success/10 text-success">{item.status}</span></td>
+                      <td className="py-3 text-sm font-medium">{item.pack as string}</td>
+                      <td className="py-3 text-sm">{item.price as string}</td>
+                      <td className="py-3 text-sm text-muted-foreground">{item.date as string}</td>
+                      <td className="py-3"><span className="text-xs px-2 py-0.5 rounded-full bg-success/10 text-success">{item.status as string}</span></td>
                     </tr>
                   );
                 })}
