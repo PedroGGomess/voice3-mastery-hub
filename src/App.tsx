@@ -50,6 +50,7 @@ import CoachPersonas from "./pages/tools/CoachPersonas";
 import ShadowCoach from "./pages/tools/ShadowCoach";
 import ProfessorDashboard from "./pages/professor/ProfessorDashboard";
 import ProfessorStudentView from "./pages/professor/ProfessorStudentView";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import DiagnosticSession from "./pages/DiagnosticSession";
 import ChaptersOverview from "./pages/ChaptersOverview";
 import ChapterDetail from "./pages/ChapterDetail";
@@ -151,6 +152,10 @@ const App = () => (
             {/* Professor routes */}
             <Route path="/professor/dashboard" element={<ProtectedRoute requiredRole="professor"><ProfessorDashboard /></ProtectedRoute>} />
             <Route path="/professor/aluno/:studentId" element={<ProtectedRoute requiredRole="professor"><ProfessorStudentView /></ProtectedRoute>} />
+
+            {/* Admin routes */}
+            <Route path="/admin/dashboard" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/:section" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
 
             {/* Chapter / diagnostic routes (student) */}
             <Route path="/sessoes/diagnostico" element={<ProtectedRoute requiredRole="student"><DiagnosticSession /></ProtectedRoute>} />

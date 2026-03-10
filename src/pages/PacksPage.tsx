@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { Check, Star, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
@@ -8,230 +8,334 @@ import ChatWidget from "@/components/ChatWidget";
 
 const packs = [
   {
+    id: "starter",
     name: "Starter",
+    slug: "starter",
     price: 149,
-    popular: false,
-    forWho: "For professionals beginning their executive communication journey",
-    transformation: "You will command meetings with greater structure and confidence",
-    coaching: "Includes 1 × 45-min Professor Session",
+    sessionsIncluded: 1,
+    badge: null,
+    tagline: "Begin your executive journey",
+    promise: "You will command meetings with greater structure and confidence",
     features: [
-      "4 Executive Performance Sessions",
-      "1 Professor Session (45 min)",
-      "Core ARRC framework access",
-      "Clarity, Wobble & Velocity metrics",
-      "Email support",
-      "Certificate of Completion",
+      "All 10 chapters & AI tools",
+      "Personalised learning path",
+      "1 live professor session",
+      "Progress tracking & certificate",
     ],
   },
   {
+    id: "pro",
     name: "Pro",
+    slug: "pro",
     price: 349,
-    popular: true,
-    forWho: "For executives who need to perform in high-stakes English environments",
-    transformation: "You will negotiate, present and lead with authority in English",
-    coaching: "Includes 2 × 45-min Professor Sessions",
+    sessionsIncluded: 3,
+    badge: "Most Popular",
+    tagline: "For high-stakes English performance",
+    promise: "You will negotiate, present and lead with authority in English",
     features: [
-      "8 Executive Performance Sessions",
-      "2 Professor Sessions (45 min each)",
-      "Full performance analytics",
-      "VOICE³ Assistant 24/7",
-      "Priority email support",
-      "Certificate of Completion",
+      "All 10 chapters & AI tools",
+      "Personalised learning path",
+      "3 live professor sessions",
+      "Progress tracking & certificate",
+      "Priority booking",
+    ],
+  },
+  {
+    id: "advanced",
+    name: "Advanced",
+    slug: "advanced",
+    price: 499,
+    sessionsIncluded: 5,
+    badge: null,
+    tagline: "Senior leaders, global exposure",
+    promise: "You will lead global teams and close deals entirely in English",
+    features: [
+      "All 10 chapters & AI tools",
+      "Personalised learning path",
+      "5 live professor sessions",
+      "Progress tracking & certificate",
+      "Priority booking",
       "Session recordings",
     ],
   },
   {
-    name: "Advanced",
-    price: 499,
-    popular: false,
-    forWho: "For senior leaders preparing for international exposure",
-    transformation: "You will lead global teams and close deals entirely in English",
-    coaching: "Includes 3 × 45-min Professor Sessions",
-    features: [
-      "12 Executive Performance Sessions",
-      "3 Professor Sessions (45 min each)",
-      "Advanced analytics & reports",
-      "VOICE³ Assistant 24/7",
-      "Priority support",
-      "Certificate of Completion",
-      "All session recordings",
-      "Personalised learning path",
-    ],
-  },
-  {
+    id: "business-master",
     name: "Business Master",
+    slug: "business-master",
     price: 799,
-    popular: false,
-    forWho: "For C-suite executives and business owners operating globally",
-    transformation: "You will command any room, any boardroom, in any country",
-    coaching: "Includes 4 × 60-min Professor Sessions",
+    sessionsIncluded: 10,
+    badge: null,
+    tagline: "C-suite & business owners",
+    promise: "You will command any room, any boardroom, in any country",
     features: [
-      "20 Executive Performance Sessions",
-      "4 Professor Sessions (60 min each)",
-      "Executive analytics suite",
-      "VOICE³ Assistant 24/7",
-      "Dedicated support manager",
-      "Premium certificate",
-      "All recordings",
-      "Personalised path",
-      "Enterprise integration",
-      "Monthly progress report",
+      "All 10 chapters & AI tools",
+      "Personalised learning path",
+      "10 live professor sessions",
+      "Progress tracking & certificate",
+      "Priority booking",
+      "Session recordings",
+      "Team dashboard + custom scenarios",
     ],
   },
 ];
 
-const comparisonFeatures = [
-  { label: "Executive Performance Sessions", values: ["4", "8", "12", "20"] },
-  { label: "Professor Sessions", values: ["1 × 45min", "2 × 45min", "3 × 45min", "4 × 60min"] },
-  { label: "Performance Analytics", values: [false, true, true, true] },
-  { label: "VOICE³ Assistant", values: [false, true, true, true] },
-  { label: "Session Recordings", values: [false, true, true, true] },
-  { label: "Personalised Learning Path", values: [false, false, true, true] },
-  { label: "Monthly Progress Report", values: [false, false, false, true] },
-  { label: "Dedicated Support Manager", values: [false, false, false, true] },
+const comparison = [
+  { label: "All Chapters & AI Tools",    values: [true,  true,  true,  true]  },
+  { label: "Personalised Learning Path", values: [true,  true,  true,  true]  },
+  { label: "Professor Sessions",         values: ["1×",  "3×",  "5×",  "10×"] },
+  { label: "Progress Tracking",          values: [true,  true,  true,  true]  },
+  { label: "Priority Booking",           values: [false, true,  true,  true]  },
+  { label: "Session Recordings",         values: [false, false, true,  true]  },
+  { label: "Team Dashboard",             values: [false, false, false, true]  },
+  { label: "Custom Scenarios",           values: [false, false, false, true]  },
 ];
 
-const PacksPage = () => {
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.5, ease: "easeOut" } }),
+};
+
+function CellValue({ v, colIdx }: { v: boolean | string; colIdx: number }) {
+  if (v === true)
+    return <span style={{ color: "#52C41A", fontWeight: 700 }}>✓</span>;
+  if (v === false)
+    return <span style={{ color: "#8E96A3" }}>—</span>;
+  return (
+    <span
+      className="text-xs font-bold px-2 py-0.5 rounded"
+      style={
+        colIdx === 1
+          ? { color: "#C9A84C", background: "rgba(201,168,76,0.1)" }
+          : { color: "#F4F2ED" }
+      }
+    >
+      {v}
+    </span>
+  );
+}
+
+export default function PacksPage() {
   return (
     <div className="min-h-screen bg-[#0B1A2A]">
       <Navbar />
 
-      {/* Hero */}
-      <section className="pt-32 pb-16 text-center px-4">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-          <p className="text-[#B89A5A] tracking-[0.2em] uppercase text-sm mb-6 font-medium">Investment</p>
-          <h1 className="font-serif text-5xl md:text-6xl font-semibold text-[#F4F2ED] mb-6 leading-tight">
-            Packs & Pricing
+      {/* ── Hero ── */}
+      <section className="pt-32 pb-16 px-6 text-center">
+        <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
+          <p className="text-xs tracking-[0.2em] text-[#C9A84C] uppercase mb-4">Investment</p>
+          <h1 className="font-serif text-[clamp(36px,5vw,52px)] font-bold text-[#F4F2ED] leading-tight mb-4">
+            Choose Your Track
           </h1>
-          <div className="flex justify-center mb-8">
-            <div className="w-20 h-0.5 bg-[#B89A5A]" />
-          </div>
-          <p className="text-[#8E96A3] text-lg max-w-xl mx-auto leading-relaxed">
-            Choose the pack that matches your ambition. Every pack includes live professor sessions, performance metrics, and a certificate of completion.
+          <div className="w-[60px] h-[2px] bg-[#C9A84C] mx-auto mb-5" />
+          <p className="text-[18px] text-[#8E96A3] max-w-lg mx-auto leading-relaxed">
+            Every pack includes live professor sessions, AI coaching, and a certificate of mastery.
           </p>
         </motion.div>
       </section>
 
-      {/* Pack cards */}
-      <section className="pb-20 px-4">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 xl:grid-cols-4 gap-8">
-          {packs.map((pack, i) => (
-            <motion.div
-              key={pack.name}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.6 }}
-              className={`relative flex flex-col bg-[#1C1F26] rounded-2xl p-7 border transition-all duration-300 ${
-                pack.popular
-                  ? "border-[#B89A5A]/50 shadow-[0_0_40px_rgba(184,154,90,0.15)]"
-                  : "border-[#B89A5A]/10 hover:border-[#B89A5A]/30"
-              }`}
-            >
-              {pack.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#B89A5A] text-[#0B1A2A] text-xs font-semibold flex items-center gap-1 whitespace-nowrap">
-                  <Star className="h-3 w-3" /> Most Popular
+      {/* ── Pack Cards ── */}
+      <section className="px-6 pb-24 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-start">
+          {packs.map((pack, i) => {
+            const isPro = pack.id === "pro";
+            return (
+              <motion.div
+                key={pack.id}
+                className="relative rounded-2xl p-7 flex flex-col"
+                style={{
+                  background: "#1C1F26",
+                  border: isPro
+                    ? "1px solid rgba(184,154,90,0.5)"
+                    : "1px solid rgba(184,154,90,0.1)",
+                  transform: isPro ? "scale(1.04)" : undefined,
+                  boxShadow: isPro ? "0 0 40px rgba(184,154,90,0.15)" : undefined,
+                }}
+                initial={{ opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                whileHover={!isPro ? { borderColor: "rgba(184,154,90,0.3)" } : undefined}
+              >
+                {/* Badge */}
+                {isPro && (
+                  <div
+                    className="absolute -top-px left-1/2 -translate-x-1/2 px-5 py-1.5 rounded-b-xl font-black text-[11px]"
+                    style={{
+                      background: "linear-gradient(135deg, #C9A84C, #E8C87A)",
+                      color: "#060f1d",
+                      letterSpacing: "0.08em",
+                    }}
+                  >
+                    MOST POPULAR
+                  </div>
+                )}
+
+                <div className={isPro ? "pt-4" : ""}>
+                  <h3 className="text-xl font-bold text-[#F4F2ED] mb-1">{pack.name}</h3>
+                  <p className="text-[13px] italic text-[#8E96A3] mb-5">{pack.tagline}</p>
+
+                  {/* Price */}
+                  <div className="flex items-end gap-1 mb-4">
+                    <span
+                      className="font-serif font-bold leading-none"
+                      style={{ fontSize: 64, color: "#C9A84C" }}
+                    >
+                      €{pack.price}
+                    </span>
+                    <span className="text-[#8E96A3] text-sm mb-3">/pack</span>
+                  </div>
+
+                  {/* Promise */}
+                  <p className="text-sm italic mb-4" style={{ color: "#C9A84C" }}>
+                    "{pack.promise}"
+                  </p>
+
+                  {/* Divider */}
+                  <div className="w-full h-px bg-[#B89A5A]/15 mb-4" />
+
+                  {/* Sessions pill */}
+                  <div className="mb-5">
+                    <span
+                      className="text-xs px-3 py-1 rounded-full"
+                      style={{
+                        background: "rgba(201,168,76,0.1)",
+                        border: "1px solid rgba(201,168,76,0.2)",
+                        color: "#C9A84C",
+                      }}
+                    >
+                      Includes {pack.sessionsIncluded} × 45-min Professor Sessions
+                    </span>
+                  </div>
+
+                  {/* Features */}
+                  <ul className="space-y-2 mb-8 flex-1">
+                    {pack.features.map((f) => (
+                      <li key={f} className="text-sm text-[#F4F2ED] flex items-start gap-2">
+                        <span style={{ color: "#C9A84C", flexShrink: 0 }}>✦</span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA */}
+                  <Link to={`/auth?pack=${pack.slug}`}>
+                    {pack.id === "starter" && (
+                      <Button
+                        variant="outline"
+                        className="w-full h-11 text-sm font-bold rounded-xl border-white/30 text-white hover:bg-white/5"
+                      >
+                        Get Started <ArrowRight className="ml-1 w-4 h-4" />
+                      </Button>
+                    )}
+                    {isPro && (
+                      <Button
+                        className="w-full h-11 text-sm font-bold rounded-xl"
+                        style={{ background: "#C9A84C", color: "#060f1d" }}
+                      >
+                        Get Started <ArrowRight className="ml-1 w-4 h-4" />
+                      </Button>
+                    )}
+                    {(pack.id === "advanced" || pack.id === "business-master") && (
+                      <Button
+                        variant="outline"
+                        className="w-full h-11 text-sm font-bold rounded-xl text-[#F4F2ED] hover:border-[#C9A84C]"
+                        style={{ borderColor: "rgba(201,168,76,0.5)" }}
+                      >
+                        Get Started <ArrowRight className="ml-1 w-4 h-4" />
+                      </Button>
+                    )}
+                  </Link>
                 </div>
-              )}
-
-              <h3 className="font-serif text-2xl font-semibold text-[#F4F2ED] mb-2">{pack.name}</h3>
-
-              <div className="mb-4">
-                <span className="font-serif text-4xl font-bold text-[#F4F2ED]">€{pack.price}</span>
-                <span className="text-[#8E96A3] text-sm">/pack</span>
-              </div>
-
-              <p className="text-[#8E96A3] text-xs mb-2 leading-relaxed italic">{pack.forWho}</p>
-              <p className="text-[#B89A5A] text-xs mb-1 leading-relaxed font-medium">{pack.transformation}</p>
-              <p className="text-[#8E96A3] text-xs mb-6 leading-relaxed">{pack.coaching}</p>
-
-              <div className="h-px bg-[#B89A5A]/10 mb-6" />
-
-              <ul className="space-y-3 mb-8 flex-1">
-                {pack.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm text-[#8E96A3]">
-                    <Check className="h-4 w-4 text-[#B89A5A] mt-0.5 shrink-0" strokeWidth={2} />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-
-              <Link to="/login">
-                <Button
-                  className={`w-full rounded-xl h-11 transition-all duration-300 ${
-                    pack.popular
-                      ? "bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] shadow-lg shadow-[#B89A5A]/20 hover:shadow-xl hover:shadow-[#B89A5A]/30 font-semibold"
-                      : "bg-transparent border-2 border-[#B89A5A]/50 text-[#F4F2ED] hover:border-[#B89A5A] hover:shadow-lg hover:shadow-[#B89A5A]/20"
-                  }`}
-                >
-                  Get Started
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
-      {/* Comparison table */}
-      <section className="pb-28 px-4">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <p className="text-[#B89A5A] tracking-[0.2em] uppercase text-sm mb-4 font-medium">Compare</p>
-            <h2 className="font-serif text-3xl md:text-4xl font-semibold text-[#F4F2ED]">Feature Comparison</h2>
-          </motion.div>
+      {/* ── Comparison Table ── */}
+      <section className="px-6 pb-24 max-w-5xl mx-auto">
+        <motion.h2
+          className="text-center font-serif text-3xl font-bold text-[#F4F2ED] mb-10"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          Compare All Tracks
+        </motion.h2>
 
-          <div className="overflow-x-auto rounded-2xl border border-[#B89A5A]/15">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-[#B89A5A]/10 border-b border-[#B89A5A]/20">
-                  <th className="text-left px-6 py-4 text-[#B89A5A] text-sm font-semibold tracking-wider">Feature</th>
-                  {packs.map((p) => (
-                    <th key={p.name} className="px-4 py-4 text-[#F4F2ED] text-sm font-semibold text-center">{p.name}</th>
+        <motion.div
+          className="overflow-x-auto rounded-2xl border border-[#B89A5A]/10"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <table className="w-full text-sm">
+            <thead>
+              <tr style={{ background: "rgba(201,168,76,0.06)" }}>
+                <th className="text-left py-4 px-5 text-[#C9A84C] font-bold tracking-wide">Feature</th>
+                {packs.map((p) => (
+                  <th key={p.id} className="py-4 px-4 text-center text-[#C9A84C] font-bold">
+                    {p.name}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {comparison.map((row, ri) => (
+                <tr
+                  key={row.label}
+                  style={{ background: ri % 2 === 0 ? "#1C1F26" : "#0B1A2A" }}
+                >
+                  <td className="py-3.5 px-5 text-[#8E96A3]">{row.label}</td>
+                  {row.values.map((v, ci) => (
+                    <td
+                      key={ci}
+                      className="py-3.5 px-4 text-center"
+                      style={ci === 1 ? { background: "rgba(201,168,76,0.03)" } : undefined}
+                    >
+                      <CellValue v={v} colIdx={ci} />
+                    </td>
                   ))}
                 </tr>
-              </thead>
-              <tbody>
-                {comparisonFeatures.map((row, i) => (
-                  <tr key={row.label} className={`border-b border-[#B89A5A]/10 ${i % 2 === 0 ? "bg-[#1C1F26]" : "bg-[#0B1A2A]"}`}>
-                    <td className="px-6 py-4 text-[#8E96A3] text-sm">{row.label}</td>
-                    {row.values.map((val, j) => (
-                      <td key={j} className="px-4 py-4 text-center">
-                        {typeof val === "boolean" ? (
-                          val ? (
-                            <Check className="h-4 w-4 text-[#B89A5A] mx-auto" strokeWidth={2} />
-                          ) : (
-                            <span className="text-[#8E96A3]/30 text-xs">—</span>
-                          )
-                        ) : (
-                          <span className="text-[#F4F2ED] text-xs">{val}</span>
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
+        </motion.div>
+      </section>
 
-          <p className="text-center text-[#8E96A3] text-sm mt-8">
-            Need a custom solution for your company?{" "}
-            <Link to="/for-companies" className="text-[#B89A5A] hover:underline">
-              View enterprise options
-            </Link>
-            .
-          </p>
-        </div>
+      {/* ── Not sure card ── */}
+      <section className="px-6 pb-32 max-w-2xl mx-auto">
+        <motion.div
+          className="text-center rounded-2xl p-10"
+          style={{
+            background: "rgba(201,168,76,0.04)",
+            border: "1px solid rgba(201,168,76,0.12)",
+          }}
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <h3 className="font-serif text-2xl font-bold text-[#F4F2ED] mb-3">
+            Not sure which track is right for you?
+          </h3>
+          <p className="text-[#8E96A3] mb-7">Book a free 15-minute discovery call.</p>
+          <Link to="/contact">
+            <Button
+              variant="outline"
+              className="h-12 px-8 font-bold text-[#C9A84C] rounded-xl"
+              style={{ borderColor: "rgba(201,168,76,0.5)" }}
+            >
+              Book Discovery Call <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+          </Link>
+        </motion.div>
       </section>
 
       <Footer />
       <ChatWidget />
     </div>
   );
-};
-
-export default PacksPage;
+}

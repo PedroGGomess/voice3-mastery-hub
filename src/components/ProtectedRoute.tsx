@@ -23,7 +23,14 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
     if (currentUser?.role === 'company_admin') {
       return <Navigate to="/empresa/dashboard" replace />;
     }
-    if (currentUser?.role === 'professor' || currentUser?.role === 'admin') {
+    if (currentUser?.role === 'admin') {
+      if (location.pathname.startsWith('/admin')) {
+        // Admin is already on an admin route but lacks the specific requiredRole — allow through
+        return <>{children}</>;
+      }
+      return <Navigate to="/admin/overview" replace />;
+    }
+    if (currentUser?.role === 'professor') {
       // Avoid infinite loop: if already targeting professor/dashboard routes, go to /app fallback
       if (location.pathname.startsWith('/professor')) {
         return <Navigate to="/app" replace />;

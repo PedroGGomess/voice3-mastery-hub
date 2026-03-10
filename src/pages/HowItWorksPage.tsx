@@ -1,275 +1,229 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Brain, MessageSquare, BarChart2, Users } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import ChatWidget from "@/components/ChatWidget";
 
-const arrcSteps = [
+const phases = [
   {
-    letter: "A",
-    title: "Activate",
-    desc: "Context setting and warm-up. You enter the scenario with clear objectives and background information, priming your executive mindset.",
+    num: "01",
+    timing: "~5 min",
+    icon: "⚡",
+    title: "Deep Dive: Context & Theory",
+    desc: "Begin each session with precision-targeted content. Video, audio, and structured theory to prime your executive mindset.",
+    badges: [],
+    label: "INTAKE",
   },
   {
-    letter: "R",
-    title: "Receive",
-    desc: "Learn the key communication structures relevant to the scenario — negotiation tactics, presentation frameworks, crisis language.",
+    num: "02",
+    timing: "~15 min",
+    icon: "🎯",
+    title: "AI-Powered Real-Time Practice",
+    desc: "Your AI Coach fires live scenarios. Immediate, brutally honest feedback on structure, clarity, and authority.",
+    badges: [{ text: "🤖 AI Active", gold: true }],
+    label: "DRILL",
   },
   {
-    letter: "R",
-    title: "Rehearse",
-    desc: "Practice with AI simulation. You are challenged with real-time prompts, objections, and pressure situations.",
+    num: "03",
+    timing: "~10 min",
+    icon: "🏆",
+    title: "Flash Executive Simulation",
+    desc: "A timed written role-play. Board meetings, investor challenges, difficult clients — performed under pressure.",
+    badges: [{ text: "⏱ Timed", gold: false }],
+    label: "SIMULATION",
   },
   {
-    letter: "C",
-    title: "Confirm",
-    desc: "Quiz, score, and debrief. Your performance is assessed across Clarity, Wobble, and Velocity metrics.",
-  },
-];
-
-const metrics = [
-  {
-    icon: MessageSquare,
-    name: "Clarity",
-    desc: "How precise and unambiguous is your communication? Measured by structure, vocabulary, and message alignment.",
-  },
-  {
-    icon: BarChart2,
-    name: "Wobble",
-    desc: "How consistent is your performance under pressure? Measures variance between your best and worst responses.",
-  },
-  {
-    icon: Brain,
-    name: "Velocity",
-    desc: "How quickly do you respond with precision? Tracks response speed without sacrificing quality or authority.",
+    num: "04",
+    timing: "~3 min",
+    icon: "📈",
+    title: "AI Performance Report",
+    desc: "Personalised score, strengths, areas to sharpen. Your AI Coach remembers everything and adapts over time.",
+    badges: [{ text: "📊 Auto-generated", gold: false }],
+    label: "DEBRIEF",
   },
 ];
 
-const GoldDivider = () => (
-  <div className="flex justify-center my-16">
-    <div className="w-20 h-0.5 bg-[#B89A5A]/40" />
-  </div>
-);
+const tools = [
+  { icon: "🤖", title: "AI Coach Chat", desc: "Your always-on training partner" },
+  { icon: "🚨", title: "Rescue Mode", desc: "Emergency communication prep" },
+  { icon: "📝", title: "Grammar Tool", desc: "Precision language correction" },
+  { icon: "⚔️", title: "Q&A Gauntlet", desc: "Hostile questioning drills" },
+  { icon: "💬", title: "AI Debate Club", desc: "Structured argumentation" },
+  { icon: "✉️", title: "Email Tone", desc: "Executive email transformation" },
+];
 
-const HowItWorksPage = () => {
+const fadeUp = {
+  hidden: { opacity: 0, y: 32 },
+  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.55, ease: "easeOut" } }),
+};
+
+export default function HowItWorksPage() {
   return (
     <div className="min-h-screen bg-[#0B1A2A]">
       <Navbar />
 
-      {/* Hero */}
-      <section className="pt-32 pb-24 text-center px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="max-w-3xl mx-auto"
-        >
-          <p className="text-[#B89A5A] tracking-[0.2em] uppercase text-sm mb-6 font-medium">The Method</p>
-          <h1 className="font-serif text-5xl md:text-6xl font-semibold text-[#F4F2ED] mb-6 leading-tight">
-            The VOICE<sup className="text-[#B89A5A]">³</sup> Method
+      {/* ── Hero ── */}
+      <section className="pt-32 pb-20 px-6 text-center">
+        <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
+          <p className="text-xs tracking-[0.2em] text-[#C9A84C] uppercase mb-4">The Method</p>
+          <h1 className="font-serif text-[clamp(36px,5vw,52px)] font-bold text-[#F4F2ED] leading-tight mb-6">
+            The VOICE<sup className="text-[#C9A84C]">³</sup> Method
           </h1>
-          <div className="flex justify-center mb-8">
-            <div className="w-20 h-0.5 bg-[#B89A5A]" />
-          </div>
-          <p className="text-[#8E96A3] text-lg leading-relaxed">
-            This is not a language course. It is an executive performance system — engineered to transform how you communicate under pressure, in negotiations, presentations, and high-stakes conversations.
+          <div className="w-[60px] h-[2px] bg-[#C9A84C] mx-auto mb-6" />
+          <p className="text-[18px] text-[#8E96A3] max-w-xl mx-auto mb-8 leading-relaxed">
+            This is not a language course. It is an executive performance system built for leaders who
+            operate in high-stakes English environments.
           </p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            {["✓ AI-Powered Training", "✓ Human Professor Sessions"].map((pill) => (
+              <span
+                key={pill}
+                style={{
+                  background: "rgba(201,168,76,0.08)",
+                  border: "1px solid rgba(201,168,76,0.2)",
+                  borderRadius: 999,
+                  padding: "8px 20px",
+                  color: "#C9A84C",
+                  fontSize: 14,
+                }}
+              >
+                {pill}
+              </span>
+            ))}
+          </div>
         </motion.div>
       </section>
 
-      <GoldDivider />
-
-      {/* AI Executive Simulation */}
-      <section className="py-16 px-4">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <p className="text-[#B89A5A] tracking-[0.2em] uppercase text-sm mb-4 font-medium">Executive Simulation</p>
-            <h2 className="font-serif text-3xl md:text-4xl font-semibold text-[#F4F2ED] mb-6 leading-tight">
-              Practice Real Executive Scenarios
-            </h2>
-            <p className="text-[#8E96A3] leading-relaxed mb-4">
-              Our performance sessions simulate real executive scenarios — negotiations with difficult counterparts, high-pressure presentations to the board, and crisis communications requiring immediate authority.
-            </p>
-            <p className="text-[#8E96A3] leading-relaxed">
-              Each simulation is designed to expose and correct communication weaknesses before they cost you in the real world.
-            </p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            {/* Mock session interface */}
-            <div className="bg-[#1C1F26] rounded-2xl border border-[#B89A5A]/20 p-6 shadow-[0_0_40px_rgba(0,0,0,0.4)]">
-              <div className="flex items-center gap-2 mb-5">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-                <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-                <span className="ml-3 text-[#8E96A3] text-xs tracking-wider uppercase">Performance Session</span>
-              </div>
-              <div className="bg-[#0B1A2A] rounded-xl p-4 mb-3 border border-[#B89A5A]/10">
-                <p className="text-[#B89A5A] text-xs uppercase tracking-wider mb-2">Scenario</p>
-                <p className="text-[#F4F2ED] text-sm">Board presentation — Q3 results under scrutiny. The CFO challenges your projections.</p>
-              </div>
-              <div className="space-y-2 mb-4">
-                <div className="bg-[#0B1A2A]/60 rounded-lg p-3 border-l-2 border-[#B89A5A]/30">
-                  <p className="text-[#8E96A3] text-xs">"Your projections seem overly optimistic given current market conditions."</p>
-                </div>
-                <div className="bg-[#B89A5A]/10 rounded-lg p-3 border-l-2 border-[#B89A5A]">
-                  <p className="text-[#F4F2ED] text-xs">Your response is being evaluated...</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                {["Clarity", "Wobble", "Velocity"].map((m) => (
-                  <div key={m} className="bg-[#0B1A2A] rounded-lg p-2 border border-[#B89A5A]/10">
-                    <div className="text-[#B89A5A] font-bold text-sm">—</div>
-                    <div className="text-[#8E96A3] text-xs">{m}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      <GoldDivider />
-
-      {/* ARRC Framework */}
-      <section className="py-16 px-4">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-14"
-          >
-            <p className="text-[#B89A5A] tracking-[0.2em] uppercase text-sm mb-4 font-medium">Framework</p>
-            <h2 className="font-serif text-3xl md:text-4xl font-semibold text-[#F4F2ED]">The ARRC Framework</h2>
-            <p className="text-[#8E96A3] mt-4 max-w-xl mx-auto">Every session follows this four-stage process, engineered for maximum performance transfer.</p>
-          </motion.div>
-          <div className="grid md:grid-cols-4 gap-6">
-            {arrcSteps.map((step, i) => (
-              <motion.div
-                key={step.letter}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-[#1C1F26] rounded-xl p-6 border border-[#B89A5A]/10 text-center"
-              >
-                <div className="w-12 h-12 rounded-full bg-[#B89A5A]/10 border border-[#B89A5A]/40 flex items-center justify-center mx-auto mb-4">
-                  <span className="font-serif text-xl font-bold text-[#B89A5A]">{step.letter}</span>
-                </div>
-                <h3 className="font-serif text-lg font-semibold text-[#F4F2ED] mb-3">{step.title}</h3>
-                <p className="text-[#8E96A3] text-sm leading-relaxed">{step.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <GoldDivider />
-
-      {/* Performance Metrics */}
-      <section className="py-16 px-4">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-14"
-          >
-            <p className="text-[#B89A5A] tracking-[0.2em] uppercase text-sm mb-4 font-medium">Performance</p>
-            <h2 className="font-serif text-3xl md:text-4xl font-semibold text-[#F4F2ED]">Three Core Metrics</h2>
-            <p className="text-[#8E96A3] mt-4 max-w-xl mx-auto">Your executive communication is measured across three precision indicators — tracked over every session.</p>
-          </motion.div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {metrics.map((metric, i) => (
-              <motion.div
-                key={metric.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-[#1C1F26] rounded-xl p-8 border border-[#B89A5A]/10 hover:border-[#B89A5A]/30 transition-all duration-300"
-              >
-                <div className="w-12 h-12 rounded-lg bg-[#B89A5A]/10 flex items-center justify-center mb-5">
-                  <metric.icon className="h-5 w-5 text-[#B89A5A]" strokeWidth={1.5} />
-                </div>
-                <h3 className="font-serif text-2xl font-semibold text-[#F4F2ED] mb-3">{metric.name}</h3>
-                <p className="text-[#8E96A3] leading-relaxed text-sm">{metric.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <GoldDivider />
-
-      {/* Coaching Integration */}
-      <section className="py-16 px-4">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-14"
-          >
-            <p className="text-[#B89A5A] tracking-[0.2em] uppercase text-sm mb-4 font-medium">Coaching Integration</p>
-            <h2 className="font-serif text-3xl md:text-4xl font-semibold text-[#F4F2ED]">Sessions + Professor Checkpoints</h2>
-            <p className="text-[#8E96A3] mt-4 max-w-xl mx-auto">Performance sessions are interspersed with live professor checkpoints for targeted correction and strategic guidance.</p>
-          </motion.div>
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-0">
-            {[
-              { label: "Performance Sessions", sub: "AI-driven simulation" },
-              { label: "Professor Checkpoint", sub: "Live correction", highlight: true },
-              { label: "Performance Sessions", sub: "Advanced scenarios" },
-              { label: "Professor Checkpoint", sub: "Final calibration", highlight: true },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center flex-1 w-full md:w-auto">
-                <div className={`flex-1 p-5 rounded-xl border text-center ${item.highlight ? "bg-[#B89A5A]/10 border-[#B89A5A]/40" : "bg-[#1C1F26] border-[#B89A5A]/10"}`}>
-                  <p className={`font-serif text-sm font-semibold mb-1 ${item.highlight ? "text-[#B89A5A]" : "text-[#F4F2ED]"}`}>{item.label}</p>
-                  <p className="text-[#8E96A3] text-xs">{item.sub}</p>
-                </div>
-                {i < 3 && <div className="hidden md:block w-8 h-px bg-[#B89A5A]/40 shrink-0" />}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-24 text-center px-4">
-        <motion.div
+      {/* ── 4 Phases ── */}
+      <section className="px-6 pb-24 max-w-4xl mx-auto">
+        <motion.h2
+          className="text-center font-serif text-3xl font-bold text-[#F4F2ED] mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="max-w-xl mx-auto"
+          transition={{ duration: 0.5 }}
         >
-          <h2 className="font-serif text-3xl md:text-4xl font-semibold text-[#F4F2ED] mb-6">
-            Apply to VOICE<sup className="text-[#B89A5A]">³</sup>
+          Inside Every Session
+        </motion.h2>
+
+        <div className="flex flex-col gap-6">
+          {phases.map((phase, i) => (
+            <motion.div
+              key={phase.num}
+              className="bg-[#1C1F26] rounded-2xl border border-[#B89A5A]/10 p-8 relative overflow-hidden"
+              initial={{ opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+            >
+              {/* Faded number */}
+              <span
+                className="absolute right-6 top-1/2 -translate-y-1/2 font-serif font-black select-none pointer-events-none"
+                style={{ fontSize: 96, color: "#C9A84C", opacity: 0.05, lineHeight: 1 }}
+              >
+                {phase.num}
+              </span>
+
+              <div className="flex items-start gap-6 relative z-10">
+                {/* Icon circle */}
+                <div
+                  className="flex-shrink-0 flex items-center justify-center text-2xl rounded-full"
+                  style={{
+                    width: 64,
+                    height: 64,
+                    background: "rgba(201,168,76,0.1)",
+                    border: "2px solid rgba(201,168,76,0.3)",
+                  }}
+                >
+                  {phase.icon}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
+                    <span className="text-xs tracking-[0.18em] text-[#C9A84C] font-bold uppercase">
+                      Phase {phase.num} — {phase.label}
+                    </span>
+                    <span className="text-xs text-[#8E96A3]">({phase.timing})</span>
+                    {phase.badges.map((b) => (
+                      <span
+                        key={b.text}
+                        className="text-xs px-3 py-1 rounded-full"
+                        style={
+                          b.gold
+                            ? { background: "rgba(201,168,76,0.15)", color: "#C9A84C", border: "1px solid rgba(201,168,76,0.3)" }
+                            : { background: "rgba(255,255,255,0.05)", color: "#8E96A3", border: "1px solid rgba(255,255,255,0.1)" }
+                        }
+                      >
+                        {b.text}
+                      </span>
+                    ))}
+                  </div>
+                  <h3 className="text-xl font-bold text-[#F4F2ED] mb-2">{phase.title}</h3>
+                  <p className="text-[#8E96A3] text-sm leading-relaxed">{phase.desc}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── 6 AI Tools ── */}
+      <section className="px-6 pb-24 max-w-5xl mx-auto">
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <p className="text-xs tracking-[0.2em] text-[#C9A84C] uppercase mb-3">Included</p>
+          <h2 className="font-serif text-3xl font-bold text-[#F4F2ED]">6 AI-Powered Tools</h2>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {tools.map((tool, i) => (
+            <motion.div
+              key={tool.title}
+              className="bg-[#1C1F26] rounded-xl border border-[#B89A5A]/10 p-6 cursor-default transition-all duration-300 hover:border-[#B89A5A]/30"
+              style={{ transition: "transform 0.2s, border-color 0.2s" }}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -3 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08, duration: 0.4 }}
+            >
+              <span className="text-3xl mb-4 block">{tool.icon}</span>
+              <h3 className="text-[#F4F2ED] font-bold text-base mb-1">{tool.title}</h3>
+              <p className="text-[#8E96A3] text-sm">{tool.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Final CTA ── */}
+      <section className="px-6 pb-32 text-center">
+        <motion.div
+          className="max-w-xl mx-auto"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#F4F2ED] mb-4">
+            Your first session is a diagnostic.
           </h2>
-          <p className="text-[#8E96A3] mb-10 leading-relaxed">
-            Join professionals who have transformed how they communicate at the highest level.
-          </p>
-          <Button
-            size="lg"
-            className="bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold px-10 py-4 text-base rounded-xl shadow-lg shadow-[#B89A5A]/20 hover:shadow-xl hover:shadow-[#B89A5A]/30 transition-all duration-300"
-            asChild
-          >
-            <Link to="/login">
-              Apply Now
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+          <p className="text-[#8E96A3] text-lg mb-8">Free for new members. Takes 30 minutes.</p>
+          <Link to="/auth">
+            <Button
+              className="h-14 px-10 text-base font-bold rounded-xl"
+              style={{ background: "linear-gradient(135deg, #C9A84C, #E8C87A)", color: "#060f1d" }}
+            >
+              Start Your Executive Diagnostic
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
+          </Link>
         </motion.div>
       </section>
 
@@ -277,6 +231,4 @@ const HowItWorksPage = () => {
       <ChatWidget />
     </div>
   );
-};
-
-export default HowItWorksPage;
+}

@@ -40,6 +40,7 @@ function seedDemoData() {
         { id: 'demo-student', name: 'João Silva', email: 'demo@voice3.pt', password: 'demo123', role: 'student', company: 'Tech Corp', createdAt: '2026-01-01' },
         { id: 'demo-company', name: 'Admin Empresa', email: 'empresa@voice3.pt', password: 'empresa123', role: 'company_admin', company: 'Tech Corp Portugal', createdAt: '2026-01-01' },
         { id: 'demo-professor', name: 'Prof. Ana Ferreira', email: 'professor@voice3.pt', password: 'prof123', role: 'professor', company: 'VOICE³', createdAt: '2026-01-01' },
+        { id: 'demo-admin', name: 'Admin Voice³', email: 'admin@voice3.pt', password: 'admin123', role: 'admin', company: 'VOICE³', createdAt: '2026-01-01' },
       ];
       localStorage.setItem(USERS_KEY, JSON.stringify(demoUsers));
 
