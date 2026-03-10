@@ -328,6 +328,16 @@ const AuthPage = () => {
                   <p className="text-xs" style={{ color: "#8E96A3" }}>👩‍🏫 <span style={{ color: "#F4F2ED" }}>Professora:</span> professor@voice3.pt / prof123</p>
                 </div>
               </div>
+
+              {/* Demo Credentials Card */}
+              <div className="mt-4 rounded-xl p-4 border border-[#B89A5A]/20 bg-[#B89A5A]/5">
+                <p className="text-xs font-bold text-[#B89A5A] uppercase tracking-wider mb-2">Demo Credentials</p>
+                <div className="space-y-1.5 text-xs text-[#8E96A3]">
+                  <div className="flex gap-2"><span>👤 Aluno:</span><span className="text-[#F4F2ED]">demo@voice3.pt / demo123</span></div>
+                  <div className="flex gap-2"><span>🏢 Empresa:</span><span className="text-[#F4F2ED]">empresa@voice3.pt / empresa123</span></div>
+                  <div className="flex gap-2"><span>👩‍🏫 Professora:</span><span className="text-[#F4F2ED]">professor@voice3.pt / prof123</span></div>
+                </div>
+              </div>
             </>
           )}
 

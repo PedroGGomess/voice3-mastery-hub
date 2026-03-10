@@ -273,18 +273,18 @@ const AIDebateClub = () => {
 
       if (currentUser) {
         savePracticeAttempt(currentUser.id, {
-          practiceId: "ai-debate",
+          practiceId: "debate-club",
           practiceName: "AI Debate Club",
           score: combined.total,
           details: { topic: selectedTopic!.text, side, ...combined },
         });
         awardPoints(currentUser.id, {
-          source: "ai-debate",
-          sourceId: "ai-debate",
-          sourceName: "AI Debate Club",
-          points: Math.round(75 + combined.total * 0.5),
+          source: "practice",
+          sourceId: "debate-club",
+          sourceName: "Debate Club",
+          points: 150,
         });
-        toast.success(`Debate complete! +${Math.round(75 + combined.total * 0.5)} pts`);
+        toast.success(`Debate complete! +150 pts`);
       }
     });
     setActiveInterval(id);

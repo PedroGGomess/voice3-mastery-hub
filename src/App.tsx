@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { awardPoints } from "@/lib/persistence";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useEffect } from "react";
 
@@ -60,9 +62,38 @@ function ScrollToTop() {
   return null;
 }
 
+function StreakTracker() {
+  const { currentUser } = useAuth();
+
+  useEffect(() => {
+    if (!currentUser) return;
+    const today = new Date().toDateString();
+    const storageKey = `v3_lastLogin_${currentUser.id}`;
+    const last = localStorage.getItem(storageKey);
+    if (last === today) return;
+
+    const MS_PER_DAY = 24 * 60 * 60 * 1000;
+    const yesterday = new Date(Date.now() - MS_PER_DAY).toDateString();
+    const consecutive = last === yesterday;
+
+    if (consecutive) {
+      awardPoints(currentUser.id, {
+        source: "streak",
+        sourceId: "daily-streak",
+        sourceName: "Daily streak",
+        points: 50,
+      });
+    }
+    localStorage.setItem(storageKey, today);
+  }, [currentUser]);
+
+  return null;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
+      <StreakTracker />
       <TooltipProvider>
         <Toaster />
         <Sonner />

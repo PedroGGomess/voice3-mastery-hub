@@ -21,7 +21,7 @@ function useCountUp(target: number, duration: number, started: boolean) {
 }
 
 const stats = [
-  { target: 500, suffix: "+", label: "Professionals Trained" },
+  { target: 200, suffix: "+", label: "Professionals Trained" },
   { target: 94, suffix: "%", label: "Success Rate" },
   // target=49 → divide by 10 to display as "4.9★" rating
   { target: 49, suffix: "", label: "Rating", display: (n: number) => `${(n / 10).toFixed(1)}★` },

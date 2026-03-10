@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import PlatformLayout from "@/components/PlatformLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { saveToolkitEntry, getToolkitHistory, awardPoints } from "@/lib/persistence";
+import { useAICoach } from "@/hooks/useAICoach";
+import LoadingAI from "@/components/LoadingAI";
 
 const MEETING_TYPES = [
   "Board Meeting",
@@ -208,39 +210,51 @@ function CopyButton({ text }: { text: string }) {
 
 const RescueMode = () => {
   const { currentUser } = useAuth();
+  const { sendMessage } = useAICoach();
   const [meetingType, setMeetingType] = useState("");
   const [topic, setTopic] = useState("");
   const [loading, setLoading] = useState(false);
   const [drill, setDrill] = useState<typeof DRILLS[string] | null>(null);
+  const [aiResult, setAiResult] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"generate" | "history">("generate");
 
   const history = currentUser ? getToolkitHistory(currentUser.id, "rescue-mode") : [];
 
   const handleGenerate = () => {
     if (!meetingType) return;
+    const selectedDrill = DRILLS[meetingType];
+    if (!selectedDrill) return;
+    setDrill(selectedDrill);
     setLoading(true);
-    setDrill(null);
-    setTimeout(() => {
-      const result = DRILLS[meetingType] || DRILLS["Board Meeting"];
-      setDrill(result);
-      setLoading(false);
+    setAiResult("");
 
-      if (currentUser) {
-        saveToolkitEntry(currentUser.id, {
-          toolId: "rescue-mode",
-          toolName: "Rescue Mode",
-          inputs: { meetingType, topic },
-          outputs: { opening: result.opening, phrases: result.phrases, pivots: result.powerPivots },
-        });
-        awardPoints(currentUser.id, {
-          source: "toolkit",
-          sourceId: "rescue-mode",
-          sourceName: "Rescue Mode",
-          points: 15,
-        });
-        toast.success("+15 points earned!", { description: "Rescue Mode drill generated." });
-      }
-    }, 1500);
+    if (currentUser) {
+      awardPoints(currentUser.id, {
+        source: "toolkit",
+        sourceId: "rescue-mode",
+        sourceName: "Rescue Mode",
+        points: 25,
+      });
+      saveToolkitEntry(currentUser.id, {
+        toolId: "rescue-mode",
+        toolName: "Rescue Mode",
+        inputs: { meetingType, topic },
+        outputs: { opening: selectedDrill.opening, phrases: selectedDrill.phrases, pivots: selectedDrill.powerPivots },
+      });
+      toast.success("+25 points earned!", { description: "Rescue Mode drill generated." });
+    }
+
+    sendMessage(
+      [{ role: "user", content: `Meeting: ${meetingType}. Topic: ${topic || "General"}. Emergency prep now.` }],
+      "rescue-mode",
+      { meetingType, topic }
+    ).then(reply => {
+      setAiResult(reply);
+    }).catch(() => {
+      // AI not available, use static drill
+    }).finally(() => {
+      setLoading(false);
+    });
   };
 
   const getOpeningWithTopic = (opening: string) => {
@@ -428,6 +442,19 @@ const RescueMode = () => {
                   </h3>
                   <p className="text-sm text-[#F4F2ED]/80 leading-relaxed">{drill.confidence}</p>
                 </div>
+
+                {/* AI Battle Plan */}
+                {loading && (
+                  <LoadingAI message="Generating your battle plan..." />
+                )}
+                {aiResult && !loading && (
+                  <div className="rounded-xl bg-[#1C1F26] border border-[#B89A5A]/30 p-5">
+                    <h3 className="text-xs font-bold text-[#B89A5A] uppercase tracking-wider mb-3">
+                      🤖 AI Battle Plan
+                    </h3>
+                    <p className="text-sm text-[#F4F2ED] leading-relaxed whitespace-pre-line">{aiResult}</p>
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

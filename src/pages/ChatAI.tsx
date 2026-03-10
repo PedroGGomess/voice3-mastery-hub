@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { Send, User, Trash2, Mic, MicOff, X, PenLine, Target, BookOpen, Users, ClipboardList, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAICoach } from "@/hooks/useAICoach";
+import LoadingAI from "@/components/LoadingAI";
 
 // SpeechRecognition type declarations
 interface SpeechRecognitionResult {
@@ -170,6 +172,7 @@ function getBotResponse(text: string): string {
 
 const ChatAI = () => {
   const { currentUser } = useAuth();
+  const { sendMessage: sendAIMessage } = useAICoach();
   const userId = currentUser?.id || "";
   const storageKey = `voice3_chat_history_${userId}`;
 
@@ -231,7 +234,7 @@ const ChatAI = () => {
     }
   };
 
-  const sendMessage = (text: string) => {
+  const sendMessage = async (text: string) => {
     if (!text.trim()) return;
     const userMsg: Message = { role: "user", text: text.trim(), timestamp: new Date().toISOString() };
     const newMessages = [...messages, userMsg];
@@ -239,7 +242,17 @@ const ChatAI = () => {
     setInput("");
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      const history = newMessages.slice(-10).map(m => ({
+        role: (m.role === "bot" ? "assistant" : "user") as "user" | "assistant",
+        content: m.text,
+      }));
+      const reply = await sendAIMessage(history, "chat");
+      const botMsg: Message = { role: "bot", text: reply, timestamp: new Date().toISOString() };
+      const withBot = [...newMessages, botMsg];
+      setMessages(withBot);
+      saveMessages(withBot);
+    } catch {
       const botMsg: Message = {
         role: "bot",
         text: getBotResponse(text),
@@ -248,8 +261,9 @@ const ChatAI = () => {
       const withBot = [...newMessages, botMsg];
       setMessages(withBot);
       saveMessages(withBot);
+    } finally {
       setIsTyping(false);
-    }, 1000);
+    }
   };
 
   const handleAnalyzeSend = () => {
