@@ -2,9 +2,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { useEffect } from "react";
 
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
@@ -45,8 +46,19 @@ import VocabularyAccelerator from "./pages/tools/VocabularyAccelerator";
 import MeetingPrep from "./pages/tools/MeetingPrep";
 import CoachPersonas from "./pages/tools/CoachPersonas";
 import ShadowCoach from "./pages/tools/ShadowCoach";
+import ProfessorDashboard from "./pages/professor/ProfessorDashboard";
+import ProfessorStudentView from "./pages/professor/ProfessorStudentView";
+import DiagnosticSession from "./pages/DiagnosticSession";
+import ChaptersOverview from "./pages/ChaptersOverview";
+import ChapterDetail from "./pages/ChapterDetail";
 
 const queryClient = new QueryClient();
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -55,6 +67,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             {/* Public */}
             <Route path="/" element={<Index />} />
@@ -99,6 +112,15 @@ const App = () => (
             <Route path="/empresa/progresso" element={<ProtectedRoute requiredRole="company_admin"><Progresso /></ProtectedRoute>} />
             <Route path="/empresa/suporte" element={<ProtectedRoute requiredRole="company_admin"><EmpresaSuporte /></ProtectedRoute>} />
             <Route path="/empresa/definicoes" element={<ProtectedRoute requiredRole="company_admin"><Definicoes /></ProtectedRoute>} />
+
+            {/* Professor routes */}
+            <Route path="/professor/dashboard" element={<ProtectedRoute requiredRole="professor"><ProfessorDashboard /></ProtectedRoute>} />
+            <Route path="/professor/aluno/:studentId" element={<ProtectedRoute requiredRole="professor"><ProfessorStudentView /></ProtectedRoute>} />
+
+            {/* Chapter / diagnostic routes (student) */}
+            <Route path="/sessoes/diagnostico" element={<ProtectedRoute requiredRole="student"><DiagnosticSession /></ProtectedRoute>} />
+            <Route path="/capitulos" element={<ProtectedRoute requiredRole="student"><ChaptersOverview /></ProtectedRoute>} />
+            <Route path="/capitulos/:chapterId" element={<ProtectedRoute requiredRole="student"><ChapterDetail /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

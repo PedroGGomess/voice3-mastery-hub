@@ -5,10 +5,11 @@ interface User {
   name: string;
   email: string;
   company?: string;
-  role: 'student' | 'company_admin';
+  role: 'student' | 'company_admin' | 'professor' | 'admin';
   createdAt: string;
   pack?: string;
   packDetails?: { name: string; sessions: number; teacherLessons: number; price: number };
+  timezone?: string;
 }
 
 interface StoredUser extends User {
@@ -20,7 +21,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (data: { name: string; email: string; password: string; company?: string; role: 'student' | 'company_admin'; pack?: string; packDetails?: { name: string; sessions: number; teacherLessons: number; price: number } }) => Promise<void>;
+  register: (data: { name: string; email: string; password: string; company?: string; role: 'student' | 'company_admin' | 'professor' | 'admin'; pack?: string; packDetails?: { name: string; sessions: number; teacherLessons: number; price: number } }) => Promise<void>;
   logout: () => void;
   updateProfile: (data: Partial<User>) => void;
 }
@@ -38,6 +39,7 @@ function seedDemoData() {
       const demoUsers: StoredUser[] = [
         { id: 'demo-student', name: 'João Silva', email: 'demo@voice3.pt', password: 'demo123', role: 'student', company: 'Tech Corp', createdAt: '2026-01-01' },
         { id: 'demo-company', name: 'Admin Empresa', email: 'empresa@voice3.pt', password: 'empresa123', role: 'company_admin', company: 'Tech Corp Portugal', createdAt: '2026-01-01' },
+        { id: 'demo-professor', name: 'Prof. Ana Ferreira', email: 'professor@voice3.pt', password: 'prof123', role: 'professor', company: 'VOICE³', createdAt: '2026-01-01' },
       ];
       localStorage.setItem(USERS_KEY, JSON.stringify(demoUsers));
 
@@ -47,6 +49,15 @@ function seedDemoData() {
         { id: 'cs3', name: 'Maria Silva', email: 'maria@empresa.pt', pack: 'Starter', completedSessions: 2, totalSessions: 4, status: 'Ativa', teacherStatus: 'Por marcar' },
         { id: 'cs4', name: 'João Mendes', email: 'joao@empresa.pt', pack: 'Pro', completedSessions: 4, totalSessions: 10, status: 'Ativo', teacherStatus: 'Marcada' },
         { id: 'cs5', name: 'Sofia Nunes', email: 'sofia@empresa.pt', pack: 'Pro', completedSessions: 0, totalSessions: 10, status: 'Nova', teacherStatus: '—' },
+      ]));
+
+      // Demo students assigned to professor
+      localStorage.setItem('voice3_professor_students_demo-professor', JSON.stringify([
+        { id: 'cs1', name: 'Ana Costa', email: 'ana@empresa.pt', pack: 'Pro', completedChapters: 3, totalChapters: 10, nextSession: '2026-03-15', level: 'B2', teachingStyle: 'Balanced' },
+        { id: 'cs2', name: 'Pedro Lopes', email: 'pedro@empresa.pt', pack: 'Advanced', completedChapters: 6, totalChapters: 10, nextSession: '2026-03-18', level: 'C1', teachingStyle: 'Rigorous' },
+        { id: 'cs3', name: 'Maria Silva', email: 'maria@empresa.pt', pack: 'Starter', completedChapters: 1, totalChapters: 10, nextSession: null, level: 'B1', teachingStyle: 'Soft' },
+        { id: 'cs4', name: 'João Mendes', email: 'joao@empresa.pt', pack: 'Pro', completedChapters: 2, totalChapters: 10, nextSession: '2026-03-20', level: 'B2', teachingStyle: 'Intensive' },
+        { id: 'cs5', name: 'Sofia Nunes', email: 'sofia@empresa.pt', pack: 'Pro', completedChapters: 0, totalChapters: 10, nextSession: null, level: null, teachingStyle: null },
       ]));
 
       localStorage.setItem('voice3_sessions_progress_demo-student', JSON.stringify({
@@ -95,7 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setCurrentUser(userWithoutPwd);
   };
 
-  const register = async (data: { name: string; email: string; password: string; company?: string; role: 'student' | 'company_admin'; pack?: string; packDetails?: { name: string; sessions: number; teacherLessons: number; price: number } }) => {
+  const register = async (data: { name: string; email: string; password: string; company?: string; role: 'student' | 'company_admin' | 'professor' | 'admin'; pack?: string; packDetails?: { name: string; sessions: number; teacherLessons: number; price: number } }) => {
     const stored = localStorage.getItem(USERS_KEY);
     const users: StoredUser[] = stored ? JSON.parse(stored) : [];
     if (users.find(u => u.email.toLowerCase() === data.email.toLowerCase())) {

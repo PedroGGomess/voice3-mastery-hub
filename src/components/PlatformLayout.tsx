@@ -36,6 +36,15 @@ const navItems: NavItem[] = [
   { type: "link", to: "/app/suporte", icon: HelpCircle, label: "Support" },
 ];
 
+const professorNavItems: NavItem[] = [
+  { type: "link", to: "/professor/dashboard", icon: LayoutDashboard, label: "Dashboard", end: true },
+  { type: "separator", label: "GESTÃO" },
+  { type: "link", to: "/professor/dashboard", icon: GraduationCap, label: "Os Meus Alunos" },
+  { type: "separator", label: "CONTA" },
+  { type: "link", to: "/app/perfil", icon: User, label: "Perfil" },
+  { type: "link", to: "/app/suporte", icon: HelpCircle, label: "Suporte" },
+];
+
 const PlatformLayout = ({ children }: { children: ReactNode }) => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
@@ -43,6 +52,9 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const { unreadCount } = useNotifications(currentUser?.id || '');
   useScrollReset();
+
+  const isProfessor = currentUser?.role === 'professor' || currentUser?.role === 'admin';
+  const activeNavItems = isProfessor ? professorNavItems : navItems;
 
   const initials = (currentUser?.name || "U")
     .split(" ")
@@ -67,7 +79,7 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
 
       {/* Nav items */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-        {navItems.map((item, idx) => {
+        {activeNavItems.map((item, idx) => {
           if (item.type === "separator") {
             return (
               <div
