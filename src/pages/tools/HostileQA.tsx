@@ -47,6 +47,7 @@ const HostileQA = () => {
   const [answeredCount, setAnsweredCount] = useState(0);
   const [cleanAnswers, setCleanAnswers] = useState(0);
   const [aiChatHistory, setAiChatHistory] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
+  const [currentAIQuestion, setCurrentAIQuestion] = useState("");
   const [isAILoading, setIsAILoading] = useState(false);
   const [aiFeedback, setAiFeedback] = useState("");
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -99,6 +100,7 @@ const HostileQA = () => {
     setAnsweredCount(0);
     setCleanAnswers(0);
     setAiChatHistory([]);
+    setCurrentAIQuestion("");
     setAiFeedback("");
     setGameState("playing");
     startTimer();
@@ -109,6 +111,7 @@ const HostileQA = () => {
       [{ role: "user", content: "Start the Hostile Q&A Gauntlet. Fire the first hard executive question now. Just the question, nothing else." }],
       "qa-gauntlet"
     ).then(q => {
+      setCurrentAIQuestion(q);
       setAiChatHistory([{ role: "assistant", content: q }]);
       setAnswer("");
     }).catch(() => {
@@ -134,12 +137,13 @@ const HostileQA = () => {
     setFeedback({ fillers, lost: lostLife });
     setGameState("feedback");
 
-    // Try AI feedback
+    // Try AI feedback + next question
     if (aiChatHistory.length > 0) {
       const updatedHistory = [...aiChatHistory, { role: "user" as const, content: answer }];
       sendMessage(updatedHistory, "qa-gauntlet").then(fb => {
         setAiFeedback(fb);
-        setAiChatHistory([...updatedHistory, { role: "assistant", content: fb }]);
+        const newHistory = [...updatedHistory, { role: "assistant" as const, content: fb }];
+        setAiChatHistory(newHistory);
       }).catch(() => {
         // Keep original history unchanged on error
       });
@@ -156,8 +160,23 @@ const HostileQA = () => {
     setAnswer("");
     setFeedback(null);
     setAiFeedback("");
+    setCurrentAIQuestion("");
     setGameState("playing");
     startTimer();
+
+    // Request next AI question if we're in AI mode
+    if (aiChatHistory.length > 0) {
+      setIsAILoading(true);
+      sendMessage(
+        [...aiChatHistory, { role: "user", content: "Next question please. Just the question, nothing else." }],
+        "qa-gauntlet"
+      ).then(q => {
+        setCurrentAIQuestion(q);
+        setAiChatHistory(prev => [...prev, { role: "assistant", content: q }]);
+      }).catch(() => {
+        // Fall back to static questions
+      }).finally(() => setIsAILoading(false));
+    }
   };
 
   // Save when game ends
@@ -273,13 +292,11 @@ const HostileQA = () => {
               <p className="text-xs text-[#B89A5A] uppercase tracking-wider font-semibold mb-3">
                 🎯 Hostile Question
               </p>
-              {isAILoading && currentQ === 0 ? (
-                <LoadingAI message="AI is preparing your first question..." />
+              {isAILoading ? (
+                <LoadingAI message="AI is preparing your question..." />
               ) : (
                 <p className="font-serif text-lg font-semibold text-[#F4F2ED] leading-relaxed">
-                  "{aiChatHistory.length > 0 && currentQ === 0
-                    ? aiChatHistory[0].content
-                    : QUESTIONS[currentQ]}"
+                  "{currentAIQuestion || QUESTIONS[currentQ]}"
                 </p>
               )}
             </motion.div>

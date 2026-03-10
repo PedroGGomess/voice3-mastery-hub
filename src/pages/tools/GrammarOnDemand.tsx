@@ -266,20 +266,20 @@ const GrammarOnDemand = () => {
       setGrammarResult(reply);
       if (currentUser) {
         saveToolkitEntry(currentUser.id, {
-          toolId: "grammar",
-          toolName: "Grammar Tool",
+          toolId: "grammar-on-demand",
+          toolName: "Grammar On Demand",
           inputs: { text: grammarInput, context: grammarContext },
           outputs: { analysis: reply },
         });
         awardPoints(currentUser.id, {
           source: "toolkit",
-          sourceId: "grammar",
-          sourceName: "Grammar Tool",
+          sourceId: "grammar-on-demand",
+          sourceName: "Grammar On Demand",
           points: 15,
         });
       }
     } catch {
-      setGrammarResult("Connection issue. Please try again later.");
+      setGrammarResult("Unable to reach AI Grammar Coach. Please try again later.");
     } finally {
       setGrammarLoading(false);
     }
