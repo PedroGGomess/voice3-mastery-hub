@@ -17,11 +17,16 @@ export default function ChapterDetail() {
   const chapter = getChapterById(chapterId || '');
 
   const [sessionProgress, setSessionProgress] = useState<Record<string, { status: string; score?: number }>>({});
+  const [chapterProgress, setChapterProgress] = useState<Record<string, { status: string; completedAt?: string }>>({});
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(`voice3_session_progress_${userId}`);
       if (stored) setSessionProgress(JSON.parse(stored));
+    } catch (_e) {}
+    try {
+      const stored = localStorage.getItem(`voice3_chapter_progress_${userId}`);
+      if (stored) setChapterProgress(JSON.parse(stored));
     } catch (_e) {}
   }, [userId]);
 
@@ -36,7 +41,10 @@ export default function ChapterDetail() {
     );
   }
 
-  const completedSessions = chapter.sessions.filter(s => sessionProgress[s.id]?.status === 'completed').length;
+  const isChapterCompleted = chapterProgress[chapter.id]?.status === 'completed';
+  const completedSessions = isChapterCompleted
+    ? chapter.totalSessions
+    : chapter.sessions.filter(s => sessionProgress[s.id]?.status === 'completed').length;
   const sessionPct = chapter.totalSessions > 0 ? Math.round((completedSessions / chapter.totalSessions) * 100) : 0;
 
   return (
@@ -78,8 +86,8 @@ export default function ChapterDetail() {
         </div>
         <div className="divide-y divide-white/[0.04]">
           {chapter.sessions.map((session, i) => {
-            const sessStatus = sessionProgress[session.id]?.status;
-            const sessScore = sessionProgress[session.id]?.score;
+            const sessStatus = isChapterCompleted ? 'completed' : sessionProgress[session.id]?.status;
+            const sessScore = sessionProgress[session.id]?.score ?? (isChapterCompleted ? 100 : undefined);
             const isDiag = session.sessionType === 'diagnostic';
 
             return (

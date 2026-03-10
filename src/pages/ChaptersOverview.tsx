@@ -59,6 +59,8 @@ export default function ChaptersOverview() {
   const getCompletedSessions = (chapterId: string) => {
     const chapter = chaptersData.find(c => c.id === chapterId);
     if (!chapter) return 0;
+    // If the chapter is marked completed, all sessions are completed
+    if (chapterProgress[chapterId]?.status === 'completed') return chapter.totalSessions;
     return chapter.sessions.filter(s => sessionProgress[s.id]?.status === 'completed').length;
   };
 

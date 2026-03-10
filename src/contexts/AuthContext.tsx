@@ -65,6 +65,34 @@ function seedDemoData() {
         2: { completed: true, score: 88, completedAt: '2026-01-15T14:00:00Z' },
       }));
 
+      // Chapter-level progress for demo student (ch1 completed, ch2 in progress)
+      localStorage.setItem('voice3_chapter_progress_demo-student', JSON.stringify({
+        ch1: { status: 'completed', completedAt: '2026-01-05T10:00:00Z' },
+        ch2: { status: 'in_progress', startedAt: '2026-01-06T10:00:00Z' },
+      }));
+
+      // Session progress for demo student using chapter-session IDs
+      localStorage.setItem('voice3_session_progress_demo-student', JSON.stringify({
+        'ch1-s1': { status: 'completed', score: 100, completedAt: '2026-01-05T10:00:00Z' },
+        'ch2-s1': { status: 'completed', score: 92, completedAt: '2026-01-10T10:00:00Z' },
+        'ch2-s2': { status: 'completed', score: 88, completedAt: '2026-01-15T14:00:00Z' },
+      }));
+
+      // AI evaluation for demo student (diagnostic completed)
+      localStorage.setItem('voice3_ai_evaluation_demo-student', JSON.stringify({
+        level: 'B2',
+        teachingStyle: 'Intensive',
+        weakPoints: { 'Filler Words': 7, 'Structuring Ideas': 6, 'Confidence': 5, 'Vocabulary Range': 4, 'Pronunciation': 3 },
+        strengths: ['Written Communication', 'Technical Vocabulary', 'Grammar Accuracy'],
+        professorFocusPoints: ['Structured responses using PREP Framework', 'Reduce filler words and hesitations', 'Pacing control and strategic pauses'],
+        suggestedDrills: ['PREP Framework Drill', 'Filler Word Elimination', '3-Point Message Builder'],
+      }));
+      localStorage.setItem('voice3_diagnostic_completed_demo-student', JSON.stringify({
+        completedAt: '2026-01-05T10:00:00Z',
+        level: 'B2',
+        teachingStyle: 'Intensive',
+      }));
+
       localStorage.setItem('voice3_chat_history_demo-student', JSON.stringify([
         { role: 'bot', text: 'Olá! 👋 Sou o assistente Voice³. Como posso ajudar?', timestamp: '2026-01-10T10:00:00Z' },
       ]));

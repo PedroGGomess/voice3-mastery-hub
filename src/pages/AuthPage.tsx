@@ -56,7 +56,9 @@ const AuthPage = () => {
 
   if (isLoading) return null;
   if (isAuthenticated) {
-    return <Navigate to={currentUser?.role === "company_admin" ? "/empresa" : "/app"} replace />;
+    if (currentUser?.role === "company_admin") return <Navigate to="/empresa" replace />;
+    if (currentUser?.role === "professor" || currentUser?.role === "admin") return <Navigate to="/professor/dashboard" replace />;
+    return <Navigate to="/app" replace />;
   }
 
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
