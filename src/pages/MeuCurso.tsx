@@ -1,7 +1,7 @@
 import PlatformLayout from "@/components/PlatformLayout";
 import { motion } from "framer-motion";
 import ChatWidget from "@/components/ChatWidget";
-import { CheckCircle2, Play, Lock, Clock, ArrowRight, FolderOpen, Mic, ChevronRight, Library, Wrench, Swords, BookOpen, Flame, Timer, BarChart2, Trophy } from "lucide-react";
+import { CheckCircle2, Play, Lock, Clock, ArrowRight, FolderOpen, Mic, ChevronRight, Library, Wrench, Swords, BookOpen, Flame, Timer, BarChart2, Trophy, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -74,6 +74,13 @@ const MeuCurso = () => {
     if (stored) assignments = JSON.parse(stored);
   } catch (_e) {}
   const pendingAssignments = assignments.filter((a: any) => a.status !== 'completed');
+
+  // Load professor info
+  let professorInfo: { name: string; title?: string } | null = null;
+  try {
+    const stored = localStorage.getItem(`voice3_professor_assignment_${userId}`);
+    if (stored) professorInfo = JSON.parse(stored);
+  } catch (_e) {}
 
   const completedCount = Object.values(progress).filter(p => p.completed).length;
   const progressPercent = Math.round((completedCount / TOTAL_SESSIONS) * 100);
@@ -531,6 +538,46 @@ const MeuCurso = () => {
                 Ver análise completa →
               </Link>
             </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Professor Info Card */}
+      {professorInfo && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.255 }}
+          className="mb-6"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <h2 style={{ letterSpacing: "0.08em" }} className="text-[10px] text-[#8E96A3] uppercase font-medium">O Teu Professor</h2>
+            <div className="h-px flex-1 bg-[#C9A84C]/20 mx-4" />
+          </div>
+          <div
+            className="rounded-xl p-4 flex items-center justify-between"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(201,168,76,0.15)", backdropFilter: "blur(20px)" }}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                style={{ background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.25)" }}
+              >
+                <User className="h-5 w-5 text-[#C9A84C]" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-[#F4F2ED]">{professorInfo.name}</p>
+                <p className="text-xs text-[#8E96A3]">{professorInfo.title || 'Executive English Coach'}</p>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              className="rounded-lg h-8 px-4 text-xs font-semibold"
+              style={{ background: "rgba(201,168,76,0.15)", color: "#C9A84C", border: "1px solid rgba(201,168,76,0.25)" }}
+              asChild
+            >
+              <Link to="/app/aulas">Book Session →</Link>
+            </Button>
           </div>
         </motion.div>
       )}

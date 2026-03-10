@@ -1,12 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, Trophy, ArrowRight, Lock, ClipboardList, Target, Building2, BarChart3 } from "lucide-react";
+import { CheckCircle2, ArrowRight, Lock, ClipboardList, Target, Building2, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SessionAIChat from "@/components/SessionAIChat";
 import SessionQuiz from "@/components/SessionQuiz";
 import type { Session } from "@/lib/sessionsData";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Phase = "learn" | "practice" | "quiz" | "complete";
+
+interface PhaseProgress {
+  phaseCompleted: "learn" | "drill" | "simulation" | null;
+  drillScore: number | null;
+  quizScore: number | null;
+}
 
 interface SessionDetailProps {
   session: Session;
@@ -25,12 +32,61 @@ const PHASES: { key: Phase; icon: React.ElementType; label: string }[] = [
 const phaseIndex = (p: Phase) => PHASES.findIndex((ph) => ph.key === p);
 
 const SessionDetail = ({ session, alreadyCompleted = false, existingScore = null, onComplete }: SessionDetailProps) => {
-  const [phase, setPhase] = useState<Phase>(alreadyCompleted ? "complete" : "learn");
-  const [learnDone, setLearnDone] = useState(alreadyCompleted);
-  const [practiceDone, setPracticeDone] = useState(alreadyCompleted);
-  const [practiceScore, setPracticeScore] = useState<number | null>(null);
-  const [quizScore, setQuizScore] = useState<number | null>(alreadyCompleted ? existingScore : null);
-  const [quizPassed, setQuizPassed] = useState(alreadyCompleted);
+  const { currentUser } = useAuth();
+  const userId = currentUser?.id || "guest";
+  const progressKey = `voice3_phase_progress_${userId}_${session.id}`;
+
+  // Load saved phase progress from localStorage
+  const savedProgress = (() => {
+    if (alreadyCompleted) return null;
+    try {
+      const stored = localStorage.getItem(progressKey);
+      if (stored) return JSON.parse(stored) as PhaseProgress;
+    } catch (_e) { /* ignore */ }
+    return null;
+  })();
+
+  const getInitialPhase = (): Phase => {
+    if (alreadyCompleted) return "complete";
+    if (!savedProgress) return "learn";
+    if (savedProgress.phaseCompleted === "simulation") return "complete";
+    if (savedProgress.phaseCompleted === "drill") return "quiz";
+    if (savedProgress.phaseCompleted === "learn") return "practice";
+    return "learn";
+  };
+
+  const [phase, setPhase] = useState<Phase>(getInitialPhase);
+  const [learnDone, setLearnDone] = useState(alreadyCompleted || (savedProgress?.phaseCompleted != null));
+  const [practiceDone, setPracticeDone] = useState(
+    alreadyCompleted ||
+    savedProgress?.phaseCompleted === "drill" ||
+    savedProgress?.phaseCompleted === "simulation"
+  );
+  const [practiceScore, setPracticeScore] = useState<number | null>(savedProgress?.drillScore ?? null);
+  const [quizScore, setQuizScore] = useState<number | null>(
+    alreadyCompleted ? existingScore : (savedProgress?.quizScore ?? null)
+  );
+  const [quizPassed, setQuizPassed] = useState(
+    alreadyCompleted || savedProgress?.phaseCompleted === "simulation"
+  );
+
+  const saveProgress = (update: Partial<PhaseProgress>) => {
+    try {
+      const stored = localStorage.getItem(progressKey);
+      const existing: PhaseProgress = stored
+        ? JSON.parse(stored)
+        : { phaseCompleted: null, drillScore: null, quizScore: null };
+      const current: PhaseProgress = { ...existing, ...update };
+      localStorage.setItem(progressKey, JSON.stringify(current));
+    } catch (_e) { /* ignore */ }
+  };
+
+  // Clear saved progress when session is fully completed
+  useEffect(() => {
+    if (alreadyCompleted) {
+      try { localStorage.removeItem(progressKey); } catch (_e) { /* ignore */ }
+    }
+  }, [alreadyCompleted, progressKey]);
 
   const currentIdx = phaseIndex(phase);
 
@@ -38,12 +94,14 @@ const SessionDetail = ({ session, alreadyCompleted = false, existingScore = null
 
   const handleLearnComplete = () => {
     setLearnDone(true);
+    saveProgress({ phaseCompleted: "learn", drillScore: null, quizScore: null });
     setPhase("practice");
   };
 
   const handlePracticeComplete = (score: number) => {
     setPracticeScore(score);
     setPracticeDone(true);
+    saveProgress({ phaseCompleted: "drill", drillScore: score, quizScore: null });
     setPhase("quiz");
   };
 
@@ -54,6 +112,7 @@ const SessionDetail = ({ session, alreadyCompleted = false, existingScore = null
       const finalScore = practiceScore !== null
         ? Math.round((score + practiceScore) / 2)
         : score;
+      saveProgress({ phaseCompleted: "simulation", drillScore: practiceScore, quizScore: score });
       setPhase("complete");
       onComplete(finalScore);
     } else {

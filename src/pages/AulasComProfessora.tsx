@@ -43,6 +43,7 @@ const AulasComProfessora = () => {
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [completedSessions, setCompletedSessions] = useState(0);
+  const [professorInfo, setProfessorInfo] = useState<{ name: string; title?: string } | null>(null);
 
   useEffect(() => {
     try {
@@ -63,7 +64,13 @@ const AulasComProfessora = () => {
     } catch (_e) {
       // ignore
     }
-  }, [storageKey, progressKey]);
+    try {
+      const stored = localStorage.getItem(`voice3_professor_assignment_${userId}`);
+      if (stored) setProfessorInfo(JSON.parse(stored));
+    } catch (_e) {
+      // ignore
+    }
+  }, [storageKey, progressKey, userId]);
 
   const saveBookings = (b: Booking[]) => {
     try {
@@ -110,7 +117,28 @@ const AulasComProfessora = () => {
     <PlatformLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="font-serif text-2xl font-bold mb-2">Aulas com Professora</h1>
-        <p className="text-muted-foreground mb-8">Marca, gere e acompanha as tuas aulas com professora.</p>
+        <p className="text-muted-foreground mb-4">Marca, gere e acompanha as tuas aulas com professora.</p>
+
+        {/* Professor Info Banner */}
+        {professorInfo && (
+          <div
+            className="rounded-xl p-4 mb-6 flex items-center gap-3"
+            style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)" }}
+          >
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+              style={{ background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.3)" }}
+            >
+              <span className="text-[#C9A84C] font-bold text-sm">
+                {professorInfo.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
+              </span>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-[#F4F2ED]">{professorInfo.name}</p>
+              <p className="text-xs text-[#8E96A3]">{professorInfo.title || 'Executive English Coach'} · Assigned to you</p>
+            </div>
+          </div>
+        )}
 
         {/* Status cards */}
         <div className="grid sm:grid-cols-2 gap-4 mb-8">

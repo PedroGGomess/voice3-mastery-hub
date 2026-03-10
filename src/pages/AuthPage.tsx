@@ -56,7 +56,7 @@ const AuthPage = () => {
 
   if (isLoading) return null;
   if (isAuthenticated) {
-    if (currentUser?.role === "company_admin") return <Navigate to="/empresa" replace />;
+    if (currentUser?.role === "company_admin") return <Navigate to="/empresa/dashboard" replace />;
     if (currentUser?.role === "professor" || currentUser?.role === "admin") return <Navigate to="/professor/dashboard" replace />;
     return <Navigate to="/app" replace />;
   }
@@ -317,6 +317,16 @@ const AuthPage = () => {
                 >
                   Acesso Empresa
                 </button>
+              </div>
+
+              {/* Mobile demo credentials */}
+              <div className="lg:hidden mt-6 p-4 rounded-2xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(184,154,90,0.2)" }}>
+                <p className="text-xs mb-3 font-medium tracking-wide uppercase" style={{ color: "#B89A5A" }}>DEMO CREDENTIALS</p>
+                <div className="space-y-1.5">
+                  <p className="text-xs" style={{ color: "#8E96A3" }}>👤 <span style={{ color: "#F4F2ED" }}>Aluno:</span> demo@voice3.pt / demo123</p>
+                  <p className="text-xs" style={{ color: "#8E96A3" }}>🏢 <span style={{ color: "#F4F2ED" }}>Empresa:</span> empresa@voice3.pt / empresa123</p>
+                  <p className="text-xs" style={{ color: "#8E96A3" }}>👩‍🏫 <span style={{ color: "#F4F2ED" }}>Professora:</span> professor@voice3.pt / prof123</p>
+                </div>
               </div>
             </>
           )}

@@ -84,6 +84,8 @@ const App = () => (
             <Route path="/app/sessao/:id" element={<ProtectedRoute requiredRole="student"><SessaoDetalhe /></ProtectedRoute>} />
             <Route path="/app/chat" element={<ProtectedRoute requiredRole="student"><ChatAI /></ProtectedRoute>} />
             <Route path="/app/aulas" element={<ProtectedRoute requiredRole="student"><AulasComProfessora /></ProtectedRoute>} />
+            <Route path="/app/aulas-com-professora" element={<ProtectedRoute requiredRole="student"><AulasComProfessora /></ProtectedRoute>} />
+            <Route path="/app/catalogo" element={<Navigate to="/app/catalogue" replace />} />
             <Route path="/app/perfil" element={<ProtectedRoute requiredRole="student"><Perfil /></ProtectedRoute>} />
             <Route path="/app/suporte" element={<ProtectedRoute requiredRole="student"><Suporte /></ProtectedRoute>} />
             <Route path="/app/call-professor" element={<ProtectedRoute requiredRole="student"><CallProfessor /></ProtectedRoute>} />
@@ -107,6 +109,7 @@ const App = () => (
 
             {/* Company routes */}
             <Route path="/empresa" element={<ProtectedRoute requiredRole="company_admin"><CompanyDashboard /></ProtectedRoute>} />
+            <Route path="/empresa/dashboard" element={<ProtectedRoute requiredRole="company_admin"><CompanyDashboard /></ProtectedRoute>} />
             <Route path="/empresa/alunos" element={<ProtectedRoute requiredRole="company_admin"><Alunos /></ProtectedRoute>} />
             <Route path="/empresa/packs" element={<ProtectedRoute requiredRole="company_admin"><Packs /></ProtectedRoute>} />
             <Route path="/empresa/progresso" element={<ProtectedRoute requiredRole="company_admin"><Progresso /></ProtectedRoute>} />

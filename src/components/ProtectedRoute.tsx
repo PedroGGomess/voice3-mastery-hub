@@ -21,7 +21,7 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
 
   if (requiredRole && currentUser?.role !== requiredRole) {
     if (currentUser?.role === 'company_admin') {
-      return <Navigate to="/empresa" replace />;
+      return <Navigate to="/empresa/dashboard" replace />;
     }
     if (currentUser?.role === 'professor' || currentUser?.role === 'admin') {
       // Avoid infinite loop: if already targeting professor/dashboard routes, go to /app fallback
