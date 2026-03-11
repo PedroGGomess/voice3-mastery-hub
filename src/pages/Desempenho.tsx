@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { sessionsData } from "@/lib/sessionsData";
 import { CheckCircle2, AlertTriangle, Lock, Flame, Target, Clock, BarChart2, Star, Award, Zap, BookOpen, MessageSquare, TrendingUp, TrendingDown } from "lucide-react";
 import { getUserPoints } from "@/lib/persistence";
+import { Card, ProgressBar } from "@/components/ui/VoiceUI";
 
 const TOTAL_SESSIONS = 10;
 
@@ -160,14 +161,14 @@ const Desempenho = () => {
           { label: "Tempo Total", value: totalMinutes > 0 ? formatTime(animatedMinutes) : "—", icon: <Clock className="h-5 w-5 text-[#B89A5A]" />, sub: "de aprendizagem" },
           { label: "Streak Atual", value: `${animatedStreak} dias`, icon: <Flame className="h-5 w-5 text-[#B89A5A]" />, sub: "consecutivos" },
         ].map((stat, i) => (
-          <div key={i} className="rounded-xl bg-[#1C1F26] border border-white/5 p-4">
+          <Card key={i} hover padding={16}>
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-[#8E96A3] font-medium">{stat.label}</span>
               {stat.icon}
             </div>
             <p className="font-serif text-2xl font-semibold text-[#F4F2ED]">{stat.value}</p>
             <p className="text-xs text-[#8E96A3] mt-0.5">{stat.sub}</p>
-          </div>
+          </Card>
         ))}
       </motion.div>
 
@@ -180,11 +181,8 @@ const Desempenho = () => {
             <p className="text-sm text-[#F4F2ED]">{nextMilestoneText}</p>
           </div>
           <div className="ml-auto shrink-0">
-            <div className="w-16 h-1.5 rounded-full bg-white/10">
-              <div
-                className="h-full rounded-full bg-[#B89A5A] transition-all duration-1000"
-                style={{ width: `${Math.round((completedCount / TOTAL_SESSIONS) * 100)}%` }}
-              />
+            <div className="w-16">
+              <ProgressBar value={Math.round((completedCount / TOTAL_SESSIONS) * 100)} height={6} />
             </div>
             <p className="text-[10px] text-[#8E96A3] text-right mt-0.5">{Math.round((completedCount / TOTAL_SESSIONS) * 100)}%</p>
           </div>
@@ -197,7 +195,7 @@ const Desempenho = () => {
           <h2 className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium">30-Day Activity</h2>
           <div className="h-px flex-1 bg-[#B89A5A]/20" />
         </div>
-        <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-5">
+        <Card padding={20}>
           <div className="grid grid-cols-7 gap-1.5">
             {calendarDays.map((day, i) => (
               <div
@@ -217,16 +215,14 @@ const Desempenho = () => {
             <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-emerald-500/70" /><span className="text-xs text-[#8E96A3]">Active day</span></div>
             <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-white/5" /><span className="text-xs text-[#8E96A3]">No activity</span></div>
           </div>
-        </div>
+        </Card>
       </motion.div>
-
-      {/* Bar Chart */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="mb-6">
         <div className="flex items-center gap-3 mb-3">
           <h2 className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium">Resultados por Sessão</h2>
           <div className="h-px flex-1 bg-[#B89A5A]/20" />
         </div>
-        <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-5">
+        <Card padding={20}>
           <div className="flex items-end gap-1.5 h-40 mb-3 relative">
             {/* Y-axis labels */}
             <div className="absolute left-0 top-0 h-full flex flex-col justify-between pointer-events-none">
@@ -275,7 +271,7 @@ const Desempenho = () => {
             <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-white/5" /><span className="text-xs text-[#8E96A3]">Por concluir</span></div>
             {scores.length > 0 && <span className="ml-auto text-xs text-[#B89A5A] font-medium">Authority Score Avg: {avgScore}%</span>}
           </div>
-        </div>
+        </Card>
       </motion.div>
 
       {/* Strengths & Areas to Improve */}
@@ -286,7 +282,7 @@ const Desempenho = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Strengths */}
-          <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-4">
+          <Card padding={16}>
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle2 className="h-4 w-4 text-[#B89A5A]" />
               <h3 className="text-sm font-semibold text-[#F4F2ED]">Pontos Fortes</h3>
@@ -303,10 +299,10 @@ const Desempenho = () => {
             ) : (
               <p className="text-xs text-[#8E96A3]/60">Completa sessões para ver os teus pontos fortes.</p>
             )}
-          </div>
+          </Card>
 
           {/* Areas to improve */}
-          <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-4">
+          <Card padding={16}>
             <div className="flex items-center gap-2 mb-3">
               <AlertTriangle className="h-4 w-4 text-amber-400" />
               <h3 className="text-sm font-semibold text-[#F4F2ED]">Áreas a Melhorar</h3>
@@ -325,7 +321,7 @@ const Desempenho = () => {
             ) : (
               <p className="text-xs text-[#B89A5A]/80">Excelente desempenho em todas as áreas!</p>
             )}
-          </div>
+          </Card>
         </div>
       </motion.div>
 
@@ -336,7 +332,8 @@ const Desempenho = () => {
             <h2 className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium">Detalhe por Sessão</h2>
             <div className="h-px flex-1 bg-[#B89A5A]/20" />
           </div>
-          <div className="rounded-xl bg-[#1C1F26] border border-white/5 overflow-hidden divide-y divide-white/[0.04]">
+          <Card style={{ padding: 0, overflow: "hidden" }}>
+            <div className="divide-y divide-white/[0.04]">
             {completedSessions.map((session, i) => {
               const p = progress[session.id];
               const date = p?.completedAt ? new Date(p.completedAt).toLocaleDateString("pt-PT") : "—";
@@ -366,7 +363,8 @@ const Desempenho = () => {
                 </div>
               );
             })}
-          </div>
+            </div>
+          </Card>
         </motion.div>
       )}
 
@@ -404,7 +402,7 @@ const Desempenho = () => {
           <h2 className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium">Points & Activity</h2>
           <div className="h-px flex-1 bg-[#B89A5A]/20" />
         </div>
-        <div className="rounded-xl bg-[#1C1F26] border border-[#B89A5A]/10 p-5">
+        <Card gold padding={20}>
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-xs text-[#8E96A3] mb-0.5">Total Authority Points</p>
@@ -425,10 +423,8 @@ const Desempenho = () => {
           ) : (
             <p className="text-xs text-[#8E96A3]/60">Complete sessions and practices to earn points.</p>
           )}
-        </div>
+        </Card>
       </motion.div>
-
-      {/* Esta Semana */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="mb-6">
         <div className="flex items-center gap-3 mb-3">
           <h2 className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium">Esta Semana</h2>

@@ -5,6 +5,7 @@ import { ArrowRight, Clock, ChevronDown, ChevronUp } from "lucide-react";
 import PlatformLayout from "@/components/PlatformLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { getToolkitHistory } from "@/lib/persistence";
+import { VoiceButton, Badge } from "@/components/ui/VoiceUI";
 
 interface ToolCard {
   id: string;
@@ -182,16 +183,12 @@ const Toolkit = () => {
                 {tool.description}
               </p>
 
-              <button
+              <VoiceButton
                 onClick={() => navigate(tool.path)}
-                style={{
-                  height: 38, padding: "0 20px",
-                  background: tool.color, color: "#060f1d",
-                  fontWeight: 700, fontSize: 13, borderRadius: 8, border: "none", cursor: "pointer",
-                }}
+                style={{ background: tool.color, color: "#060f1d", border: "none" }}
               >
                 Open Tool →
-              </button>
+              </VoiceButton>
 
               {/* Decorative bg icon */}
               <span style={{
@@ -219,12 +216,13 @@ const Toolkit = () => {
               <div className="text-4xl mb-4">🛠️</div>
               <p className="text-sm font-semibold text-[#F4F2ED] mb-1">No history yet</p>
               <p className="text-xs text-[#8E96A3] mb-4">Use a tool to see your results here.</p>
-              <button
+              <VoiceButton
+                variant="gold-outline"
+                size="sm"
                 onClick={() => setActiveTab("tools")}
-                className="inline-flex items-center gap-1.5 text-xs text-[#C9A84C] hover:text-[#d4ba6a] transition-colors font-semibold"
               >
                 Open a Tool <ArrowRight className="h-3 w-3" />
-              </button>
+              </VoiceButton>
             </div>
           ) : (
             history.map(entry => {
@@ -239,9 +237,7 @@ const Toolkit = () => {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-bold text-[#C9A84C] bg-[#C9A84C]/10 border border-[#C9A84C]/20 px-2 py-0.5 rounded">
-                          {entry.toolName}
-                        </span>
+                        <Badge variant="gold" size="xs">{entry.toolName}</Badge>
                         <span className="text-xs text-[#8E96A3] flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {new Date(entry.createdAt).toLocaleDateString("en-GB", {

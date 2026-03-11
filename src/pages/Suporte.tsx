@@ -8,6 +8,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { HelpCircle, MessageSquare, CheckCircle2, Clock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { Card, Badge } from "@/components/ui/VoiceUI";
 
 interface Ticket {
   id: string;
@@ -76,7 +77,8 @@ const Suporte = () => {
         <p className="text-muted-foreground mb-8">Encontra respostas às tuas dúvidas ou contacta a nossa equipa.</p>
 
         {/* FAQ */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="premium-card mb-8">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-8">
+          <Card hover>
           <h2 className="font-semibold mb-4 flex items-center gap-2"><HelpCircle className="h-4 w-4 text-primary" /> Perguntas Frequentes</h2>
           <Accordion type="single" collapsible>
             {faqs.map((faq, i) => (
@@ -86,11 +88,13 @@ const Suporte = () => {
               </AccordionItem>
             ))}
           </Accordion>
+          </Card>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Contact form */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="premium-card">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            <Card hover>
             <h2 className="font-semibold mb-4 flex items-center gap-2"><MessageSquare className="h-4 w-4 text-primary" /> Contactar Suporte</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
@@ -121,10 +125,12 @@ const Suporte = () => {
                 {submitting ? "A enviar..." : "Enviar Pedido"}
               </Button>
             </form>
+            </Card>
           </motion.div>
 
           {/* Ticket history */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="premium-card">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+            <Card hover>
             <h2 className="font-semibold mb-4 flex items-center gap-2"><Clock className="h-4 w-4 text-primary" /> Histórico de Pedidos</h2>
             {tickets.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground text-sm">
@@ -137,9 +143,9 @@ const Suporte = () => {
                   <div key={t.id} className="p-4 rounded-xl bg-white/5 border border-white/10">
                     <div className="flex items-start justify-between mb-2">
                       <p className="font-medium text-sm">{t.subject}</p>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${t.status === "resolved" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>
+                      <Badge variant={t.status === "resolved" ? "success" : "gold"} size="xs">
                         {t.status === "resolved" ? "Resolvido" : "Em análise"}
-                      </span>
+                      </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground line-clamp-2">{t.message}</p>
                     <p className="text-xs text-white/30 mt-2">{new Date(t.createdAt).toLocaleDateString("pt-PT")}</p>
@@ -147,6 +153,7 @@ const Suporte = () => {
                 ))}
               </div>
             )}
+            </Card>
           </motion.div>
         </div>
       </motion.div>
