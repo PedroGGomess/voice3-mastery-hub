@@ -440,8 +440,8 @@ const AuthPage = () => {
           <LanguageSelector />
         </div>
         <div className="slide-in-right" style={{ maxWidth: 440, width: "100%", margin: "0 auto" }}>
-          <h2 style={{ fontFamily: "serif", fontSize: 32, fontWeight: 700, color: "white", marginBottom: 8 }}>Welcome back.</h2>
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", marginBottom: 36 }}>Sign in to continue your executive training.</p>
+          <h2 style={{ fontFamily: "serif", fontSize: 32, fontWeight: 700, color: "white", marginBottom: 8 }}>{t('auth.welcome')}</h2>
+          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", marginBottom: 36 }}>{t('auth.sub')}</p>
           <div style={{ width: 40, height: 2, background: "#C9A84C", marginBottom: 36 }} />
           {error && (
             <div style={{ marginBottom: 16, padding: "12px 16px", borderRadius: 8, fontSize: 14, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#f87171" }}>{error}</div>
