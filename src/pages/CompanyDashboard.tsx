@@ -6,6 +6,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, BarChart, Bar, PieChart, Pie, Cell,
 } from "recharts";
+import { Card, VoiceButton, Badge, Avatar, ProgressBar } from '@/components/ui/VoiceUI';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -96,35 +97,11 @@ const makeCompanyTourSteps = (firstName: string, companyName: string) => [
 
 // ── Helper components ─────────────────────────────────────────────────────────
 
-const card: React.CSSProperties = {
-  background: "rgba(255,255,255,0.02)",
-  border: "1px solid rgba(255,255,255,0.07)",
-  borderRadius: 16,
-  padding: 24,
-};
-
 /** Max sessions used to calculate the team table progress bar width (100% = this value). */
 const MAX_SESSIONS_FOR_PROGRESS = 20;
 
 /** Percentage threshold above which heatmap cell text switches to dark for contrast. */
 const HEATMAP_TEXT_CONTRAST_THRESHOLD = 50;
-
-function getInitials(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return "?";
-  return ((parts[0][0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase() || "?";
-}
-
-function Initials({ name }: { name: string }) {
-  return (
-    <div style={{
-      width: 36, height: 36, borderRadius: "50%",
-      background: "linear-gradient(135deg,#C9A84C,#8B6914)",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      fontSize: 12, fontWeight: 800, color: "#060f1d", flexShrink: 0,
-    }}>{getInitials(name)}</div>
-  );
-}
 
 // ── Tab: Overview ─────────────────────────────────────────────────────────────
 
@@ -178,20 +155,17 @@ function OverviewTab({ companyName }: { companyName: string }) {
       <div data-tour="company-kpis"
         style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16, marginBottom: 32 }}>
         {kpis.map((kpi, i) => (
-          <div key={i} style={{ ...card, transition: "border-color 0.2s" }}
-            onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.borderColor = "rgba(201,168,76,0.2)")}
-            onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.borderColor = "rgba(255,255,255,0.07)")}
-          >
+          <Card key={i} hover>
             <div style={{ fontSize: 24, marginBottom: 8 }}>{kpi.icon}</div>
             <div style={{ fontSize: 28, fontWeight: 800, color: GOLD, fontFamily: "serif", marginBottom: 2 }}>{kpi.value}</div>
             <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{kpi.label}</div>
             <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{kpi.sub}</div>
-          </div>
+          </Card>
         ))}
       </div>
 
       {/* Activity chart */}
-      <div style={{ ...card, marginBottom: 24 }}>
+      <Card style={{ marginBottom: 24 }}>
         <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 20, color: "rgba(255,255,255,0.8)" }}>
           Team Activity — Last 30 Days
         </h3>
@@ -205,10 +179,10 @@ function OverviewTab({ companyName }: { companyName: string }) {
               dot={false} fill="rgba(201,168,76,0.08)" />
           </LineChart>
         </ResponsiveContainer>
-      </div>
+      </Card>
 
       {/* Recent activity */}
-      <div style={card}>
+      <Card>
         <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 16, color: "rgba(255,255,255,0.8)" }}>
           Recent Activity
         </h3>
@@ -232,7 +206,7 @@ function OverviewTab({ companyName }: { companyName: string }) {
             </div>
           </div>
         ))}
-      </div>
+      </Card>
     </div>
   );
 }
@@ -245,14 +219,10 @@ function TeamTab() {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
         <h2 style={{ fontSize: 22, fontWeight: 700 }}>Team Members</h2>
-        <button style={{
-          height: 40, padding: "0 20px", background: GOLD,
-          color: "#060f1d", fontWeight: 700, fontSize: 13,
-          borderRadius: 8, border: "none", cursor: "pointer",
-        }}>+ Add Member</button>
+        <VoiceButton variant="primary" onClick={() => {}}>+ Add Member</VoiceButton>
       </div>
 
-      <div style={{ ...card, padding: 0, overflow: "hidden" }}>
+      <Card padding={0} style={{ overflow: "hidden" }}>
         {/* Table header */}
         <div style={{
           display: "grid", gridTemplateColumns: cols,
@@ -277,28 +247,21 @@ function TeamTab() {
             >
               {/* Member */}
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <Initials name={m.name} />
+                <Avatar name={m.name} />
                 <div>
                   <p style={{ fontSize: 14, fontWeight: 600 }}>{m.name}</p>
                   <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>{m.email}</p>
                 </div>
               </div>
               {/* Level */}
-              <span style={{
-                fontSize: 12, padding: "4px 10px", borderRadius: 100, display: "inline-block",
-                background: "rgba(201,168,76,0.12)", color: GOLD,
-                border: "1px solid rgba(201,168,76,0.25)", fontWeight: 600,
-              }}>{m.level}</span>
+              <Badge variant="gold">{m.level}</Badge>
               {/* Progress */}
               <div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: GOLD, marginBottom: 4 }}>
                   {m.sessions} sessions
                 </div>
-                <div style={{ height: 3, background: "rgba(255,255,255,0.08)", borderRadius: 2, width: 80 }}>
-                  <div style={{
-                    height: "100%", background: GOLD, borderRadius: 2,
-                    width: `${Math.min(100, (m.sessions / MAX_SESSIONS_FOR_PROGRESS) * 100)}%`,
-                  }} />
+                <div style={{ width: 80 }}>
+                  <ProgressBar value={Math.min(100, (m.sessions / MAX_SESSIONS_FOR_PROGRESS) * 100)} height={3} />
                 </div>
               </div>
               {/* Avg score */}
@@ -309,16 +272,12 @@ function TeamTab() {
               <span style={{ fontSize: 13, color: "rgba(255,255,255,0.5)" }}>{m.professor}</span>
               {/* Actions */}
               <div>
-                <button style={{
-                  fontSize: 11, padding: "4px 10px", borderRadius: 6,
-                  background: "transparent", border: "1px solid rgba(255,255,255,0.12)",
-                  color: "rgba(255,255,255,0.5)", cursor: "pointer",
-                }}>···</button>
+                <VoiceButton variant="ghost" size="sm">···</VoiceButton>
               </div>
             </div>
           );
         })}
-      </div>
+      </Card>
     </div>
   );
 }
@@ -331,7 +290,7 @@ function ProgressTab() {
       <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>Team Progress</h2>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
         {/* Skills Radar */}
-        <div style={card}>
+        <Card>
           <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 16 }}>Skills Radar — Team</h3>
           <ResponsiveContainer width="100%" height={280}>
             <RadarChart data={RADAR_DATA}>
@@ -346,10 +305,10 @@ function ProgressTab() {
             <span style={{ fontSize: 11, color: GOLD }}>● Team Avg</span>
             <span style={{ fontSize: 11, color: "rgba(74,222,128,0.7)" }}>● Top Performer</span>
           </div>
-        </div>
+        </Card>
 
         {/* Score Trend */}
-        <div style={card}>
+        <Card>
           <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 16 }}>Score Trend — Last 8 Weeks</h3>
           <ResponsiveContainer width="100%" height={280}>
             <LineChart data={SCORE_TREND}>
@@ -360,11 +319,11 @@ function ProgressTab() {
               <Line type="monotone" dataKey="score" stroke={GOLD} strokeWidth={2.5} dot={{ fill: GOLD, r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </Card>
       </div>
 
       {/* Chapter heatmap */}
-      <div style={{ ...card, marginTop: 24 }}>
+      <Card style={{ marginTop: 24 }}>
         <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 16 }}>Chapter Completion Heatmap</h3>
         <div style={{ overflowX: "auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "100px repeat(10,1fr)", gap: 4, minWidth: 600 }}>
@@ -399,7 +358,7 @@ function ProgressTab() {
             ))}
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -418,17 +377,17 @@ function AnalyticsTab() {
       <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>Analytics & ROI</h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16, marginBottom: 32 }}>
         {roiCards.map((m, i) => (
-          <div key={i} style={{ ...card }}>
+          <Card key={i}>
             <div style={{ fontSize: 28, fontWeight: 800, color: GOLD, marginBottom: 4 }}>{m.value}</div>
             <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{m.label}</div>
             <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{m.sub}</div>
-          </div>
+          </Card>
         ))}
       </div>
 
       <div style={{ display: "flex", gap: 24 }}>
         {/* Bar chart */}
-        <div style={{ flex: 1, ...card }}>
+        <Card style={{ flex: 1 }}>
           <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 16 }}>Session Activity</h3>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={WEEKLY_SESSIONS}>
@@ -439,10 +398,10 @@ function AnalyticsTab() {
               <Bar dataKey="sessions" fill={GOLD} fillOpacity={0.8} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
-        </div>
+        </Card>
 
         {/* Pie chart */}
-        <div style={{ width: 220, ...card }}>
+        <Card style={{ width: 220 }}>
           <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 16 }}>Tools Usage</h3>
           <ResponsiveContainer width="100%" height={140}>
             <PieChart>
@@ -463,21 +422,13 @@ function AnalyticsTab() {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Export buttons */}
       <div style={{ marginTop: 24, display: "flex", gap: 12 }}>
-        <button style={{
-          height: 40, padding: "0 20px", background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)",
-          borderRadius: 8, fontSize: 13, cursor: "pointer",
-        }}>📊 Export Progress Report</button>
-        <button style={{
-          height: 40, padding: "0 20px", background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)",
-          borderRadius: 8, fontSize: 13, cursor: "pointer",
-        }}>📋 Export Team Data CSV</button>
+        <VoiceButton variant="ghost">📊 Export Progress Report</VoiceButton>
+        <VoiceButton variant="ghost">📋 Export Team Data CSV</VoiceButton>
       </div>
     </div>
   );
@@ -501,7 +452,7 @@ function SettingsTab({ companyName }: { companyName: string }) {
       <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>Account Settings</h2>
 
       {/* Company profile */}
-      <div style={{ ...card, marginBottom: 20 }}>
+      <Card style={{ marginBottom: 20 }}>
         <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 16 }}>Company Profile</h3>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
           <label style={{ display: "block" }}>
@@ -525,34 +476,23 @@ function SettingsTab({ companyName }: { companyName: string }) {
             }} />
           </label>
         </div>
-        <button style={{
-          marginTop: 16, height: 38, padding: "0 20px",
-          background: GOLD, color: "#060f1d", fontWeight: 700,
-          fontSize: 13, borderRadius: 8, border: "none", cursor: "pointer",
-        }}>Save Changes</button>
-      </div>
+        <VoiceButton variant="primary" style={{ marginTop: 16 }}>Save Changes</VoiceButton>
+      </Card>
 
       {/* Seat management */}
-      <div style={{ ...card, marginBottom: 20 }}>
+      <Card style={{ marginBottom: 20 }}>
         <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>Seat Management</h3>
         <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 16 }}>
           {seatsUsed} of {seatsTotal} seats active. {seatsTotal - seatsUsed} available to assign.
         </p>
-        <div style={{ height: 8, background: "rgba(255,255,255,0.08)", borderRadius: 4, marginBottom: 16 }}>
-          <div style={{
-            height: "100%", width: `${(seatsUsed / seatsTotal) * 100}%`,
-            background: `linear-gradient(90deg,${GOLD},#E8C87A)`, borderRadius: 4,
-          }} />
+        <div style={{ marginBottom: 16 }}>
+          <ProgressBar value={(seatsUsed / seatsTotal) * 100} height={8} />
         </div>
-        <button style={{
-          height: 36, padding: "0 16px", background: "transparent",
-          border: "1px solid rgba(201,168,76,0.3)", color: GOLD,
-          fontSize: 13, borderRadius: 7, cursor: "pointer",
-        }}>+ Invite Team Member</button>
-      </div>
+        <VoiceButton variant="gold-outline" size="sm">+ Invite Team Member</VoiceButton>
+      </Card>
 
       {/* Notifications */}
-      <div style={card}>
+      <Card>
         <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 16 }}>Notifications</h3>
         {notifications.map((n, i) => (
           <div key={i} style={{
@@ -565,7 +505,7 @@ function SettingsTab({ companyName }: { companyName: string }) {
               style={{ accentColor: GOLD, width: 16, height: 16 }} />
           </div>
         ))}
-      </div>
+      </Card>
     </div>
   );
 }
@@ -581,7 +521,6 @@ const CompanyDashboard = () => {
 
   const companyName = currentUser?.company || "Atlantic Ventures";
   const userName = currentUser?.name || "Ana Ferreira";
-  const userInitials = getInitials(userName);
   const firstName = userName.trim().split(/\s+/)[0] ?? userName;
   const tourSteps = makeCompanyTourSteps(firstName, companyName);
 
@@ -654,12 +593,7 @@ const CompanyDashboard = () => {
         {/* User */}
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontSize: 13, color: "rgba(255,255,255,0.5)" }}>{userName}</span>
-          <div style={{
-            width: 32, height: 32, borderRadius: "50%",
-            background: "linear-gradient(135deg,#C9A84C,#8B6914)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 11, fontWeight: 800, color: "#060f1d",
-          }}>{userInitials}</div>
+          <Avatar name={userName} size={32} />
           <button onClick={handleSignOut} style={{
             fontSize: 12, color: "rgba(255,255,255,0.3)",
             background: "transparent", border: "none", cursor: "pointer",
