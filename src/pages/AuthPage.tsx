@@ -400,7 +400,7 @@ const AuthPage = () => {
           <rect width="100%" height="100%" fill="url(#geo)" />
         </svg>
         <div className="slide-in-left" style={{ position: "relative", zIndex: 10, textAlign: "center", maxWidth: 420, padding: "0 40px" }}>
-          <h1 style={{ fontFamily: "serif", fontSize: 52, fontWeight: 700, color: "#C9A84C", letterSpacing: "0.15em", margin: 0 }}>VOICE³</h1>
+          <Link to="/"><h1 style={{ fontFamily: "serif", fontSize: 52, fontWeight: 700, color: "#C9A84C", letterSpacing: "0.15em", margin: 0, cursor: "pointer" }}>VOICE³</h1></Link>
           <div style={{ width: 48, height: 2, background: "#C9A84C", margin: "28px auto" }} />
           <p style={{ fontFamily: "serif", fontSize: 22, fontStyle: "italic", color: "rgba(255,255,255,0.82)", maxWidth: 380, lineHeight: 1.75, textAlign: "center", margin: 0 }}>
             "You will not improve your English.<br />You will perform with precision."
