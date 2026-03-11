@@ -150,7 +150,7 @@ export default function PacksPage() {
     const loadPacks = async () => {
       // Use static packs - no DB table exists yet
     };
-    };
+
 
     loadPacks();
     return () => controller.abort();
