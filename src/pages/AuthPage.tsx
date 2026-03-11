@@ -66,6 +66,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 const AuthPage = () => {
+  const [mode, setMode] = useState<"login" | "register">("login");
   const navigate = useNavigate();
   const [regStep, setRegStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
