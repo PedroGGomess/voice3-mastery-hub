@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ChevronUp } from "lucide-react";
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
+import ClientTicker from "@/components/landing/ClientTicker";
 import HowItWorks from "@/components/landing/HowItWorks";
 import Packs from "@/components/landing/Packs";
 import WhatYouLearn from "@/components/landing/WhatYouLearn";
