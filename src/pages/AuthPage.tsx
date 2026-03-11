@@ -237,14 +237,30 @@ const AuthPage = () => {
                     </div>
                   ))}
                   <div className="space-y-1.5">
-                    <Label style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>Tipo de conta</Label>
-                    <select className="flex w-full rounded-lg px-3 py-2 text-sm outline-none"
-                      style={{ ...inputStyle, height: 52, background: "rgba(255,255,255,0.04)" }}
-                      value={regData.role}
-                      onChange={e => setRegData(d => ({ ...d, role: e.target.value as "student" | "company_admin" }))}>
-                      <option value="student">Aluno / Profissional</option>
-                      <option value="company_admin">Administrador de Empresa</option>
-                    </select>
+                    <Label style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>{t('auth.account_type')}</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { id: "student" as const, icon: "🎓", title: t('auth.student'), desc: "Individual training" },
+                        { id: "company_admin" as const, icon: "🏢", title: t('auth.company'), desc: "Team training" },
+                      ].map(type => (
+                        <button
+                          key={type.id}
+                          type="button"
+                          onClick={() => setRegData(d => ({ ...d, role: type.id }))}
+                          className="text-left p-3 rounded-xl border transition-all"
+                          style={{
+                            background: regData.role === type.id ? "rgba(201,168,76,0.1)" : "rgba(255,255,255,0.03)",
+                            border: regData.role === type.id ? "2px solid rgba(201,168,76,0.6)" : "1px solid rgba(255,255,255,0.08)",
+                            cursor: "pointer",
+                            transform: regData.role === type.id ? "scale(1.02)" : "scale(1)",
+                          }}
+                        >
+                          <div className="text-xl mb-1">{type.icon}</div>
+                          <div className="text-sm font-semibold" style={{ color: regData.role === type.id ? "#C9A84C" : "#F4F2ED" }}>{type.title}</div>
+                          <div className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{type.desc}</div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                   <div className="space-y-1.5">
                     <Label style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>Password</Label>
