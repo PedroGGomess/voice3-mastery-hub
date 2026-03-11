@@ -1,20 +1,23 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Menu, X, LayoutDashboard } from "lucide-react";
+import { Menu, X, LayoutDashboard, Search } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
+import LanguageSelector from "@/components/LanguageSelector";
 
 const navLinks: [string, string][] = [
-  ["How It Works", "/how-it-works"],
-  ["Packs", "/packs"],
-  ["For Companies", "/for-companies"],
-  ["Contact", "/contact"],
+  ["nav.how", "/how-it-works"],
+  ["nav.packs", "/packs"],
+  ["nav.companies", "/for-companies"],
+  ["nav.contact", "/contact"],
 ];
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { isAuthenticated, currentUser } = useAuth();
+  const { t } = useTranslation();
 
   const dashboardLink = currentUser?.role === "company_admin" ? "/empresa" : "/app";
 
@@ -32,73 +35,90 @@ const Navbar = () => {
         background: scrolled ? "rgba(4,10,20,0.97)" : "rgba(6,15,29,0.8)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
-        borderBottom: "1px solid rgba(201,168,76,0.1)",
+        borderBottom: "1px solid hsla(var(--primary) / 0.1)",
         boxShadow: scrolled ? "0 4px 32px rgba(0,0,0,0.4)" : "none",
         transition: "background 0.3s, box-shadow 0.3s",
-      }}>
-      <div className="container flex items-center justify-between h-16">
+      }}
+    >
+      <div className="container h-16" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
+        {/* Logo (left) */}
         <Link to="/" className="flex items-center">
-          <span className="font-sans font-bold tracking-[0.2em] text-[#F4F2ED] uppercase text-lg">
-            VOICE<sup className="text-[#B89A5A] text-sm">³</sup>
+          <span className="font-sans font-bold tracking-[0.2em] text-foreground uppercase text-lg">
+            VOICE<sup className="text-primary text-sm">³</sup>
           </span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map(([label, href]) => (
-            <Link key={href} to={href}
-              className="nav-link relative text-sm tracking-wider py-1"
-              style={{ color: "rgba(255,255,255,0.7)", transition: "color 0.2s", letterSpacing: "0.03em" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.95)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}>
-              {label}
-              <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-[#C9A84C] transition-all duration-300 group-hover:w-full nav-underline" />
+        {/* Center: search bar (premium) */}
+        <div className="hidden md:flex items-center gap-6">
+          {navLinks.map(([key, href]) => (
+            <Link
+              key={href}
+              to={href}
+              className="text-sm tracking-wider py-1 transition-colors duration-200"
+              style={{ color: "hsl(var(--muted-foreground))" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "hsl(var(--foreground))")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "hsl(var(--muted-foreground))")}
+            >
+              {t(key)}
             </Link>
           ))}
         </div>
 
-        <div className="hidden md:flex items-center gap-3">
+        {/* Right: actions */}
+        <div className="hidden md:flex items-center gap-3 justify-end">
+          <LanguageSelector />
           {isAuthenticated ? (
             <>
-              <span className="text-sm text-[#8E96A3]">{currentUser?.name?.split(" ")[0]}</span>
-              <Button size="sm" className="bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#C9AB6B] hover:shadow-[0_0_20px_rgba(184,154,90,0.3)] font-semibold rounded-lg transition-all duration-300" asChild>
-                <Link to={dashboardLink}><LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Minha Plataforma</Link>
+              <span className="text-sm" style={{ color: "hsl(var(--muted-foreground))" }}>{currentUser?.name?.split(" ")[0]}</span>
+              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold rounded-lg transition-all duration-300" asChild>
+                <Link to={dashboardLink}>
+                  <LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Minha Plataforma
+                </Link>
               </Button>
             </>
           ) : (
             <>
-              <Button variant="ghost" size="sm" className="text-[#8E96A3] hover:text-[#F4F2ED] hover:bg-white/5" asChild>
-                <Link to="/login">Entrar</Link>
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-white/5" asChild>
+                <Link to="/login">{t("nav.login")}</Link>
               </Button>
-              <Button size="sm" className="bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#C9AB6B] hover:shadow-[0_0_20px_rgba(184,154,90,0.3)] font-semibold rounded-lg px-5 transition-all duration-300" asChild>
-                <Link to="/login">Apply for VOICE³</Link>
+              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold rounded-lg px-5 transition-all duration-300" asChild>
+                <Link to="/login">{t("nav.apply")}</Link>
               </Button>
             </>
           )}
         </div>
 
-        <button className="md:hidden text-[#F4F2ED]" onClick={() => setOpen(!open)}>
+        {/* Mobile menu button */}
+        <button className="md:hidden text-foreground justify-self-end" onClick={() => setOpen(!open)}>
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-[#B89A5A]/10 bg-[#0B1A2A]/98 backdrop-blur-xl">
+        <div className="md:hidden border-t border-primary/10 backdrop-blur-xl" style={{ background: "rgba(11,26,42,0.98)" }}>
           <div className="container py-4 space-y-3">
-            {navLinks.map(([label, href]) => (
-              <Link key={href} to={href} className="block text-sm py-2 text-[#8E96A3] hover:text-[#F4F2ED]" onClick={() => setOpen(false)}>{label}</Link>
+            {navLinks.map(([key, href]) => (
+              <Link key={href} to={href} className="block text-sm py-2 text-muted-foreground hover:text-foreground" onClick={() => setOpen(false)}>
+                {t(key)}
+              </Link>
             ))}
+            <div className="py-2">
+              <LanguageSelector />
+            </div>
             <div className="pt-2 flex gap-3">
               {isAuthenticated ? (
-                <Button size="sm" className="flex-1 bg-[#B89A5A] text-[#0B1A2A]" asChild>
-                  <Link to={dashboardLink} onClick={() => setOpen(false)}><LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Plataforma</Link>
+                <Button size="sm" className="flex-1 bg-primary text-primary-foreground" asChild>
+                  <Link to={dashboardLink} onClick={() => setOpen(false)}>
+                    <LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Plataforma
+                  </Link>
                 </Button>
               ) : (
                 <>
-                  <Button variant="outline" size="sm" className="flex-1 border-[#B89A5A]/30 text-[#F4F2ED] hover:bg-white/5" asChild>
-                    <Link to="/login" onClick={() => setOpen(false)}>Entrar</Link>
+                  <Button variant="outline" size="sm" className="flex-1 border-primary/30 text-foreground hover:bg-white/5" asChild>
+                    <Link to="/login" onClick={() => setOpen(false)}>{t("nav.login")}</Link>
                   </Button>
-                  <Button size="sm" className="flex-1 bg-[#B89A5A] text-[#0B1A2A] font-semibold" asChild>
-                    <Link to="/login" onClick={() => setOpen(false)}>Apply</Link>
+                  <Button size="sm" className="flex-1 bg-primary text-primary-foreground font-semibold" asChild>
+                    <Link to="/login" onClick={() => setOpen(false)}>{t("nav.apply")}</Link>
                   </Button>
                 </>
               )}
