@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { chaptersData, sessionTypeLabels, sessionTypeColors } from "@/lib/chaptersData";
 import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
+import { ProgressBar } from "@/components/ui/VoiceUI";
 
 type FilterTab = "todas" | "concluidas" | "progresso" | "bloqueadas";
 
@@ -195,8 +196,8 @@ const Sessoes = () => {
                         <p className="text-xs text-white/20 mt-0.5">Completa o capítulo anterior para desbloquear</p>
                       )}
                       {!isLocked && (
-                        <div className="mt-1.5 h-1 bg-white/10 rounded-full overflow-hidden max-w-xs">
-                          <div className="h-full rounded-full bg-[#B89A5A] transition-all" style={{ width: `${sessionPct}%` }} />
+                        <div className="mt-1.5 max-w-xs">
+                          <ProgressBar value={sessionPct} height={4} />
                         </div>
                       )}
                     </div>

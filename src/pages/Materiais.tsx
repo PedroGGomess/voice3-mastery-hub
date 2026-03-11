@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Card } from "@/components/ui/VoiceUI";
 
 const TOTAL_SESSIONS = 8;
 
@@ -423,10 +424,7 @@ const Materiais = () => {
           <div className="h-px flex-1 bg-[#B89A5A]/20" />
         </div>
         {allComplete ? (
-          <div
-            className="rounded-xl border border-[#B89A5A]/40 p-6 text-center"
-            style={{ background: "linear-gradient(135deg, #0F2235 0%, #1C2A3A 100%)" }}
-          >
+          <Card gold style={{ textAlign: "center" }}>
             <div className="w-14 h-14 rounded-full bg-[#B89A5A]/20 flex items-center justify-center mx-auto mb-3">
               <Award className="h-7 w-7 text-[#B89A5A]" />
             </div>
@@ -439,9 +437,9 @@ const Materiais = () => {
               <Download className="h-4 w-4 mr-2" />
               Descarregar Certificado
             </Button>
-          </div>
+          </Card>
         ) : (
-          <div className="rounded-xl bg-[#1C1F26] border border-white/5 p-6 text-center">
+          <Card style={{ textAlign: "center" }}>
             <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3">
               <Lock className="h-7 w-7 text-white/20" />
             </div>
@@ -450,7 +448,7 @@ const Materiais = () => {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 text-xs text-[#8E96A3]">
               <span className="text-[#B89A5A] font-semibold">{completedCount}/{TOTAL_SESSIONS}</span> sessões concluídas
             </div>
-          </div>
+          </Card>
         )}
       </motion.div>
 

@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { sessionsData } from "@/lib/sessionsData";
 import { chaptersData } from "@/lib/chaptersData";
+import { Card, ProgressBar, Badge } from "@/components/ui/VoiceUI";
 
 const TOTAL_SESSIONS = 10;
 
@@ -216,11 +217,8 @@ const MeuCurso = () => {
         <p className="text-sm text-[#8E96A3] mb-4">
           You're {progressPercent}% through your journey to executive fluency.
         </p>
-        <div className="h-[4px] bg-white/[0.06] rounded-full overflow-hidden mb-2 max-w-md">
-          <div
-            className="h-full rounded-full transition-all duration-700"
-            style={{ width: `${progressPercent}%`, background: "linear-gradient(135deg, #C9A84C, #E8C97A)" }}
-          />
+        <div className="mb-2 max-w-md">
+          <ProgressBar value={progressPercent} height={4} />
         </div>
         <p style={{ letterSpacing: "0.06em" }} className="text-[11px] text-[#8E96A3]/70 uppercase">
           {completedCount} of {TOTAL_SESSIONS} chapters · {progressPercent}% complete
@@ -287,15 +285,7 @@ const MeuCurso = () => {
                     {nextSessionChapterInfo.done}/{nextSessionChapterInfo.totalInChapter}
                   </span>
                 </div>
-                <div className="h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
-                  <div
-                    className="h-full rounded-full"
-                    style={{
-                      width: `${(nextSessionChapterInfo.done / nextSessionChapterInfo.totalInChapter) * 100}%`,
-                      background: "linear-gradient(135deg, #C9A84C, #E8C97A)",
-                    }}
-                  />
-                </div>
+                <ProgressBar value={nextSessionChapterInfo.done} max={nextSessionChapterInfo.totalInChapter} height={4} />
               </div>
             )}
 
@@ -407,14 +397,10 @@ const MeuCurso = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3, flexWrap: 'wrap' as const }}>
                       <span style={{ fontWeight: 600, fontSize: 14, color: '#F4F2ED' }}>Cap. {ch.number} — {ch.title}</span>
                       {ch.isDiagnostic && (
-                        <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 100, background: 'rgba(139,92,246,0.15)', color: 'rgba(167,139,250,0.9)', border: '1px solid rgba(139,92,246,0.2)' }}>
-                          Diagnostic
-                        </span>
+                        <Badge variant="purple" size="xs">Diagnostic</Badge>
                       )}
                       {isDone && (
-                        <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 100, background: 'rgba(34,197,94,0.12)', color: 'rgba(74,222,128,0.9)', border: '1px solid rgba(34,197,94,0.2)' }}>
-                          ✓ Complete
-                        </span>
+                        <Badge variant="success" size="xs">✓ Complete</Badge>
                       )}
                     </div>
                     <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
@@ -428,13 +414,7 @@ const MeuCurso = () => {
                       <div style={{ fontSize: 13, fontWeight: 700, color: isDone ? 'rgba(74,222,128,0.9)' : '#C9A84C', marginBottom: 4 }}>
                         {ch.completionPct}%
                       </div>
-                      <div style={{ height: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 2 }}>
-                        <div style={{
-                          height: '100%', borderRadius: 2, width: `${ch.completionPct}%`,
-                          background: isDone ? '#22c55e' : 'linear-gradient(90deg,#C9A84C,#E8C87A)',
-                          transition: 'width 1s ease-out',
-                        }} />
-                      </div>
+                      <ProgressBar value={ch.completionPct} color={isDone ? "green" : "gold"} height={4} />
                     </div>
                   )}
                   {ch.unlocked && (
@@ -466,15 +446,15 @@ const MeuCurso = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.22 + i * 0.05 }}
-              className="p-4 rounded-xl transition-all duration-300 hover:shadow-[0_8px_32px_rgba(201,168,76,0.12)]"
-              style={glassCard}
             >
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-lg">{metric.emoji}</span>
-                <span style={{ letterSpacing: "0.08em", fontSize: "10px" }} className="uppercase font-semibold text-[#8E96A3]">{metric.label}</span>
-              </div>
-              <p className="text-xl font-light text-[#F4F2ED] mb-0.5">{metric.value}</p>
-              <p className="text-[11px] text-[#8E96A3]">{metric.sub}</p>
+              <Card hover padding={16}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-lg">{metric.emoji}</span>
+                  <span style={{ letterSpacing: "0.08em", fontSize: "10px" }} className="uppercase font-semibold text-[#8E96A3]">{metric.label}</span>
+                </div>
+                <p className="text-xl font-light text-[#F4F2ED] mb-0.5">{metric.value}</p>
+                <p className="text-[11px] text-[#8E96A3]">{metric.sub}</p>
+              </Card>
             </motion.div>
           ))}
         </div>
@@ -561,14 +541,7 @@ const MeuCurso = () => {
             <h2 style={{ letterSpacing: "0.08em" }} className="text-[10px] text-[#8E96A3] uppercase font-medium">Resultados do Diagnóstico</h2>
             <div className="h-px flex-1 bg-[#C9A84C]/20 mx-4" />
           </div>
-          <div
-            className="rounded-xl p-5"
-            style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(201,168,76,0.2)",
-              backdropFilter: "blur(20px)",
-            }}
-          >
+          <Card gold style={{ backdropFilter: "blur(20px)" }}>
             <div className="flex items-start gap-4">
               <div
                 className="w-14 h-14 rounded-full flex items-center justify-center shrink-0"
@@ -592,11 +565,8 @@ const MeuCurso = () => {
                   {Object.entries(aiEval.weakPoints || {}).sort(([, a]: any, [, b]: any) => b - a).slice(0, 3).map(([key, val]: [string, any]) => (
                     <div key={key} className="flex items-center gap-2">
                       <span style={{ letterSpacing: "0.04em" }} className="text-xs text-[#8E96A3] w-24 capitalize">{key}</span>
-                      <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
-                        <div
-                          className="h-full rounded-full"
-                          style={{ width: `${(val / 10) * 100}%`, background: "linear-gradient(135deg, #C9A84C, #E8C97A)" }}
-                        />
+                      <div className="flex-1">
+                        <ProgressBar value={(val / 10) * 100} height={4} />
                       </div>
                       <span className="text-xs text-[#C9A84C] w-8 text-right">{val}/10</span>
                     </div>
@@ -609,7 +579,7 @@ const MeuCurso = () => {
                 Ver análise completa →
               </Link>
             </div>
-          </div>
+          </Card>
         </motion.div>
       )}
 
@@ -625,10 +595,7 @@ const MeuCurso = () => {
             <h2 style={{ letterSpacing: "0.08em" }} className="text-[10px] text-[#8E96A3] uppercase font-medium">O Teu Professor</h2>
             <div className="h-px flex-1 bg-[#C9A84C]/20 mx-4" />
           </div>
-          <div
-            className="rounded-xl p-4 flex items-center justify-between"
-            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(201,168,76,0.15)", backdropFilter: "blur(20px)" }}
-          >
+          <Card gold style={{ display: "flex", alignItems: "center", justifyContent: "space-between", backdropFilter: "blur(20px)" }}>
             <div className="flex items-center gap-3">
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
@@ -649,7 +616,7 @@ const MeuCurso = () => {
             >
               <Link to="/app/aulas">Book Session →</Link>
             </Button>
-          </div>
+          </Card>
         </motion.div>
       )}
 
@@ -665,10 +632,7 @@ const MeuCurso = () => {
             <h2 style={{ letterSpacing: "0.08em" }} className="text-[10px] text-[#8E96A3] uppercase font-medium">👨‍🏫 Tarefas do Professor</h2>
             <div className="h-px flex-1 bg-[#C9A84C]/20 mx-4" />
           </div>
-          <div
-            className="rounded-xl overflow-hidden"
-            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(251,191,36,0.2)", backdropFilter: "blur(20px)" }}
-          >
+          <Card style={{ padding: 0, overflow: "hidden", backdropFilter: "blur(20px)" }}>
             <div className="divide-y divide-white/[0.04]">
               {pendingAssignments.slice(0, 3).map((a: any, i: number) => (
                 <div key={a.id || i} className="flex items-center gap-3 px-5 py-3">
@@ -690,7 +654,7 @@ const MeuCurso = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         </motion.div>
       )}
 
@@ -742,9 +706,9 @@ const MeuCurso = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="rounded-xl overflow-hidden mb-6"
-        style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(20px)" }}
+        className="mb-6"
       >
+        <Card style={{ padding: 0, overflow: "hidden", backdropFilter: "blur(20px)" }}>
         <div
           className="px-5 py-4 flex items-center justify-between"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
@@ -823,6 +787,7 @@ const MeuCurso = () => {
             );
           })}
         </div>
+        </Card>
       </motion.div>
 
       <ChatWidget />

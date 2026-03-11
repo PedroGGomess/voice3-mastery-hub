@@ -5,6 +5,7 @@ import PlatformLayout from "@/components/PlatformLayout";
 import LeaderboardCard, { type LeaderboardEntry } from "@/components/LeaderboardCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { getLeaderboard, getUserPoints } from "@/lib/persistence";
+import { Card, ProgressBar } from "@/components/ui/VoiceUI";
 
 const pointCategories = [
   { label: "Drill Accuracy", description: "Precision in structured drills", max: 300 },
@@ -108,12 +109,7 @@ const Leaderboard = () => {
         </motion.div>
 
         {/* Points breakdown */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="bg-[#1C1F26] border border-white/5 rounded-xl p-5"
-        >
+        <Card padding={20}>
           <h2 className="text-[#F4F2ED] font-semibold text-sm mb-4 tracking-wide">
             Points System
           </h2>
@@ -126,15 +122,15 @@ const Leaderboard = () => {
               </div>
             ))}
           </div>
-        </motion.div>
+        </Card>
 
         {/* Your position summary */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="bg-[#243A5A]/20 border border-[#B89A5A]/20 rounded-xl p-5"
         >
+          <Card gold>
           <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
             <div>
               <p className="text-[#B89A5A] text-xs tracking-[0.15em] uppercase font-medium mb-1">Your Position</p>
@@ -161,6 +157,7 @@ const Leaderboard = () => {
               </div>
             ))}
           </div>
+          </Card>
         </motion.div>
 
         {/* Podium — top 3 */}
@@ -169,8 +166,8 @@ const Leaderboard = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-[#1C1F26] border border-white/5 rounded-xl p-6"
           >
+            <Card padding={24}>
             <p className="text-[#8E96A3] text-xs tracking-[0.2em] uppercase font-medium mb-6 text-center">Top Performers</p>
             <div className="flex items-end justify-center gap-4">
               {/* 2nd place */}
@@ -210,6 +207,7 @@ const Leaderboard = () => {
                 <p className="text-[10px] text-[#8E96A3]">{entries[2].authorityScore} pts</p>
               </div>
             </div>
+            </Card>
           </motion.div>
         )}
 
@@ -230,8 +228,8 @@ const Leaderboard = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-[#0F2235] border border-[#B89A5A]/30 rounded-xl p-5 shadow-[0_0_30px_rgba(184,154,90,0.08)]"
         >
+          <Card gold>
           <p className="text-[#B89A5A] text-xs tracking-[0.15em] uppercase font-medium mb-4 flex items-center gap-2">
             <Trophy className="h-3.5 w-3.5" /> Your Ranking
           </p>
@@ -258,9 +256,8 @@ const Leaderboard = () => {
               );
             })()}
           </div>
+          </Card>
         </motion.div>
-
-        {/* Weekly Challenges */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -275,7 +272,7 @@ const Leaderboard = () => {
               { emoji: '🎯', title: 'Score 100% on a vocabulary quiz', reward: '+30 pts', progress: 0, total: 1 },
               { emoji: '🔧', title: 'Use a toolkit tool 3 times', reward: '+20 pts', progress: 0, total: 3 },
             ].map((challenge, i) => (
-              <div key={i} className="bg-[#1C1F26] border border-white/5 hover:border-[#B89A5A]/20 hover:shadow-[0_0_20px_rgba(184,154,90,0.08)] rounded-xl p-4 transition-all duration-200">
+              <Card hover key={i} padding={16}>
                 <div className="flex items-start justify-between mb-3">
                   <span className="text-2xl">{challenge.emoji}</span>
                   <span className="text-xs font-bold text-[#B89A5A] bg-[#B89A5A]/10 border border-[#B89A5A]/20 px-2 py-0.5 rounded-full">{challenge.reward}</span>
@@ -286,14 +283,9 @@ const Leaderboard = () => {
                     <span>{challenge.progress}/{challenge.total}</span>
                     <span>{Math.round((challenge.progress / challenge.total) * 100)}%</span>
                   </div>
-                  <div className="h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-[#B89A5A] to-[#d4ba6a] rounded-full"
-                      style={{ width: `${(challenge.progress / challenge.total) * 100}%` }}
-                    />
-                  </div>
+                  <ProgressBar value={(challenge.progress / challenge.total) * 100} height={4} />
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         </motion.div>
