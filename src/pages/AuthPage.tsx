@@ -435,8 +435,9 @@ const AuthPage = () => {
         justifyContent: "center",
         overflowY: "auto",
       }}>
-        <div className="lg:hidden" style={{ marginBottom: 32 }}>
-          <span style={{ fontFamily: "serif", fontSize: 28, fontWeight: 700, color: "#C9A84C", letterSpacing: "0.1em" }}>VOICE³</span>
+        <div className="lg:hidden flex items-center justify-between" style={{ marginBottom: 32 }}>
+          <Link to="/"><span style={{ fontFamily: "serif", fontSize: 28, fontWeight: 700, color: "#C9A84C", letterSpacing: "0.1em" }}>VOICE³</span></Link>
+          <LanguageSelector />
         </div>
         <div className="slide-in-right" style={{ maxWidth: 440, width: "100%", margin: "0 auto" }}>
           <h2 style={{ fontFamily: "serif", fontSize: 32, fontWeight: 700, color: "white", marginBottom: 8 }}>Welcome back.</h2>
