@@ -48,6 +48,7 @@ import VocabularyAccelerator from "./pages/tools/VocabularyAccelerator";
 import MeetingPrep from "./pages/tools/MeetingPrep";
 import CoachPersonas from "./pages/tools/CoachPersonas";
 import ShadowCoach from "./pages/tools/ShadowCoach";
+import PresentationCoach from "./pages/tools/PresentationCoach";
 import ProfessorDashboard from "./pages/professor/ProfessorDashboard";
 import ProfessorStudentView from "./pages/professor/ProfessorStudentView";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -135,6 +136,7 @@ const App = () => (
             <Route path="/app/toolkit/meeting-prep" element={<ProtectedRoute requiredRole="student"><MeetingPrep /></ProtectedRoute>} />
             <Route path="/app/toolkit/coach-personas" element={<ProtectedRoute requiredRole="student"><CoachPersonas /></ProtectedRoute>} />
             <Route path="/app/toolkit/shadow-coach" element={<ProtectedRoute requiredRole="student"><ShadowCoach /></ProtectedRoute>} />
+            <Route path="/app/toolkit/presentation" element={<ProtectedRoute requiredRole="student"><PresentationCoach /></ProtectedRoute>} />
             <Route path="/app/practice" element={<ProtectedRoute requiredRole="student"><Practice /></ProtectedRoute>} />
             <Route path="/app/practice/hostile-qa" element={<ProtectedRoute requiredRole="student"><HostileQA /></ProtectedRoute>} />
             <Route path="/app/practice/debate" element={<ProtectedRoute requiredRole="student"><AIDebateClub /></ProtectedRoute>} />

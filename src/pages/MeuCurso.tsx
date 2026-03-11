@@ -132,6 +132,58 @@ const MeuCurso = () => {
     ch3: [6,7,8,9,10].filter(id => progress[id]?.completed).length,
   };
 
+  // Load string-ID session progress for chapter-based view
+  let sessionProgressStr: Record<string, { status: string; score?: number }> = {};
+  try {
+    const stored = localStorage.getItem(`voice3_session_progress_${userId}`);
+    if (stored) sessionProgressStr = JSON.parse(stored);
+  } catch (_e) {}
+
+  // Build programme data from chaptersData + session progress
+  const isChapterUnlocked = (chapter: typeof chaptersData[0], allChapters: typeof chaptersData, idx: number): boolean => {
+    if (idx === 0) return true;
+    if (chapter.isDiagnostic) return true;
+    const prevChapter = allChapters[idx - 1];
+    const prevCp = chapterProgress[prevChapter.id];
+    if (prevCp?.status === 'completed') return true;
+    // Compute completion from session progress
+    const prevCompletedSessions = prevChapter.sessions.filter(s =>
+      sessionProgressStr[s.id]?.status === 'completed'
+    ).length;
+    return prevCompletedSessions === prevChapter.totalSessions;
+  };
+
+  const programmeChapters = chaptersData.map((ch, idx) => {
+    const sessionsWithProgress = ch.sessions.map(s => ({
+      ...s,
+      sessionStatus: sessionProgressStr[s.id]?.status,
+      score: sessionProgressStr[s.id]?.score,
+    }));
+    const completedSessionsCount = sessionsWithProgress.filter(s => s.sessionStatus === 'completed').length;
+    const totalSessionsCount = ch.totalSessions;
+    const pct = totalSessionsCount > 0 ? Math.round((completedSessionsCount / totalSessionsCount) * 100) : 0;
+    const cp = chapterProgress[ch.id];
+    const unlocked = isChapterUnlocked(ch, chaptersData, idx);
+    let status: string;
+    if (cp?.status === 'completed' || pct === 100) {
+      status = 'completed';
+    } else if (pct > 0 || cp?.status === 'in_progress') {
+      status = 'in_progress';
+    } else if (unlocked) {
+      status = 'available';
+    } else {
+      status = 'locked';
+    }
+    return {
+      ...ch,
+      sessionsWithProgress,
+      completedSessions: completedSessionsCount,
+      completionPct: pct,
+      status,
+      unlocked,
+    };
+  });
+
   // Build combined list
   const combinedList = [
     ...sessionsData.slice(0, 5).map(s => ({ ...s, isTeacher: false })),
@@ -311,7 +363,7 @@ const MeuCurso = () => {
         </motion.div>
       </div>
 
-      {/* Chapter Progress Cards */}
+      {/* Chapter Progress — vertical list */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -319,56 +371,75 @@ const MeuCurso = () => {
         className="mb-6"
       >
         <div className="flex items-center justify-between mb-3">
-          <span style={{ letterSpacing: "0.08em" }} className="text-[10px] text-[#8E96A3] uppercase font-medium">Course Progress</span>
-          <span className="text-xs text-[#C9A84C] font-semibold">{completedCount}/{TOTAL_SESSIONS} sessões · {progressPercent}%</span>
+          <span style={{ letterSpacing: "0.08em" }} className="text-[10px] text-[#8E96A3] uppercase font-medium">My Programme</span>
+          <Link to="/capitulos" className="text-xs text-[#C9A84C] hover:text-[#E8C97A] transition-colors">
+            Ver tudo →
+          </Link>
         </div>
-        <div className="flex gap-3 overflow-x-auto pb-2">
-          {chaptersData.map((chapter) => {
-            const chStatus = chapterProgress[chapter.id]?.status || (chapter.id === 'ch1' ? 'available' : 'locked');
-            const isCompleted = chStatus === 'completed';
-            const sessionsDone = isCompleted
-              ? chapter.totalSessions
-              : (sessionsDoneByChapter[chapter.id] ?? 0);
-            const total = chapter.totalSessions;
-            const pct = total > 0 ? (sessionsDone / total) * 100 : 0;
-            const isActive = chStatus === 'in_progress' || chStatus === 'available';
-            const isLocked = chStatus === 'locked' && sessionsDone === 0;
+        <div>
+          {programmeChapters.map((ch) => {
+            const isDone = ch.completionPct === 100;
+            const isActive = ch.status === 'in_progress';
             return (
               <Link
-                key={chapter.id}
+                key={ch.id}
                 to="/capitulos"
-                className={`flex-shrink-0 w-44 p-3.5 rounded-xl transition-all duration-300 hover:shadow-[0_8px_32px_rgba(201,168,76,0.12)] ${isLocked ? "opacity-40" : ""}`}
                 style={{
-                  background: isCompleted ? "rgba(34,197,94,0.06)" : "rgba(255,255,255,0.04)",
-                  border: isCompleted
-                    ? "1px solid rgba(34,197,94,0.25)"
-                    : isActive
-                    ? "1px solid rgba(201,168,76,0.3)"
-                    : "1px solid rgba(255,255,255,0.08)",
-                  backdropFilter: "blur(20px)",
-                  boxShadow: isActive && !isCompleted ? "0 0 20px rgba(201,168,76,0.06)" : "none",
+                  display: "block",
+                  background: isDone ? 'rgba(34,197,94,0.04)' : isActive ? 'rgba(201,168,76,0.06)' : 'rgba(255,255,255,0.02)',
+                  border: isDone ? '1px solid rgba(34,197,94,0.2)' : isActive ? '1px solid rgba(201,168,76,0.25)' : '1px solid rgba(255,255,255,0.06)',
+                  borderRadius: 14, padding: '16px 20px', marginBottom: 8,
+                  opacity: ch.unlocked ? 1 : 0.45, cursor: ch.unlocked ? 'pointer' : 'default',
+                  transition: 'all 0.25s', textDecoration: 'none',
                 }}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span style={{ letterSpacing: "0.08em" }} className="text-[10px] font-semibold text-[#8E96A3] uppercase">Ch {chapter.number}</span>
-                  {isCompleted && <span className="text-[10px] text-green-400 font-semibold">✅ Concluído</span>}
-                  {isActive && !isCompleted && <span className="text-[10px] text-[#C9A84C] font-semibold">🔵 Ativo</span>}
-                  {isLocked && <Lock className="h-3 w-3 text-white/20" />}
-                </div>
-                <p className={`text-xs font-medium leading-tight mb-2.5 line-clamp-2 ${isLocked ? "text-white/30" : "text-[#F4F2ED]"}`}>
-                  {chapter.title}
-                </p>
-                <div className="space-y-1">
-                  <span className="text-[10px] text-[#8E96A3]">{sessionsDone}/{total} sessões</span>
-                  <div className="h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
-                    <div
-                      className="h-full rounded-full"
-                      style={{
-                        width: `${pct}%`,
-                        background: isCompleted ? "#22c55e" : "linear-gradient(135deg, #C9A84C, #E8C97A)",
-                      }}
-                    />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{
+                    width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15,
+                    background: isDone ? 'rgba(34,197,94,0.15)' : isActive ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.06)',
+                    border: isDone ? '1px solid rgba(34,197,94,0.3)' : isActive ? '1px solid rgba(201,168,76,0.3)' : '1px solid rgba(255,255,255,0.1)',
+                    color: isDone ? 'rgba(74,222,128,0.9)' : '#F4F2ED',
+                  }}>
+                    {isDone ? '✓' : ch.unlocked ? ch.number : '🔒'}
                   </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3, flexWrap: 'wrap' as const }}>
+                      <span style={{ fontWeight: 600, fontSize: 14, color: '#F4F2ED' }}>Cap. {ch.number} — {ch.title}</span>
+                      {ch.isDiagnostic && (
+                        <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 100, background: 'rgba(139,92,246,0.15)', color: 'rgba(167,139,250,0.9)', border: '1px solid rgba(139,92,246,0.2)' }}>
+                          Diagnostic
+                        </span>
+                      )}
+                      {isDone && (
+                        <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 100, background: 'rgba(34,197,94,0.12)', color: 'rgba(74,222,128,0.9)', border: '1px solid rgba(34,197,94,0.2)' }}>
+                          ✓ Complete
+                        </span>
+                      )}
+                    </div>
+                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
+                      {ch.unlocked
+                        ? `${ch.completedSessions}/${ch.totalSessions} sessions completed`
+                        : 'Complete previous chapter to unlock'}
+                    </span>
+                  </div>
+                  {ch.unlocked && ch.totalSessions > 0 && (
+                    <div style={{ width: 100, textAlign: 'right', flexShrink: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: isDone ? 'rgba(74,222,128,0.9)' : '#C9A84C', marginBottom: 4 }}>
+                        {ch.completionPct}%
+                      </div>
+                      <div style={{ height: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 2 }}>
+                        <div style={{
+                          height: '100%', borderRadius: 2, width: `${ch.completionPct}%`,
+                          background: isDone ? '#22c55e' : 'linear-gradient(90deg,#C9A84C,#E8C87A)',
+                          transition: 'width 1s ease-out',
+                        }} />
+                      </div>
+                    </div>
+                  )}
+                  {ch.unlocked && (
+                    <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 18, flexShrink: 0 }}>›</span>
+                  )}
                 </div>
               </Link>
             );
