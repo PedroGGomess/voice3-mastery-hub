@@ -79,7 +79,7 @@ const AuthPage = () => {
   const [loginPassword, setLoginPassword] = useState("");
   const [isShowingDemo, setIsShowingDemo] = useState(false);
 
-  const navigate = useNavigate();
+  const { t } = useTranslation();
   const { login, register, isAuthenticated, isLoading, currentUser } = useAuth();
 
   if (isLoading) return null;
