@@ -1,70 +1,107 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Lock, Clock, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowRight, Clock, ChevronDown, ChevronUp } from "lucide-react";
 import PlatformLayout from "@/components/PlatformLayout";
-import ComingSoonModal from "@/components/ComingSoonModal";
-import { layersData } from "@/lib/layersData";
 import { useAuth } from "@/contexts/AuthContext";
 import { getToolkitHistory } from "@/lib/persistence";
 
-const toolRoutes: Record<string, string> = {
-  "rescue-mode": "/app/toolkit/rescue-mode",
-  "grammar-on-demand": "/app/toolkit/grammar",
-  "email-tone-translator": "/app/toolkit/email-tone",
-  "vocabulary-accelerator": "/app/toolkit/vocabulary",
-  "meeting-prep-tool": "/app/toolkit/meeting-prep",
-  "ai-coach-persona": "/app/toolkit/coach-personas",
-  "shadow-coach": "/app/toolkit/shadow-coach",
-};
+interface ToolCard {
+  id: string;
+  icon: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  color: string;
+  colorBg: string;
+  colorBorder: string;
+  badge: string;
+  path: string;
+}
 
-const comingSoonTools = ["presentation-rehearsal-studio"];
-
-const StatusBadge = ({ status }: { status: string }) => {
-  if (status === "available") {
-    return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-        Available
-      </span>
-    );
-  }
-  if (status === "beta") {
-    return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-[#B89A5A]/20 text-[#B89A5A] border border-[#B89A5A]/30 tracking-wider uppercase">
-        BETA
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 text-[#8E96A3] border border-white/10">
-      <Lock className="h-2.5 w-2.5" />
-      Coming Soon
-    </span>
-  );
-};
+const tools: ToolCard[] = [
+  {
+    id: "rescue-mode",
+    icon: "🚨",
+    title: "Rescue Mode",
+    subtitle: "Emergency Meeting Prep",
+    description: "Got a high-stakes meeting in 60 minutes? Generate an instant drill for any meeting type.",
+    color: "#ef4444",
+    colorBg: "rgba(239,68,68,0.08)",
+    colorBorder: "rgba(239,68,68,0.2)",
+    badge: "INSTANT",
+    path: "/app/toolkit/rescue-mode",
+  },
+  {
+    id: "grammar",
+    icon: "📝",
+    title: "Grammar Tool",
+    subtitle: "Executive Writing Corrector",
+    description: "Paste any text. Get instant executive-level grammar correction with explanation.",
+    color: "#3b82f6",
+    colorBg: "rgba(59,130,246,0.08)",
+    colorBorder: "rgba(59,130,246,0.2)",
+    badge: "AI-POWERED",
+    path: "/app/toolkit/grammar",
+  },
+  {
+    id: "qa-gauntlet",
+    icon: "⚔️",
+    title: "Q&A Gauntlet",
+    subtitle: "5-Round Pressure Testing",
+    description: "Face 5 rounds of aggressive executive questions. Hold your position under pressure.",
+    color: "#f59e0b",
+    colorBg: "rgba(245,158,11,0.08)",
+    colorBorder: "rgba(245,158,11,0.2)",
+    badge: "5 ROUNDS",
+    path: "/app/practice/hostile-qa",
+  },
+  {
+    id: "email-tone",
+    icon: "✉️",
+    title: "Email Tone",
+    subtitle: "Professional Email Rewriter",
+    description: "Paste your email. Get 3 versions: formal, assertive, and diplomatic — instantly.",
+    color: "#8b5cf6",
+    colorBg: "rgba(139,92,246,0.08)",
+    colorBorder: "rgba(139,92,246,0.2)",
+    badge: "3 VERSIONS",
+    path: "/app/toolkit/email-tone",
+  },
+  {
+    id: "debate",
+    icon: "💬",
+    title: "AI Debate Club",
+    subtitle: "Defend Your Position",
+    description: "Your AI opponent argues the opposite side. Sharpen your executive argumentation.",
+    color: "#10b981",
+    colorBg: "rgba(16,185,129,0.08)",
+    colorBorder: "rgba(16,185,129,0.2)",
+    badge: "ADVERSARIAL",
+    path: "/app/practice/debate",
+  },
+  {
+    id: "presentation",
+    icon: "🎤",
+    title: "Presentation Coach",
+    subtitle: "Structure Any Presentation",
+    description: "Enter topic and audience. Get a full executive presentation structure instantly.",
+    color: "#C9A84C",
+    colorBg: "rgba(201,168,76,0.08)",
+    colorBorder: "rgba(201,168,76,0.2)",
+    badge: "NEW",
+    path: "/app/toolkit/presentation",
+  },
+];
 
 const Toolkit = () => {
-  const toolkitLayer = layersData.find(l => l.id === "toolkit")!;
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const [comingSoon, setComingSoon] = useState<{ open: boolean; name: string; id: string } | null>(null);
   const [activeTab, setActiveTab] = useState<"tools" | "history">("tools");
   const [expandedEntry, setExpandedEntry] = useState<string | null>(null);
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   const history = currentUser ? getToolkitHistory(currentUser.id) : [];
-
-  const handleCardClick = (tool: typeof toolkitLayer.tools[0]) => {
-    const route = toolRoutes[tool.id];
-    if (route) {
-      navigate(route);
-    } else {
-      setComingSoon({ open: true, name: tool.name, id: tool.id });
-    }
-  };
-
-  const getUsageCount = (toolId: string) => {
-    return history.filter(h => h.toolId === toolId).length;
-  };
 
   return (
     <PlatformLayout>
@@ -74,12 +111,12 @@ const Toolkit = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-6"
       >
-        <p className="text-xs text-[#B89A5A] tracking-[0.2em] uppercase font-medium mb-1">Layer A</p>
+        <p className="text-xs text-[#C9A84C] tracking-[0.2em] uppercase font-medium mb-1">Premium Toolkit</p>
         <h1 className="font-serif text-2xl font-semibold text-[#F4F2ED] tracking-tight mb-2">
           My Toolkit
         </h1>
         <p className="text-[#8E96A3] text-sm">
-          On-demand utilities to solve immediate problems
+          On-demand utilities to solve immediate executive communication challenges
         </p>
       </motion.div>
 
@@ -91,7 +128,7 @@ const Toolkit = () => {
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 rounded-full text-xs font-semibold transition-all ${
               activeTab === tab
-                ? "bg-[#B89A5A] text-[#0B1A2A]"
+                ? "bg-[#C9A84C] text-[#0a1628]"
                 : "bg-[#1C1F26] text-[#8E96A3] border border-white/10 hover:text-[#F4F2ED]"
             }`}
           >
@@ -102,63 +139,72 @@ const Toolkit = () => {
 
       {activeTab === "tools" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {toolkitLayer.tools.map((tool, i) => {
-            const route = toolRoutes[tool.id];
-            const usageCount = getUsageCount(tool.id);
+          {tools.map((tool, i) => (
+            <motion.div
+              key={tool.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06 }}
+              onMouseEnter={() => setHoveredCard(tool.id)}
+              onMouseLeave={() => setHoveredCard(null)}
+              style={{
+                background: tool.colorBg,
+                border: `1px solid ${hoveredCard === tool.id ? tool.color : tool.colorBorder}`,
+                borderRadius: 20,
+                padding: 28,
+                cursor: "pointer",
+                position: "relative",
+                overflow: "hidden",
+                transition: "all 0.3s",
+                transform: hoveredCard === tool.id ? "translateY(-6px)" : "translateY(0)",
+                boxShadow: hoveredCard === tool.id ? "0 20px 50px rgba(0,0,0,0.4)" : "none",
+              }}
+            >
+              {/* Badge top-right */}
+              <span style={{
+                position: "absolute", top: 16, right: 16,
+                fontSize: 9, letterSpacing: "0.12em", fontWeight: 800,
+                padding: "4px 10px", borderRadius: 100,
+                background: tool.colorBg, border: `1px solid ${tool.colorBorder}`, color: tool.color,
+              }}>
+                {tool.badge}
+              </span>
 
-            return (
-              <motion.div
-                key={tool.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.06 }}
-                onClick={() => handleCardClick(tool)}
-                className={`rounded-xl bg-[#1C1F26] border p-5 flex flex-col transition-all duration-200 cursor-pointer ${
-                  route
-                    ? "border-[#B89A5A]/10 hover:border-[#B89A5A]/30"
-                    : "border-white/5 hover:border-[#B89A5A]/20"
-                }`}
+              {/* Icon */}
+              <div style={{ fontSize: 44, marginBottom: 16, lineHeight: 1 }}>{tool.icon}</div>
+
+              {/* Title */}
+              <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 4, color: "#F4F2ED" }}>{tool.title}</h3>
+              <p style={{ fontSize: 12, color: tool.color, fontWeight: 600, marginBottom: 12, letterSpacing: "0.04em" }}>
+                {tool.subtitle}
+              </p>
+              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.55)", lineHeight: 1.65, marginBottom: 20 }}>
+                {tool.description}
+              </p>
+
+              <button
+                onClick={() => navigate(tool.path)}
+                style={{
+                  height: 38, padding: "0 20px",
+                  background: tool.color, color: "#060f1d",
+                  fontWeight: 700, fontSize: 13, borderRadius: 8, border: "none", cursor: "pointer",
+                }}
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#B89A5A]/10 flex items-center justify-center shrink-0">
-                    <span className="text-lg">{
-                      tool.id === "rescue-mode" ? "🚨" :
-                      tool.id === "grammar-on-demand" ? "📚" :
-                      tool.id === "email-tone-translator" ? "✉️" :
-                      tool.id === "vocabulary-accelerator" ? "⚡" :
-                      tool.id === "meeting-prep-tool" ? "📅" :
-                      tool.id === "ai-coach-persona" ? "🤖" :
-                      tool.id === "shadow-coach" ? "🪞" :
-                      "🛠️"
-                    }</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                    {usageCount > 0 && (
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#B89A5A]/20 text-[#B89A5A] border border-[#B89A5A]/20">
-                        {usageCount}×
-                      </span>
-                    )}
-                    <StatusBadge status={route ? (tool.status === "beta" ? "beta" : "available") : tool.status} />
-                  </div>
-                </div>
+                Open Tool →
+              </button>
 
-                <h3 className="font-semibold text-sm text-[#F4F2ED] mb-1.5">{tool.name}</h3>
-                <p className="text-xs text-[#8E96A3] leading-relaxed flex-1 mb-4">{tool.description}</p>
-
-                {route ? (
-                  <div className="mt-auto flex items-center gap-1.5 text-xs font-semibold text-[#B89A5A]">
-                    Open Tool
-                    <ArrowRight className="h-3 w-3" />
-                  </div>
-                ) : (
-                  <div className="mt-auto flex items-center gap-1 text-xs text-[#B89A5A]/60">
-                    <Lock className="h-3 w-3" />
-                    Click to register interest
-                  </div>
-                )}
-              </motion.div>
-            );
-          })}
+              {/* Decorative bg icon */}
+              <span style={{
+                position: "absolute", bottom: -10, right: -10,
+                fontSize: 100, fontWeight: 900,
+                opacity: 0.04, color: tool.color,
+                fontFamily: "serif", lineHeight: 1, userSelect: "none",
+                pointerEvents: "none",
+              }}>
+                {tool.icon}
+              </span>
+            </motion.div>
+          ))}
         </div>
       )}
 
@@ -175,7 +221,7 @@ const Toolkit = () => {
               <p className="text-xs text-[#8E96A3] mb-4">Use a tool to see your results here.</p>
               <button
                 onClick={() => setActiveTab("tools")}
-                className="inline-flex items-center gap-1.5 text-xs text-[#B89A5A] hover:text-[#d4ba6a] transition-colors font-semibold"
+                className="inline-flex items-center gap-1.5 text-xs text-[#C9A84C] hover:text-[#d4ba6a] transition-colors font-semibold"
               >
                 Open a Tool <ArrowRight className="h-3 w-3" />
               </button>
@@ -193,7 +239,7 @@ const Toolkit = () => {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-bold text-[#B89A5A] bg-[#B89A5A]/10 border border-[#B89A5A]/20 px-2 py-0.5 rounded">
+                        <span className="text-xs font-bold text-[#C9A84C] bg-[#C9A84C]/10 border border-[#C9A84C]/20 px-2 py-0.5 rounded">
                           {entry.toolName}
                         </span>
                         <span className="text-xs text-[#8E96A3] flex items-center gap-1">
@@ -209,7 +255,7 @@ const Toolkit = () => {
                     </div>
                     <button
                       onClick={() => setExpandedEntry(isExpanded ? null : entry.id)}
-                      className="shrink-0 flex items-center gap-1 text-xs text-[#B89A5A] hover:text-[#d4ba6a] transition-colors font-semibold"
+                      className="shrink-0 flex items-center gap-1 text-xs text-[#C9A84C] hover:text-[#d4ba6a] transition-colors font-semibold"
                     >
                       {isExpanded ? (
                         <><ChevronUp className="h-3.5 w-3.5" /> Hide</>
@@ -246,16 +292,6 @@ const Toolkit = () => {
             })
           )}
         </motion.div>
-      )}
-
-      {comingSoon && (
-        <ComingSoonModal
-          open={comingSoon.open}
-          onOpenChange={open => setComingSoon(prev => prev ? { ...prev, open } : null)}
-          moduleName={comingSoon.name}
-          moduleId={comingSoon.id}
-          moduleType="toolkit"
-        />
       )}
     </PlatformLayout>
   );
