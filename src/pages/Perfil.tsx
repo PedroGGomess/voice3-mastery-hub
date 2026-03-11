@@ -8,6 +8,7 @@ import { User, Mail, Building, Trophy, Clock, Target, Flame, Lock, CheckCircle2,
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { Card, Avatar } from "@/components/ui/VoiceUI";
 
 interface Achievement {
   id: string;
@@ -84,10 +85,8 @@ const Perfil = () => {
         <p className="text-muted-foreground mb-8">Gere as tuas informações e acompanha o teu progresso.</p>
 
         {/* Avatar + stats */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 premium-card mb-6">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-2xl font-bold text-white shrink-0">
-            {initials}
-          </div>
+        <Card hover style={{ marginBottom: 24, display: "flex", flexDirection: "column", gap: 24 }} className="flex-col sm:flex-row items-start sm:items-center">
+          <Avatar name={currentUser?.name || "U"} size={80} />
           <div>
             <h2 className="text-xl font-bold">{currentUser?.name}</h2>
             <p className="text-muted-foreground text-sm">{currentUser?.email}</p>
@@ -108,10 +107,11 @@ const Perfil = () => {
               <p className="text-xs text-muted-foreground">Tempo</p>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Executive Profile section */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="premium-card mb-6">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-6">
+          <Card hover>
           <h3 className="font-semibold mb-4 flex items-center gap-2"><Briefcase className="h-4 w-4 text-primary" /> Executive Profile</h3>
           {onboardingCompleted && onboardingData ? (
             <div className="grid sm:grid-cols-2 gap-3">
@@ -135,11 +135,13 @@ const Perfil = () => {
               </Button>
             </div>
           )}
+          </Card>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Edit profile */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="premium-card">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+            <Card hover>
             <h3 className="font-semibold mb-4 flex items-center gap-2"><User className="h-4 w-4 text-primary" /> Informações Pessoais</h3>
             <form onSubmit={handleSaveProfile} className="space-y-4">
               <div className="space-y-2">
@@ -159,10 +161,12 @@ const Perfil = () => {
                 {saving ? "A guardar..." : "Guardar Alterações"}
               </Button>
             </form>
+            </Card>
           </motion.div>
 
           {/* Change password */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="premium-card">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            <Card hover>
             <h3 className="font-semibold mb-4 flex items-center gap-2"><Lock className="h-4 w-4 text-primary" /> Alterar Password</h3>
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div className="space-y-2">
@@ -179,11 +183,13 @@ const Perfil = () => {
               </div>
               <Button type="submit" variant="outline" className="w-full rounded-xl h-11">Alterar Password</Button>
             </form>
+            </Card>
           </motion.div>
         </div>
 
         {/* Achievements */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="premium-card mt-6">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mt-6">
+          <Card hover>
           <h3 className="font-semibold mb-4 flex items-center gap-2"><Trophy className="h-4 w-4 text-primary" /> Conquistas</h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {achievements.map(a => (
@@ -199,6 +205,7 @@ const Perfil = () => {
               </div>
             ))}
           </div>
+          </Card>
         </motion.div>
       </motion.div>
     </PlatformLayout>

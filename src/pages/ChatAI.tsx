@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAICoach } from "@/hooks/useAICoach";
 import LoadingAI from "@/components/LoadingAI";
+import { VoiceButton } from "@/components/ui/VoiceUI";
 
 // SpeechRecognition type declarations
 interface SpeechRecognitionResult {
@@ -466,14 +467,14 @@ const ChatAI = () => {
                   className="w-full bg-transparent text-sm text-[#F4F2ED] placeholder:text-white/25 outline-none resize-none"
                 />
                 <div className="flex justify-end mt-2">
-                  <Button
+                  <VoiceButton
+                    variant="primary"
+                    size="sm"
                     onClick={handleAnalyzeSend}
                     disabled={!analyzeText.trim()}
-                    className="rounded-full h-8 px-5 text-xs font-semibold"
-                    style={{ background: "linear-gradient(135deg, #C9A84C, #E8C97A)", color: "#0A0A0F", border: "none" }}
                   >
                     Analyse →
-                  </Button>
+                  </VoiceButton>
                 </div>
               </div>
             </motion.div>
@@ -483,21 +484,15 @@ const ChatAI = () => {
         {/* Quick action buttons — 3×2 grid */}
         <div className="grid grid-cols-3 gap-2 mb-3">
           {quickActions.map((action, i) => (
-            <button
+            <VoiceButton
               key={i}
+              variant="ghost"
               onClick={() => handleQuickAction(action)}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-all duration-200 group hover:shadow-[0_0_12px_rgba(201,168,76,0.2)]"
-              style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.08)",
-                backdropFilter: "blur(20px)",
-              }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.35)")}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}
+              style={{ justifyContent: "flex-start", gap: 8, padding: "0 12px" }}
             >
               <span className="text-base shrink-0">{action.emoji}</span>
-              <span className="text-[11px] text-white/60 group-hover:text-[#C9A84C] transition-colors leading-tight">{action.label}</span>
-            </button>
+              <span className="text-[11px] leading-tight">{action.label}</span>
+            </VoiceButton>
           ))}
         </div>
 
@@ -538,14 +533,14 @@ const ChatAI = () => {
               )}
             </Button>
           )}
-          <Button
+          <VoiceButton
+            variant="primary"
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || isTyping}
-            className="h-12 w-12 rounded-xl disabled:opacity-40 transition-all duration-200"
-            style={{ background: "linear-gradient(135deg, #C9A84C, #E8C97A)", color: "#0A0A0F", border: "none" }}
+            style={{ height: 48, width: 48, padding: 0, borderRadius: 12 }}
           >
             <Send className="h-4 w-4" />
-          </Button>
+          </VoiceButton>
         </div>
       </motion.div>
     </PlatformLayout>

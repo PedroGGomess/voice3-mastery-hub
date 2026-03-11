@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { VoiceButton, Card, Badge, Avatar, ProgressBar } from '@/components/ui/VoiceUI';
 import {
   LineChart, Line, AreaChart, Area, BarChart, Bar,
   PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid,
@@ -176,8 +177,8 @@ interface ConfirmModalProps {
 function ConfirmModal({ title, description, confirmWord = 'DELETE', onConfirm, onClose }: ConfirmModalProps) {
   const [typed, setTyped] = useState('');
   return (
-    <div style={{ position:'fixed', inset:0, zIndex:1000, background:'rgba(0,0,0,0.7)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-      <div style={{ background:CARD, border:'1px solid rgba(239,68,68,0.25)', borderRadius:16, padding:36, maxWidth:420, width:'90%' }}>
+    <div className="voice-modal-overlay">
+      <div className="voice-modal" style={{ maxWidth:420 }}>
         <h3 style={{ color:'white', fontSize:18, fontWeight:700, marginBottom:8 }}>{title}</h3>
         <p style={{ color:MUTED, fontSize:14, marginBottom:20 }}>{description}</p>
         <p style={{ color:'rgba(239,68,68,0.8)', fontSize:13, marginBottom:8 }}>
@@ -205,8 +206,8 @@ function ConfirmModal({ title, description, confirmWord = 'DELETE', onConfirm, o
 // ─── Simple Modal wrapper ─────────────────────────────────────────────────────
 function Modal({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
   return (
-    <div style={{ position:'fixed', inset:0, zIndex:1000, background:'rgba(0,0,0,0.7)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-      <div style={{ background:CARD, border:`1px solid ${WHITE_08}`, borderRadius:16, padding:36, maxWidth:520, width:'90%', maxHeight:'90vh', overflowY:'auto', position:'relative' }}>
+    <div className="voice-modal-overlay">
+      <div className="voice-modal" style={{ maxWidth:520, maxHeight:'90vh', overflowY:'auto', position:'relative' }}>
         <button onClick={onClose} style={{ position:'absolute', top:16, right:16, background:'transparent', border:'none', color:MUTED, fontSize:20, cursor:'pointer' }}>✕</button>
         {children}
       </div>
@@ -217,17 +218,9 @@ function Modal({ onClose, children }: { onClose: () => void; children: React.Rea
 // ─── Gold button ──────────────────────────────────────────────────────────────
 function GoldBtn({ onClick, children, outlined }: { onClick: () => void; children: React.ReactNode; outlined?: boolean }) {
   return (
-    <button
-      onClick={onClick}
-      style={{
-        padding:'8px 18px', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer',
-        background: outlined ? 'transparent' : GOLD,
-        color: outlined ? GOLD : '#0a1628',
-        border: outlined ? `1px solid ${GOLD}` : 'none',
-      }}
-    >
+    <VoiceButton variant={outlined ? 'gold-outline' : 'primary'} size="sm" onClick={onClick}>
       {children}
-    </button>
+    </VoiceButton>
   );
 }
 
@@ -277,11 +270,11 @@ function SectionOverview() {
             <div style={{ fontSize:28, fontWeight:700, color:GOLD, margin:'8px 0 2px' }}>{k.value}</div>
             <div style={{ fontSize:13, color:MUTED }}>{k.label}</div>
             <div style={{ fontSize:11, color:MUTED, marginTop:4 }}>{k.sub}</div>
-          </div>
+          </Card>
         ))}
       </div>
 
-      <div style={{ ...glassCard, marginBottom:32 }}>
+      <Card style={{ marginBottom:32 }}>
         <h3 style={{ color:'white', fontSize:15, fontWeight:600, marginBottom:16 }}>Session Activity (Last 4 Weeks)</h3>
         <ResponsiveContainer width="100%" height={200}>
           <AreaChart data={activityData}>
@@ -298,9 +291,9 @@ function SectionOverview() {
             <Area type="monotone" dataKey="sessions" stroke={GOLD} fill="url(#goldGrad)" strokeWidth={2} />
           </AreaChart>
         </ResponsiveContainer>
-      </div>
+      </Card>
 
-      <div style={glassCard}>
+      <Card>
         <h3 style={{ color:'white', fontSize:15, fontWeight:600, marginBottom:16 }}>Recent Activity</h3>
         <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
           {recentActivity.map((a, i) => (
@@ -313,7 +306,7 @@ function SectionOverview() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -384,7 +377,7 @@ function SectionStudents() {
         />
       </div>
 
-      <div style={{ ...glassCard, padding:0, overflow:'hidden' }}>
+      <Card padding={0} style={{ overflow:'hidden' }}>
         <table style={{ width:'100%', borderCollapse:'collapse' }}>
           <thead>
             <tr style={{ borderBottom:`1px solid rgba(201,168,76,0.2)` }}>
@@ -398,26 +391,21 @@ function SectionStudents() {
               const ps = packStyle(s.pack);
               const pct = Math.round((s.sessions / s.totalSessions) * 100);
               return (
-                <tr key={s.id} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)', borderBottom:`1px solid rgba(255,255,255,0.05)` }}>
+                <tr key={s.id} className="voice-table-row" style={{ borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
                   <td style={{ padding:'12px 16px', color:'white', fontSize:13, fontWeight:500 }}>{s.name}</td>
                   <td style={{ padding:'12px 16px', color:MUTED, fontSize:13 }}>{s.email}</td>
                   <td style={{ padding:'12px 16px' }}>
-                    <span style={{ background:ps.bg, color:ps.color, padding:'2px 10px', borderRadius:20, fontSize:11, fontWeight:600 }}>{s.pack}</span>
+                    <Badge variant={s.pack === 'Starter' ? 'blue' : s.pack === 'Pro' ? 'gold' : s.pack === 'Advanced' ? 'purple' : s.pack === 'Business Master' ? 'success' : 'muted'} size="xs">{s.pack}</Badge>
                   </td>
                   <td style={{ padding:'12px 16px', color:'white', fontSize:13 }}>{s.level}</td>
                   <td style={{ padding:'12px 16px' }}>
-                    <div style={{ width:80, height:6, background:'rgba(255,255,255,0.08)', borderRadius:3 }}>
-                      <div style={{ width:`${pct}%`, height:'100%', background:GOLD, borderRadius:3 }} />
-                    </div>
+                    <div style={{ width:80 }}><ProgressBar value={s.sessions} max={s.totalSessions} height={6} /></div>
                     <span style={{ color:MUTED, fontSize:11 }}>{s.sessions}/{s.totalSessions}</span>
                   </td>
                   <td style={{ padding:'12px 16px', color:MUTED, fontSize:13 }}>{s.professor}</td>
                   <td style={{ padding:'12px 16px', color: s.score >= 90 ? '#52C41A' : s.score >= 75 ? GOLD : '#FF6B6B', fontSize:13, fontWeight:600 }}>{s.score}%</td>
                   <td style={{ padding:'12px 16px', position:'relative' }}>
-                    <button
-                      onClick={() => setOpenMenu(openMenu === s.id ? null : s.id)}
-                      style={{ background:WHITE_04, border:`1px solid ${WHITE_08}`, color:'white', padding:'4px 10px', borderRadius:6, cursor:'pointer', fontSize:16 }}
-                    >⋯</button>
+                    <VoiceButton variant="ghost" size="sm" onClick={() => setOpenMenu(openMenu === s.id ? null : s.id)}>⋯</VoiceButton>
                     {openMenu === s.id && (
                       <div style={{ position:'absolute', right:16, top:40, background:'#0d1829', border:`1px solid ${WHITE_08}`, borderRadius:10, zIndex:50, minWidth:160, overflow:'hidden' }}>
                         {['View Profile','Edit Pack','Assign Professor','Suspend'].map(action => (
@@ -443,7 +431,7 @@ function SectionStudents() {
             })}
           </tbody>
         </table>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -497,7 +485,7 @@ function SectionProfessors() {
         <GoldBtn onClick={() => setShowModal(true)}>+ Create New Professor</GoldBtn>
       </div>
 
-      <div style={{ ...glassCard, padding:0, overflow:'hidden' }}>
+      <Card padding={0} style={{ overflow:'hidden' }}>
         <table style={{ width:'100%', borderCollapse:'collapse' }}>
           <thead>
             <tr style={{ borderBottom:`1px solid rgba(201,168,76,0.2)` }}>
@@ -521,7 +509,7 @@ function SectionProfessors() {
                 <td style={{ padding:'12px 16px' }}>
                   <div style={{ display:'flex', gap:8 }}>
                     {['Edit','Manage Students','Deactivate'].map(a => (
-                      <button key={a} onClick={() => toast.info(a)} style={{ padding:'4px 12px', borderRadius:6, border:`1px solid ${WHITE_08}`, background:WHITE_04, color:'white', fontSize:12, cursor:'pointer' }}>{a}</button>
+                      <VoiceButton key={a} variant="ghost" size="sm" onClick={() => toast.info(a)}>{a}</VoiceButton>
                     ))}
                   </div>
                 </td>
@@ -529,7 +517,7 @@ function SectionProfessors() {
             ))}
           </tbody>
         </table>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -575,7 +563,7 @@ function SectionCompanies() {
         <GoldBtn onClick={() => setShowModal(true)}>+ Add Company</GoldBtn>
       </div>
 
-      <div style={{ ...glassCard, padding:0, overflow:'hidden' }}>
+      <Card padding={0} style={{ overflow:'hidden' }}>
         <table style={{ width:'100%', borderCollapse:'collapse' }}>
           <thead>
             <tr style={{ borderBottom:`1px solid rgba(201,168,76,0.2)` }}>
@@ -592,16 +580,14 @@ function SectionCompanies() {
                 <td style={{ padding:'12px 16px' }}>
                   <span style={{ color:'white', fontSize:13 }}>{c.usedSeats}</span>
                   <span style={{ color:MUTED, fontSize:13 }}>/{c.seats}</span>
-                  <div style={{ width:60, height:4, background:'rgba(255,255,255,0.08)', borderRadius:2, marginTop:4 }}>
-                    <div style={{ width:`${Math.round((c.usedSeats/c.seats)*100)}%`, height:'100%', background:GOLD, borderRadius:2 }} />
-                  </div>
+                  <div style={{ width:60, marginTop:4 }}><ProgressBar value={c.usedSeats} max={c.seats} height={4} /></div>
                 </td>
                 <td style={{ padding:'12px 16px', color:'white', fontSize:13 }}>{c.avgScore}%</td>
                 <td style={{ padding:'12px 16px', color:MUTED, fontSize:13 }}>{c.expires}</td>
                 <td style={{ padding:'12px 16px' }}>
                   <div style={{ display:'flex', gap:8 }}>
                     {['View','Edit','Manage Seats'].map(a => (
-                      <button key={a} onClick={() => toast.info(a)} style={{ padding:'4px 12px', borderRadius:6, border:`1px solid ${WHITE_08}`, background:WHITE_04, color:'white', fontSize:12, cursor:'pointer' }}>{a}</button>
+                      <VoiceButton key={a} variant="ghost" size="sm" onClick={() => toast.info(a)}>{a}</VoiceButton>
                     ))}
                   </div>
                 </td>
@@ -609,7 +595,7 @@ function SectionCompanies() {
             ))}
           </tbody>
         </table>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -695,7 +681,7 @@ function SectionChapters() {
 
       <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
         {chapters.map(ch => (
-          <div key={ch.id} style={{ ...glassCard, padding:0, overflow:'hidden' }}>
+          <Card key={ch.id} padding={0} style={{ overflow:'hidden' }}>
             <div
               style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 20px', cursor:'pointer' }}
               onClick={() => setExpanded(expanded === ch.id ? null : ch.id)}
@@ -704,10 +690,10 @@ function SectionChapters() {
               <span style={{ color:GOLD, fontSize:13, fontWeight:700, minWidth:60 }}>CH{ch.number}</span>
               <span style={{ color:'white', fontSize:14, flex:1 }}>{ch.title}</span>
               {ch.isDiagnostic && (
-                <span style={{ background:'rgba(59,130,246,0.15)', color:'rgba(147,197,253,0.9)', fontSize:11, padding:'2px 10px', borderRadius:20, fontWeight:600 }}>Diagnostic</span>
+                <Badge variant="blue" size="xs">Diagnostic</Badge>
               )}
-              <button onClick={e => { e.stopPropagation(); setEditChapter(ch); }} style={{ padding:'4px 12px', borderRadius:6, border:`1px solid ${WHITE_08}`, background:WHITE_04, color:'white', fontSize:12, cursor:'pointer' }}>Edit</button>
-              <button onClick={e => { e.stopPropagation(); toast.error('Delete chapter'); }} style={{ padding:'4px 10px', borderRadius:6, border:'1px solid rgba(239,68,68,0.25)', background:'rgba(239,68,68,0.08)', color:'rgba(239,68,68,0.8)', fontSize:13, cursor:'pointer' }}>🗑</button>
+              <span onClick={e => e.stopPropagation()}><VoiceButton variant="ghost" size="sm" onClick={() => setEditChapter(ch)}>Edit</VoiceButton></span>
+              <span onClick={e => e.stopPropagation()}><VoiceButton variant="danger" size="sm" onClick={() => toast.error('Delete chapter')}>🗑</VoiceButton></span>
             </div>
             {expanded === ch.id && (
               <div style={{ borderTop:`1px solid ${WHITE_06}`, padding:'12px 20px', display:'flex', flexDirection:'column', gap:8 }}>
@@ -715,15 +701,15 @@ function SectionChapters() {
                   <div key={sess.id} style={{ display:'flex', alignItems:'center', gap:12, padding:'10px 0', borderBottom: idx < ch.sessions.length-1 ? `1px solid ${WHITE_06}` : 'none' }}>
                     <span style={{ color:MUTED, fontSize:13, minWidth:24 }}>{idx+1}.</span>
                     <span style={{ color:'white', fontSize:13, flex:1 }}>{sess.title}</span>
-                    <span style={{ background:'rgba(139,92,246,0.15)', color:'rgba(196,181,253,0.9)', fontSize:11, padding:'2px 10px', borderRadius:20 }}>{sess.type}</span>
+                    <Badge variant="purple" size="xs">{sess.type}</Badge>
                     <span style={{ color:MUTED, fontSize:12 }}>{sess.duration}m</span>
-                    <button onClick={() => setEditSession(sess)} style={{ padding:'4px 12px', borderRadius:6, border:`1px solid ${WHITE_08}`, background:WHITE_04, color:'white', fontSize:12, cursor:'pointer' }}>Edit</button>
+                    <VoiceButton variant="ghost" size="sm" onClick={() => setEditSession(sess)}>Edit</VoiceButton>
                   </div>
                 ))}
                 {ch.sessions.length === 0 && <span style={{ color:MUTED, fontSize:13 }}>No sessions yet.</span>}
               </div>
             )}
-          </div>
+          </Card>
         ))}
       </div>
     </div>
@@ -779,7 +765,7 @@ function SectionPricing() {
         <GoldBtn onClick={() => setShowAdd(true)}>+ Add New Pack</GoldBtn>
       </div>
 
-      <div style={{ ...glassCard, padding:0, overflow:'hidden' }}>
+      <Card padding={0} style={{ overflow:'hidden' }}>
         <table style={{ width:'100%', borderCollapse:'collapse' }}>
           <thead>
             <tr style={{ borderBottom:`1px solid rgba(201,168,76,0.2)` }}>
@@ -790,13 +776,13 @@ function SectionPricing() {
           </thead>
           <tbody>
             {packs.map((pk, i) => (
-              <tr key={pk.id} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)', borderBottom:`1px solid rgba(255,255,255,0.05)` }}>
+              <tr key={pk.id} className="voice-table-row" style={{ borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
                 <td style={{ padding:'12px 16px', color:'white', fontSize:13, fontWeight:600 }}>{pk.name}</td>
                 <td style={{ padding:'12px 16px', color:GOLD, fontSize:13, fontWeight:600 }}>€{pk.price}</td>
                 <td style={{ padding:'12px 16px', color:'white', fontSize:13 }}>{pk.sessionsIncluded}</td>
                 <td style={{ padding:'12px 16px' }}>
                   {pk.badge
-                    ? <span style={{ background:'rgba(201,168,76,0.15)', color:GOLD, fontSize:11, padding:'2px 10px', borderRadius:20, fontWeight:600 }}>{pk.badge}</span>
+                    ? <Badge variant="gold" size="xs">{pk.badge}</Badge>
                     : <span style={{ color:MUTED, fontSize:13 }}>—</span>
                   }
                 </td>
@@ -807,13 +793,13 @@ function SectionPricing() {
                   </div>
                 </td>
                 <td style={{ padding:'12px 16px' }}>
-                  <button onClick={() => openEdit(pk)} style={{ padding:'4px 14px', borderRadius:6, border:`1px solid ${WHITE_08}`, background:WHITE_04, color:'white', fontSize:12, cursor:'pointer' }}>Edit</button>
+                  <VoiceButton variant="ghost" size="sm" onClick={() => openEdit(pk)}>Edit</VoiceButton>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -828,7 +814,7 @@ function SectionAiTools() {
 
   return (
     <div>
-      <div style={{ ...glassCard, marginBottom:24 }}>
+      <Card style={{ marginBottom:24 }}>
         <h3 style={{ color:'white', fontSize:15, fontWeight:600, marginBottom:16 }}>AI Coach Status</h3>
         <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
           {[
@@ -847,9 +833,9 @@ function SectionAiTools() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
-      <div style={{ ...glassCard, padding:0, overflow:'hidden' }}>
+      <Card padding={0} style={{ overflow:'hidden' }}>
         <table style={{ width:'100%', borderCollapse:'collapse' }}>
           <thead>
             <tr style={{ borderBottom:`1px solid rgba(201,168,76,0.2)` }}>
@@ -860,7 +846,7 @@ function SectionAiTools() {
           </thead>
           <tbody>
             {tools.map((t, i) => (
-              <tr key={t.slug} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)', borderBottom:`1px solid rgba(255,255,255,0.05)` }}>
+              <tr key={t.slug} className="voice-table-row" style={{ borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
                 <td style={{ padding:'12px 16px', color:'white', fontSize:13, fontWeight:500 }}>{t.name}</td>
                 <td style={{ padding:'12px 16px' }}>
                   <span style={{ color: t.isActive ? '#52C41A' : MUTED, fontSize:13 }}>{t.isActive ? 'Active' : 'Inactive'}</span>
@@ -886,7 +872,7 @@ function SectionAiTools() {
             ))}
           </tbody>
         </table>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -918,7 +904,7 @@ function SectionBookings() {
   if (isLoading) return <div style={{ textAlign:'center', padding:'60px', color:MUTED }}>A carregar...</div>;
 
   return (
-    <div style={{ ...glassCard, padding:0, overflow:'hidden' }}>
+    <Card padding={0} style={{ overflow:'hidden' }}>
       <table style={{ width:'100%', borderCollapse:'collapse' }}>
         <thead>
           <tr style={{ borderBottom:`1px solid rgba(201,168,76,0.2)` }}>
@@ -931,20 +917,20 @@ function SectionBookings() {
           {bookings.map((b, i) => {
             const sc = statusColor(b.status);
             return (
-              <tr key={b.id} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)', borderBottom:`1px solid rgba(255,255,255,0.05)` }}>
+              <tr key={b.id} className="voice-table-row" style={{ borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
                 <td style={{ padding:'12px 16px', color:'white', fontSize:13 }}>{b.date}</td>
                 <td style={{ padding:'12px 16px', color:MUTED, fontSize:13 }}>{b.time}</td>
                 <td style={{ padding:'12px 16px', color:'white', fontSize:13 }}>{b.student}</td>
                 <td style={{ padding:'12px 16px', color:MUTED, fontSize:13 }}>{b.professor}</td>
                 <td style={{ padding:'12px 16px' }}>
-                  <span style={{ background:sc.bg, color:sc.color, fontSize:11, padding:'2px 10px', borderRadius:20, fontWeight:600, textTransform:'capitalize' }}>{b.status}</span>
+                  <Badge variant={b.status === 'confirmed' ? 'blue' : b.status === 'completed' ? 'success' : 'error'} size="xs">{b.status}</Badge>
                 </td>
                 <td style={{ padding:'12px 16px' }}>
                   <div style={{ display:'flex', gap:8 }}>
                     {b.status !== 'cancelled' && b.status !== 'completed' && (
                       <>
-                        <button onClick={() => toast.info('Cancel')} style={{ padding:'4px 12px', borderRadius:6, border:'1px solid rgba(239,68,68,0.25)', background:'rgba(239,68,68,0.08)', color:'rgba(239,68,68,0.8)', fontSize:12, cursor:'pointer' }}>Cancel</button>
-                        <button onClick={() => toast.info('Reschedule')} style={{ padding:'4px 12px', borderRadius:6, border:`1px solid ${WHITE_08}`, background:WHITE_04, color:'white', fontSize:12, cursor:'pointer' }}>Reschedule</button>
+                        <VoiceButton variant="danger" size="sm" onClick={() => toast.info('Cancel')}>Cancel</VoiceButton>
+                        <VoiceButton variant="ghost" size="sm" onClick={() => toast.info('Reschedule')}>Reschedule</VoiceButton>
                       </>
                     )}
                     {(b.status === 'cancelled' || b.status === 'completed') && (
@@ -957,7 +943,7 @@ function SectionBookings() {
           })}
         </tbody>
       </table>
-    </div>
+    </Card>
   );
 }
 
@@ -970,25 +956,20 @@ function SectionAnalytics() {
 
   return (
     <div>
-      <div style={{ display:'flex', gap:0, marginBottom:24, background:'rgba(255,255,255,0.03)', borderRadius:10, border:`1px solid ${WHITE_08}`, overflow:'hidden', width:'fit-content' }}>
+      <div style={{ display:'flex', gap:4, marginBottom:24 }}>
         {tabs.map(t => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            style={{
-              padding:'9px 22px', border:'none', cursor:'pointer', fontSize:13, fontWeight:600,
-              background: tab === t ? GOLD_DIM : 'transparent',
-              color: tab === t ? GOLD : MUTED,
-              borderRight: t !== 'professors' ? `1px solid ${WHITE_08}` : 'none',
-              textTransform:'capitalize',
-            }}
+            className={tab === t ? 'voice-tab active' : 'voice-tab'}
+            style={{ textTransform:'capitalize' }}
           >{t}</button>
         ))}
       </div>
 
       {tab === 'engagement' && (
         <div>
-          <div style={{ ...glassCard, marginBottom:24 }}>
+          <Card style={{ marginBottom:24 }}>
             <h3 style={{ color:'white', fontSize:15, fontWeight:600, marginBottom:16 }}>Daily Active Users (Last 30 Days)</h3>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={dauData}>
@@ -999,9 +980,9 @@ function SectionAnalytics() {
                 <Line type="monotone" dataKey="dau" stroke={GOLD} strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
-          </div>
+          </Card>
 
-          <div style={glassCard}>
+          <Card>
             <h3 style={{ color:'white', fontSize:15, fontWeight:600, marginBottom:16 }}>Feature Usage</h3>
             <ResponsiveContainer width="100%" height={260}>
               <PieChart>
@@ -1012,13 +993,13 @@ function SectionAnalytics() {
                 <Legend wrapperStyle={{ color:'white', fontSize:12 }} />
               </PieChart>
             </ResponsiveContainer>
-          </div>
+          </Card>
         </div>
       )}
 
       {tab === 'learning' && (
         <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
-          <div style={glassCard}>
+          <Card>
             <h3 style={{ color:'white', fontSize:15, fontWeight:600, marginBottom:16 }}>Score Distribution</h3>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={scoreDistData}>
@@ -1029,9 +1010,9 @@ function SectionAnalytics() {
                 <Bar dataKey="count" fill={GOLD} radius={[4,4,0,0]} />
               </BarChart>
             </ResponsiveContainer>
-          </div>
+          </Card>
 
-          <div style={glassCard}>
+          <Card>
             <h3 style={{ color:'white', fontSize:15, fontWeight:600, marginBottom:16 }}>Chapter Completion %</h3>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={chapterCompletionData}>
@@ -1042,20 +1023,20 @@ function SectionAnalytics() {
                 <Bar dataKey="pct" fill="rgba(74,144,217,0.7)" radius={[4,4,0,0]} />
               </BarChart>
             </ResponsiveContainer>
-          </div>
+          </Card>
         </div>
       )}
 
       {tab === 'business' && (
         <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
-          <div style={{ ...glassCard, display:'flex', alignItems:'center', gap:16 }}>
+          <Card style={{ display:'flex', alignItems:'center', gap:16 }}>
             <div>
               <div style={{ color:MUTED, fontSize:12, letterSpacing:'0.05em' }}>TOTAL MONTHLY REVENUE</div>
               <div style={{ color:GOLD, fontSize:36, fontWeight:700 }}>€{totalRevenue.toLocaleString()}</div>
             </div>
-          </div>
+          </Card>
 
-          <div style={glassCard}>
+          <Card>
             <h3 style={{ color:'white', fontSize:15, fontWeight:600, marginBottom:16 }}>Revenue by Pack</h3>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={revenueData}>
@@ -1066,9 +1047,9 @@ function SectionAnalytics() {
                 <Bar dataKey="revenue" fill={GOLD} radius={[4,4,0,0]} />
               </BarChart>
             </ResponsiveContainer>
-          </div>
+          </Card>
 
-          <div style={{ ...glassCard, padding:0, overflow:'hidden' }}>
+          <Card padding={0} style={{ overflow:'hidden' }}>
             <table style={{ width:'100%', borderCollapse:'collapse' }}>
               <thead>
                 <tr style={{ borderBottom:`1px solid rgba(201,168,76,0.2)` }}>
@@ -1079,7 +1060,7 @@ function SectionAnalytics() {
               </thead>
               <tbody>
                 {revenueData.map((r, i) => (
-                  <tr key={r.pack} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)', borderBottom:`1px solid rgba(255,255,255,0.05)` }}>
+                  <tr key={r.pack} className="voice-table-row" style={{ borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
                     <td style={{ padding:'12px 16px', color:'white', fontSize:13 }}>{r.pack}</td>
                     <td style={{ padding:'12px 16px', color:MUTED, fontSize:13 }}>{r.students}</td>
                     <td style={{ padding:'12px 16px', color:GOLD, fontSize:13, fontWeight:600 }}>€{r.revenue.toLocaleString()}</td>
@@ -1087,13 +1068,13 @@ function SectionAnalytics() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </Card>
         </div>
       )}
 
       {tab === 'professors' && (
         <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
-          <div style={glassCard}>
+          <Card>
             <h3 style={{ color:'white', fontSize:15, fontWeight:600, marginBottom:16 }}>Sessions per Professor</h3>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={professorPerfData} layout="vertical">
@@ -1104,9 +1085,9 @@ function SectionAnalytics() {
                 <Bar dataKey="sessions" fill={GOLD} radius={[0,4,4,0]} />
               </BarChart>
             </ResponsiveContainer>
-          </div>
+          </Card>
 
-          <div style={{ ...glassCard, padding:0, overflow:'hidden' }}>
+          <Card padding={0} style={{ overflow:'hidden' }}>
             <table style={{ width:'100%', borderCollapse:'collapse' }}>
               <thead>
                 <tr style={{ borderBottom:`1px solid rgba(201,168,76,0.2)` }}>
@@ -1117,7 +1098,7 @@ function SectionAnalytics() {
               </thead>
               <tbody>
                 {professorPerfData.map((p, i) => (
-                  <tr key={p.name} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)' }}>
+                  <tr key={p.name} className="voice-table-row">
                     <td style={{ padding:'12px 16px', color:'white', fontSize:13 }}>{p.name}</td>
                     <td style={{ padding:'12px 16px', color:MUTED, fontSize:13 }}>{p.sessions}</td>
                     <td style={{ padding:'12px 16px', color:GOLD, fontSize:13, fontWeight:600 }}>{p.avgScore}%</td>
@@ -1125,7 +1106,7 @@ function SectionAnalytics() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </Card>
         </div>
       )}
     </div>
@@ -1189,7 +1170,7 @@ function SectionSettings() {
       )}
 
       {/* Platform block */}
-      <div style={glassCard}>
+      <Card>
         <h3 style={{ color:'white', fontSize:15, fontWeight:600, marginBottom:20 }}>Platform</h3>
         <Field label="PLATFORM NAME">
           <input value={platformName} onChange={e => setPlatformName(e.target.value)} style={inputStyle} />
@@ -1198,27 +1179,27 @@ function SectionSettings() {
           <input value={contactEmail} onChange={e => setContactEmail(e.target.value)} style={inputStyle} />
         </Field>
         <GoldBtn onClick={() => toast.success('Settings saved')}>Save Changes</GoldBtn>
-      </div>
+      </Card>
 
       {/* Admin accounts block */}
-      <div style={glassCard}>
+      <Card>
         <h3 style={{ color:'white', fontSize:15, fontWeight:600, marginBottom:20 }}>Admin Accounts</h3>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 0', borderBottom:`1px solid ${WHITE_06}`, marginBottom:16 }}>
           <span style={{ color:'white', fontSize:13 }}>admin@voice3.pt</span>
-          <span style={{ background:GOLD_DIM, color:GOLD, fontSize:11, padding:'2px 10px', borderRadius:20, fontWeight:600 }}>You</span>
+          <Badge variant="gold" size="xs">You</Badge>
         </div>
         <GoldBtn outlined onClick={() => setShowAdminModal(true)}>Add Another Admin →</GoldBtn>
-      </div>
+      </Card>
 
       {/* Data export block */}
-      <div style={glassCard}>
+      <Card>
         <h3 style={{ color:'white', fontSize:15, fontWeight:600, marginBottom:20 }}>Data Export</h3>
         <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-          <button onClick={exportStudents} style={{ padding:'9px 18px', borderRadius:8, border:`1px solid ${WHITE_08}`, background:WHITE_04, color:'white', fontSize:13, cursor:'pointer' }}>Export Students CSV</button>
-          <button onClick={exportSessions} style={{ padding:'9px 18px', borderRadius:8, border:`1px solid ${WHITE_08}`, background:WHITE_04, color:'white', fontSize:13, cursor:'pointer' }}>Export Sessions CSV</button>
-          <button onClick={exportBookings} style={{ padding:'9px 18px', borderRadius:8, border:`1px solid ${WHITE_08}`, background:WHITE_04, color:'white', fontSize:13, cursor:'pointer' }}>Export Bookings CSV</button>
+          <VoiceButton variant="ghost" size="sm" onClick={exportStudents}>Export Students CSV</VoiceButton>
+          <VoiceButton variant="ghost" size="sm" onClick={exportSessions}>Export Sessions CSV</VoiceButton>
+          <VoiceButton variant="ghost" size="sm" onClick={exportBookings}>Export Bookings CSV</VoiceButton>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -1334,9 +1315,7 @@ export default function AdminDashboard() {
 
           <div style={{ display:'flex', alignItems:'center', gap:14 }}>
             <button style={{ background:'transparent', border:'none', color:MUTED, fontSize:20, cursor:'pointer', padding:'0 4px' }}>🔔</button>
-            <div style={{ width:36, height:36, borderRadius:'50%', background:GOLD_DIM, border:`1px solid ${GOLD_BD}`, display:'flex', alignItems:'center', justifyContent:'center', color:GOLD, fontSize:15, fontWeight:700 }}>
-              {adminInitial}
-            </div>
+            <Avatar name={adminName} size={36} />
           </div>
         </header>
 
