@@ -205,7 +205,9 @@ const AuthPage = () => {
       <div className="min-h-screen flex items-center justify-center p-8 overflow-y-auto" style={{ background: "#060f1d" }}>
         <motion.div key={`${mode}-${regStep}`} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} className="w-full max-w-md">
           <div className="mb-8">
-            <span className="font-serif text-2xl font-bold cursor-pointer" style={{ color: "#C9A84C", letterSpacing: "0.1em" }} onClick={resetToLogin}>VOICE³</span>
+            <Link to="/">
+              <span className="font-serif text-2xl font-bold cursor-pointer" style={{ color: "#C9A84C", letterSpacing: "0.1em" }}>VOICE³</span>
+            </Link>
           </div>
           <div className="flex items-center gap-2 mb-6">
             {Array.from({ length: totalSteps }).map((_, i) => (
