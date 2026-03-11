@@ -1,6 +1,162 @@
+@import './styles/tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar (webkit + firefox) */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.4); }
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201,168,76,0.2) transparent;
+}
+
+/* ── CARD HOVER ── */
+.voice-card-hover {
+  transition: var(--transition-slow, all 0.35s ease) !important;
+}
+.voice-card-hover:hover {
+  border-color: var(--border-gold) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.3);
+}
+
+/* ── BUTTONS HOVER ── */
+button[style*="#C9A84C"]:not(:disabled):hover,
+button[style*="var(--gold)"]:not(:disabled):hover {
+  filter: brightness(1.08);
+  transform: scale(1.02);
+  box-shadow: var(--shadow-gold-hover);
+}
+
+/* ── NAV LINKS ── */
+.voice-nav-link {
+  position: relative;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  transition: var(--transition);
+  padding-bottom: 2px;
+}
+.voice-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0; height: 1px;
+  background: var(--gold);
+  transition: width 0.25s ease;
+}
+.voice-nav-link:hover { color: var(--text-primary); }
+.voice-nav-link:hover::after { width: 100%; }
+.voice-nav-link.active {
+  color: var(--gold);
+}
+.voice-nav-link.active::after { width: 100%; }
+
+/* ── SIDEBAR NAV ITEMS ── */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: var(--transition);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  margin-bottom: 2px;
+}
+.sidebar-item:hover {
+  background: rgba(255,255,255,0.04);
+  color: var(--text-secondary);
+}
+.sidebar-item.active {
+  background: var(--gold-10);
+  border-left-color: var(--gold);
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* ── TAB BUTTONS (horizontal navigation) ── */
+.voice-tab {
+  padding: 7px 18px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.voice-tab:hover {
+  background: rgba(255,255,255,0.04);
+  color: var(--text-secondary);
+}
+.voice-tab.active {
+  background: var(--gold-10);
+  color: var(--gold);
+  border: 1px solid var(--border-gold);
+  font-weight: 600;
+}
+
+/* ── INPUTS FOCUS ── */
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  border-color: rgba(201,168,76,0.5) !important;
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.08) !important;
+}
+
+/* ── TABLE ROWS ── */
+.voice-table-row {
+  transition: background 0.15s ease;
+  border-bottom: 1px solid var(--border);
+}
+.voice-table-row:hover {
+  background: rgba(255,255,255,0.02);
+}
+.voice-table-row:last-child {
+  border-bottom: none;
+}
+
+/* ── SPIN ANIMATION ── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── MODAL OVERLAY ── */
+.voice-modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(4,10,20,0.85);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+.voice-modal {
+  background: var(--bg-overlay);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 36px;
+  max-width: 480px; width: 100%;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  animation: slideUp 0.25s ease;
+}
+@keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+@keyframes slideUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:none } }
 
 html {
   scroll-behavior: smooth;

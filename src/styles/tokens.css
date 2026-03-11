@@ -1,0 +1,73 @@
+/* src/styles/tokens.css */
+:root {
+  /* ── CORES PRINCIPAIS ── */
+  --gold:          #C9A84C;
+  --gold-light:    #E8C87A;
+  --gold-dark:     #8B6914;
+  --gold-10:       rgba(201,168,76,0.10);
+  --gold-15:       rgba(201,168,76,0.15);
+  --gold-20:       rgba(201,168,76,0.20);
+  --gold-30:       rgba(201,168,76,0.30);
+
+  /* ── BACKGROUNDS ── */
+  --bg-base:       #060f1d;   /* página base */
+  --bg-surface:    #0a1628;   /* surface principal */
+  --bg-elevated:   #0d1f3c;   /* cards elevados */
+  --bg-overlay:    #070f1e;   /* sidebars, headers */
+  --bg-card:       rgba(255,255,255,0.03);
+  --bg-card-hover: rgba(255,255,255,0.05);
+  --bg-input:      rgba(255,255,255,0.05);
+
+  /* ── BORDERS ── */
+  --border:        rgba(255,255,255,0.07);
+  --border-hover:  rgba(255,255,255,0.14);
+  --border-gold:   rgba(201,168,76,0.20);
+  --border-gold-strong: rgba(201,168,76,0.40);
+
+  /* ── TEXTO ── */
+  --text-primary:  #ffffff;
+  --text-secondary: rgba(255,255,255,0.70);
+  --text-muted:    rgba(255,255,255,0.45);
+  --text-faint:    rgba(255,255,255,0.25);
+  --text-gold:     #C9A84C;
+
+  /* ── STATUS ── */
+  --success:       rgba(34,197,94,0.85);
+  --success-bg:    rgba(34,197,94,0.08);
+  --success-border:rgba(34,197,94,0.20);
+  --error:         rgba(239,68,68,0.85);
+  --error-bg:      rgba(239,68,68,0.08);
+  --error-border:  rgba(239,68,68,0.20);
+  --warning:       rgba(245,158,11,0.85);
+
+  /* ── TIPOGRAFIA ── */
+  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif:   'Playfair Display', Georgia, serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Sizes */
+  --text-xs:   11px;
+  --text-sm:   13px;
+  --text-base: 15px;
+  --text-lg:   17px;
+  --text-xl:   20px;
+  --text-2xl:  24px;
+  --text-3xl:  32px;
+  --text-4xl:  48px;
+
+  /* ── SPACING ── */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+  --radius-xl:  20px;
+  --radius-full: 9999px;
+
+  /* ── SHADOWS ── */
+  --shadow-card:  0 4px 24px rgba(0,0,0,0.25);
+  --shadow-gold:  0 4px 24px rgba(201,168,76,0.20);
+  --shadow-gold-hover: 0 8px 36px rgba(201,168,76,0.35);
+
+  /* ── TRANSITIONS ── */
+  --transition: all 0.2s ease;
+  --transition-slow: all 0.35s ease;
+}
