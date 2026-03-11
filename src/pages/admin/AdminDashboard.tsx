@@ -270,7 +270,7 @@ function SectionOverview() {
             <div style={{ fontSize:28, fontWeight:700, color:GOLD, margin:'8px 0 2px' }}>{k.value}</div>
             <div style={{ fontSize:13, color:MUTED }}>{k.label}</div>
             <div style={{ fontSize:11, color:MUTED, marginTop:4 }}>{k.sub}</div>
-          </Card>
+          </div>
         ))}
       </div>
 
