@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -240,11 +241,31 @@ const inputStyle: React.CSSProperties = {
 
 // ─── Section: OVERVIEW ────────────────────────────────────────────────────────
 function SectionOverview() {
+  const [kpis, setKpis] = useState(kpiCards);
+
+  useEffect(() => {
+    (async () => {
+      const [{ count: s }, { count: p }, { count: b }] = await Promise.all([
+        supabase.from('user_roles').select('*', { count:'exact', head:true }).eq('role','student'),
+        supabase.from('user_roles').select('*', { count:'exact', head:true }).eq('role','professor'),
+        supabase.from('bookings').select('*', { count:'exact', head:true }).eq('status','completed'),
+      ]);
+      setKpis([
+        { icon:'👥', label:'Students',      value: String(s||0), sub:'registered' },
+        { icon:'👩‍🏫', label:'Professors',    value: String(p||0), sub:'active' },
+        { icon:'🏢', label:'Companies',     value:'3',            sub:'active accounts' },
+        { icon:'📚', label:'Sessions Done', value: String(b||0), sub:'total completed' },
+        { icon:'🎯', label:'Avg Score',     value:'87%',          sub:'across all students' },
+        { icon:'💰', label:'Revenue/mo',    value:'€8,420',       sub:'+12% MoM' },
+      ]);
+    })();
+  }, []);
+
   return (
     <div>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16, marginBottom:32 }}>
-        {kpiCards.map(k => (
-          <Card key={k.label} hover>
+        {kpis.map(k => (
+          <div key={k.label} style={glassCard}>
             <div style={{ fontSize:28 }}>{k.icon}</div>
             <div style={{ fontSize:28, fontWeight:700, color:GOLD, margin:'8px 0 2px' }}>{k.value}</div>
             <div style={{ fontSize:13, color:MUTED }}>{k.label}</div>
@@ -295,17 +316,46 @@ function SectionStudents() {
   const [search, setSearch] = useState('');
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
-  const [students, setStudents] = useState(demoStudents);
+  const [students, setStudents] = useState<typeof demoStudents>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadStudents = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const { data: roles } = await supabase.from('user_roles').select('user_id').eq('role','student');
+      if (!roles?.length) { setIsLoading(false); return; }
+      const ids = roles.map(r => r.user_id);
+      const { data: profiles } = await supabase.from('profiles').select('*').in('id', ids);
+      const { data: evals } = await supabase.from('ai_evaluations').select('student_id, level').in('student_id', ids);
+      const { data: spa } = await supabase.from('student_professor_assignments').select('student_id, professor_id, pack').in('student_id', ids);
+      const profIds = [...new Set((spa||[]).map(s=>s.professor_id))];
+      const { data: profs } = profIds.length ? await supabase.from('profiles').select('id,name').in('id',profIds) : { data: [] };
+      const { data: bks } = await supabase.from('bookings').select('student_id, status').in('student_id', ids);
+      setStudents((profiles||[]).map(p => {
+        const ev = evals?.find(e=>e.student_id===p.id);
+        const sp = spa?.find(s=>s.student_id===p.id);
+        const profName = profs?.find(pp=>pp.id===sp?.professor_id)?.name||'—';
+        const sb = bks?.filter(b=>b.student_id===p.id)||[];
+        const done = sb.filter(b=>b.status==='completed').length;
+        const tot = sb.length||10;
+        return { id:p.id, name:p.name||'Unknown', email:p.email||'', pack:sp?.pack||p.pack||'Pro', level:ev?.level||'B1', professor:profName, score:Math.round((done/tot)*100), sessions:done, totalSessions:tot };
+      }));
+    } catch(e){ console.error(e); }
+    setIsLoading(false);
+  }, []);
+  useEffect(() => { loadStudents(); }, [loadStudents]);
 
   const filtered = students.filter(s =>
     s.name.toLowerCase().includes(search.toLowerCase()) ||
     s.email.toLowerCase().includes(search.toLowerCase())
   );
-
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
+    await supabase.from('profiles').delete().eq('id', id);
     setStudents(prev => prev.filter(s => s.id !== id));
     toast.success('Student deleted');
   };
+
+  if (isLoading) return <div style={{ textAlign:'center', padding:'60px', color:MUTED }}>A carregar...</div>;
 
   return (
     <div>
@@ -390,12 +440,23 @@ function SectionStudents() {
 function SectionProfessors() {
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ name:'', email:'', password:'', bio:'' });
+  const [professors, setProfessors] = useState<typeof demoProfessors>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleCreate = () => {
-    toast.success(`Professor ${form.name || 'created'} successfully`);
-    setShowModal(false);
-    setForm({ name:'', email:'', password:'', bio:'' });
-  };
+  useEffect(() => {
+    (async () => {
+      const { data: roles } = await supabase.from('user_roles').select('user_id').eq('role','professor');
+      if (!roles?.length) { setIsLoading(false); return; }
+      const ids = roles.map(r=>r.user_id);
+      const { data: profiles } = await supabase.from('profiles').select('id,name,email').in('id',ids);
+      const { data: counts } = await supabase.from('student_professor_assignments').select('professor_id').in('professor_id',ids);
+      setProfessors((profiles||[]).map(p => ({ id:p.id, name:p.name||'Unknown', email:p.email||'', students:counts?.filter(c=>c.professor_id===p.id).length||0, status:'active' as const })));
+      setIsLoading(false);
+    })();
+  }, []);
+  const handleCreate = () => { toast.success(`Professor ${form.name||'created'} successfully`); setShowModal(false); setForm({ name:'', email:'', password:'', bio:'' }); };
+
+  if (isLoading) return <div style={{ textAlign:'center', padding:'60px', color:MUTED }}>A carregar...</div>;
 
   return (
     <div>
@@ -434,8 +495,8 @@ function SectionProfessors() {
             </tr>
           </thead>
           <tbody>
-            {demoProfessors.map((p, i) => (
-              <tr key={p.id} className="voice-table-row" style={{ borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
+            {professors.map((p, i) => (
+              <tr key={p.id} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)', borderBottom:`1px solid rgba(255,255,255,0.05)` }}>
                 <td style={{ padding:'12px 16px', color:'white', fontSize:13, fontWeight:500 }}>{p.name}</td>
                 <td style={{ padding:'12px 16px', color:MUTED, fontSize:13 }}>{p.email}</td>
                 <td style={{ padding:'12px 16px', color:'white', fontSize:13 }}>{p.students}</td>
@@ -464,6 +525,24 @@ function SectionProfessors() {
 // ─── Section: COMPANIES ──────────────────────────────────────────────────────
 function SectionCompanies() {
   const [showModal, setShowModal] = useState(false);
+  const [companies, setCompanies] = useState<typeof demoCompanies>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const { data: profiles } = await supabase.from('profiles').select('company,pack').not('company','is',null);
+      const map: Record<string,any> = {};
+      (profiles||[]).forEach(p => {
+        if (!p.company) return;
+        if (!map[p.company]) map[p.company] = { id:p.company, name:p.company, admin:`admin@${p.company.toLowerCase().replace(/\s/g,'')}.pt`, seats:10, usedSeats:0, avgScore:85, expires:'2026-12-31' };
+        map[p.company].usedSeats++;
+      });
+      setCompanies(Object.values(map));
+      setIsLoading(false);
+    })();
+  }, []);
+
+  if (isLoading) return <div style={{ textAlign:'center', padding:'60px', color:MUTED }}>A carregar...</div>;
 
   return (
     <div>
@@ -494,8 +573,8 @@ function SectionCompanies() {
             </tr>
           </thead>
           <tbody>
-            {demoCompanies.map((c, i) => (
-              <tr key={c.id} className="voice-table-row" style={{ borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
+            {companies.map((c, i) => (
+              <tr key={c.id} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)', borderBottom:`1px solid rgba(255,255,255,0.05)` }}>
                 <td style={{ padding:'12px 16px', color:'white', fontSize:13, fontWeight:600 }}>{c.name}</td>
                 <td style={{ padding:'12px 16px', color:MUTED, fontSize:13 }}>{c.admin}</td>
                 <td style={{ padding:'12px 16px' }}>
@@ -800,11 +879,29 @@ function SectionAiTools() {
 
 // ─── Section: BOOKINGS ───────────────────────────────────────────────────────
 function SectionBookings() {
+  const [bookings, setBookings] = useState<typeof demoBookings>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const { data: bData } = await supabase.from('bookings')
+        .select('id, booked_date, start_time, student_id, professor_id, status')
+        .order('booked_date', { ascending:false }).limit(50);
+      if (!bData?.length) { setIsLoading(false); return; }
+      const allIds = [...new Set([...bData.map(b=>b.student_id), ...bData.map(b=>b.professor_id)])];
+      const { data: names } = await supabase.from('profiles').select('id,name').in('id', allIds);
+      setBookings(bData.map(b => ({ id:b.id, date:b.booked_date, time:b.start_time?.slice(0,5)||'', student:names?.find(p=>p.id===b.student_id)?.name||'Unknown', professor:names?.find(p=>p.id===b.professor_id)?.name||'Unknown', status:b.status })));
+      setIsLoading(false);
+    })();
+  }, []);
+
   const statusColor = (s: string) => {
     if (s === 'confirmed') return { bg:'rgba(59,130,246,0.15)', color:'rgba(147,197,253,0.9)' };
     if (s === 'completed') return { bg:'rgba(34,197,94,0.15)', color:'rgba(134,239,172,0.9)' };
     return { bg:'rgba(239,68,68,0.15)', color:'rgba(252,165,165,0.9)' };
   };
+
+  if (isLoading) return <div style={{ textAlign:'center', padding:'60px', color:MUTED }}>A carregar...</div>;
 
   return (
     <Card padding={0} style={{ overflow:'hidden' }}>
@@ -817,7 +914,7 @@ function SectionBookings() {
           </tr>
         </thead>
         <tbody>
-          {demoBookings.map((b, i) => {
+          {bookings.map((b, i) => {
             const sc = statusColor(b.status);
             return (
               <tr key={b.id} className="voice-table-row" style={{ borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
