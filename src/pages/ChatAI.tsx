@@ -466,16 +466,16 @@ const ChatAI = () => {
                   rows={4}
                   className="w-full bg-transparent text-sm text-[#F4F2ED] placeholder:text-white/25 outline-none resize-none"
                 />
-                  <div className="flex justify-end mt-2">
-                   <VoiceButton
-                      variant="primary"
-                      size="sm"
-                      onClick={handleAnalyzeSend}
-                      disabled={!analyzeText.trim()}
-                    >
-                      Analyse →
-                    </VoiceButton>
-                  </div>
+                <div className="flex justify-end mt-2">
+                  <VoiceButton
+                    variant="primary"
+                    size="sm"
+                    onClick={handleAnalyzeSend}
+                    disabled={!analyzeText.trim()}
+                  >
+                    Analyse →
+                  </VoiceButton>
+                </div>
               </div>
             </motion.div>
           )}
