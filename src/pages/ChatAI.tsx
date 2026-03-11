@@ -37,12 +37,12 @@ interface Message {
   timestamp: string;
 }
 
-const quickActions = [
+const quickActions: { icon: typeof PenLine; emoji: string; label: string; type?: string; prompt?: string }[] = [
   {
     icon: PenLine,
     emoji: "✍️",
     label: "Analyse my writing",
-    type: "analyze" as const,
+    type: "analyze",
   },
   {
     icon: Target,
