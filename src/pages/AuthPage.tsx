@@ -2,10 +2,12 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate, Navigate, Link } from "react-router-dom";
 import { ArrowRight, Eye, EyeOff, Check, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import LanguageSelector from "@/components/LanguageSelector";
 
 interface PackOption {
   name: string;
@@ -65,6 +67,7 @@ const inputStyle: React.CSSProperties = {
 
 const AuthPage = () => {
   const [mode, setMode] = useState<"login" | "register">("login");
+  const navigate = useNavigate();
   const [regStep, setRegStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -77,7 +80,7 @@ const AuthPage = () => {
   const [loginPassword, setLoginPassword] = useState("");
   const [isShowingDemo, setIsShowingDemo] = useState(false);
 
-  const navigate = useNavigate();
+  const { t } = useTranslation();
   const { login, register, isAuthenticated, isLoading, currentUser } = useAuth();
 
   if (isLoading) return null;
@@ -202,7 +205,9 @@ const AuthPage = () => {
       <div className="min-h-screen flex items-center justify-center p-8 overflow-y-auto" style={{ background: "#060f1d" }}>
         <motion.div key={`${mode}-${regStep}`} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} className="w-full max-w-md">
           <div className="mb-8">
-            <span className="font-serif text-2xl font-bold cursor-pointer" style={{ color: "#C9A84C", letterSpacing: "0.1em" }} onClick={resetToLogin}>VOICE³</span>
+            <Link to="/">
+              <span className="font-serif text-2xl font-bold cursor-pointer" style={{ color: "#C9A84C", letterSpacing: "0.1em" }}>VOICE³</span>
+            </Link>
           </div>
           <div className="flex items-center gap-2 mb-6">
             {Array.from({ length: totalSteps }).map((_, i) => (
@@ -234,14 +239,30 @@ const AuthPage = () => {
                     </div>
                   ))}
                   <div className="space-y-1.5">
-                    <Label style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>Tipo de conta</Label>
-                    <select className="flex w-full rounded-lg px-3 py-2 text-sm outline-none"
-                      style={{ ...inputStyle, height: 52, background: "rgba(255,255,255,0.04)" }}
-                      value={regData.role}
-                      onChange={e => setRegData(d => ({ ...d, role: e.target.value as "student" | "company_admin" }))}>
-                      <option value="student">Aluno / Profissional</option>
-                      <option value="company_admin">Administrador de Empresa</option>
-                    </select>
+                    <Label style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>{t('auth.account_type')}</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { id: "student" as const, icon: "🎓", title: t('auth.student'), desc: "Individual training" },
+                        { id: "company_admin" as const, icon: "🏢", title: t('auth.company'), desc: "Team training" },
+                      ].map(type => (
+                        <button
+                          key={type.id}
+                          type="button"
+                          onClick={() => setRegData(d => ({ ...d, role: type.id }))}
+                          className="text-left p-3 rounded-xl border transition-all"
+                          style={{
+                            background: regData.role === type.id ? "rgba(201,168,76,0.1)" : "rgba(255,255,255,0.03)",
+                            border: regData.role === type.id ? "2px solid rgba(201,168,76,0.6)" : "1px solid rgba(255,255,255,0.08)",
+                            cursor: "pointer",
+                            transform: regData.role === type.id ? "scale(1.02)" : "scale(1)",
+                          }}
+                        >
+                          <div className="text-xl mb-1">{type.icon}</div>
+                          <div className="text-sm font-semibold" style={{ color: regData.role === type.id ? "#C9A84C" : "#F4F2ED" }}>{type.title}</div>
+                          <div className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{type.desc}</div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                   <div className="space-y-1.5">
                     <Label style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>Password</Label>
@@ -379,7 +400,7 @@ const AuthPage = () => {
           <rect width="100%" height="100%" fill="url(#geo)" />
         </svg>
         <div className="slide-in-left" style={{ position: "relative", zIndex: 10, textAlign: "center", maxWidth: 420, padding: "0 40px" }}>
-          <h1 style={{ fontFamily: "serif", fontSize: 52, fontWeight: 700, color: "#C9A84C", letterSpacing: "0.15em", margin: 0 }}>VOICE³</h1>
+          <Link to="/"><h1 style={{ fontFamily: "serif", fontSize: 52, fontWeight: 700, color: "#C9A84C", letterSpacing: "0.15em", margin: 0, cursor: "pointer" }}>VOICE³</h1></Link>
           <div style={{ width: 48, height: 2, background: "#C9A84C", margin: "28px auto" }} />
           <p style={{ fontFamily: "serif", fontSize: 22, fontStyle: "italic", color: "rgba(255,255,255,0.82)", maxWidth: 380, lineHeight: 1.75, textAlign: "center", margin: 0 }}>
             "You will not improve your English.<br />You will perform with precision."
@@ -414,12 +435,13 @@ const AuthPage = () => {
         justifyContent: "center",
         overflowY: "auto",
       }}>
-        <div className="lg:hidden" style={{ marginBottom: 32 }}>
-          <span style={{ fontFamily: "serif", fontSize: 28, fontWeight: 700, color: "#C9A84C", letterSpacing: "0.1em" }}>VOICE³</span>
+        <div className="lg:hidden flex items-center justify-between" style={{ marginBottom: 32 }}>
+          <Link to="/"><span style={{ fontFamily: "serif", fontSize: 28, fontWeight: 700, color: "#C9A84C", letterSpacing: "0.1em" }}>VOICE³</span></Link>
+          <LanguageSelector />
         </div>
         <div className="slide-in-right" style={{ maxWidth: 440, width: "100%", margin: "0 auto" }}>
-          <h2 style={{ fontFamily: "serif", fontSize: 32, fontWeight: 700, color: "white", marginBottom: 8 }}>Welcome back.</h2>
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", marginBottom: 36 }}>Sign in to continue your executive training.</p>
+          <h2 style={{ fontFamily: "serif", fontSize: 32, fontWeight: 700, color: "white", marginBottom: 8 }}>{t('auth.welcome')}</h2>
+          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", marginBottom: 36 }}>{t('auth.sub')}</p>
           <div style={{ width: 40, height: 2, background: "#C9A84C", marginBottom: 36 }} />
           {error && (
             <div style={{ marginBottom: 16, padding: "12px 16px", borderRadius: 8, fontSize: 14, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#f87171" }}>{error}</div>

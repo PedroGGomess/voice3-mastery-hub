@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 function useCountUp(target: number, duration: number, started: boolean) {
   const [count, setCount] = useState(0);
@@ -21,13 +22,13 @@ function useCountUp(target: number, duration: number, started: boolean) {
 }
 
 const stats = [
-  { target: 200, suffix: "+", label: "Professionals Trained" },
-  { target: 94, suffix: "%", label: "Success Rate" },
-  // target=49 → divide by 10 to display as "4.9★" rating
-  { target: 49, suffix: "", label: "Rating", display: (n: number) => `${(n / 10).toFixed(1)}★` },
+  { target: 200, suffix: "+", labelKey: "hero.stat1" },
+  { target: 94, suffix: "%", labelKey: "hero.stat2" },
+  { target: 49, suffix: "", labelKey: "hero.stat3", display: (n: number) => `${(n / 10).toFixed(1)}★` },
 ] as const;
 
 const Hero = () => {
+  const { t } = useTranslation();
   const statsRef = useRef<HTMLDivElement>(null);
   const [statsStarted, setStatsStarted] = useState(false);
   const c0 = useCountUp(stats[0].target, 1200, statsStarted);
@@ -37,7 +38,12 @@ const Hero = () => {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setStatsStarted(true); observer.disconnect(); } },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStatsStarted(true);
+          observer.disconnect();
+        }
+      },
       { threshold: 0.3 }
     );
     if (statsRef.current) observer.observe(statsRef.current);
@@ -56,7 +62,7 @@ const Hero = () => {
   return (
     <section
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden grain-overlay"
-      style={{ backgroundColor: "#0B1A2A" }}
+      style={{ backgroundColor: "hsl(var(--background))" }}
     >
       {/* Background image */}
       <img
@@ -66,10 +72,10 @@ const Hero = () => {
         className="absolute inset-0 w-full h-full object-cover object-center brightness-[0.3] saturate-[0.7] pointer-events-none"
       />
 
-      {/* Gold light reflection bottom-right */}
+      {/* Gold light reflection */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at bottom right, rgba(184,154,90,0.08), transparent 60%)" }}
+        style={{ background: "radial-gradient(ellipse at bottom right, hsla(var(--primary) / 0.08), transparent 60%)" }}
       />
 
       {/* Background video */}
@@ -82,26 +88,24 @@ const Hero = () => {
         aria-hidden="true"
         poster="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=80"
       >
-        {/* TODO: Replace with 10s cinematic executive boardroom loop */}
         <source src="" type="video/mp4" />
       </video>
 
-      {/* Overlay: navy fade in/out */}
+      {/* Overlays */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: "linear-gradient(180deg, #0B1A2A 0%, transparent 40%, transparent 60%, #0B1A2A 100%)" }}
+        style={{ background: "linear-gradient(180deg, hsl(var(--background)) 0%, transparent 40%, transparent 60%, hsl(var(--background)) 100%)" }}
       />
-      {/* Overlay: depth layer */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: "linear-gradient(135deg, rgba(11,26,42,0.95), rgba(11,26,42,0.6))" }}
+        style={{ background: "linear-gradient(135deg, hsla(var(--background) / 0.95), hsla(var(--background) / 0.6))" }}
       />
 
-      {/* Cinematic gold light sweep */}
+      {/* Gold light sweep */}
       <div
         className="absolute inset-y-0 pointer-events-none"
         style={{
-          background: "linear-gradient(90deg, transparent, #B89A5A, transparent)",
+          background: "linear-gradient(90deg, transparent, hsl(var(--primary)), transparent)",
           width: "40%",
           animation: "hero-light-sweep 10s ease-in-out infinite",
         }}
@@ -109,88 +113,87 @@ const Hero = () => {
 
       {/* Radial glow */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#B89A5A]/5 blur-[120px]" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[120px]" style={{ background: "hsla(var(--primary) / 0.05)" }} />
       </div>
 
       <div className="relative z-10 container text-center px-4 py-32">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {/* Logo badge */}
+        <motion.div variants={containerVariants} initial="hidden" animate="visible">
+          {/* Badge */}
           <motion.div variants={itemVariants}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#B89A5A]/20 bg-[#B89A5A]/5 text-sm text-[#8E96A3] mb-10 tracking-[0.15em] uppercase">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#B89A5A]" />
-              Executive Communication Programme
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 text-sm text-muted-foreground mb-10 tracking-[0.15em] uppercase">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+              {t("hero.badge")}
             </div>
           </motion.div>
 
+          {/* Headline */}
           <motion.h1
             variants={itemVariants}
-            className="font-serif text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.1] tracking-[0.02em] text-[#F4F2ED] mb-6 max-w-5xl mx-auto"
+            className="font-serif text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.1] tracking-[0.02em] text-foreground mb-6 max-w-5xl mx-auto"
           >
-            You will not improve your English.{" "}
-            <em className="not-italic text-[#B89A5A]">You will perform with precision.</em>
+            {t("hero.h1a")}{" "}
+            <em className="not-italic text-primary">{t("hero.h1b")}</em>
           </motion.h1>
 
-          {/* Gold divider line */}
+          {/* Divider */}
           <motion.div variants={itemVariants} className="flex justify-center mb-8">
-            <div className="w-20 h-0.5 bg-[#B89A5A]" />
+            <div className="w-20 h-0.5 bg-primary" />
           </motion.div>
 
+          {/* Subtitle */}
           <motion.p
             variants={itemVariants}
-            className="text-xl text-[#F4F2ED]/60 max-w-2xl mx-auto mb-12 leading-relaxed font-light"
+            className="text-xl text-foreground/60 max-w-2xl mx-auto mb-12 leading-relaxed font-light"
           >
-            Executive communication training for professionals who operate under pressure.
+            {t("hero.sub")}
           </motion.p>
 
+          {/* CTAs */}
           <motion.div variants={itemVariants} className="flex flex-wrap justify-center gap-4">
             <Button
               size="lg"
-              className="h-12 px-8 bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#C9AB6B] hover:shadow-[0_0_24px_rgba(184,154,90,0.3)] hover:-translate-y-0.5 font-semibold rounded-xl transition-all duration-300"
+              className="h-12 px-8 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-[0_0_24px_hsla(var(--primary)/0.3)] hover:-translate-y-0.5 font-semibold rounded-xl transition-all duration-300"
               asChild
             >
               <Link to="/login">
-                Apply for VOICE<sup className="text-[#0B1A2A]">³</sup>
+                {t("hero.cta1")}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="h-12 px-8 border border-[#B89A5A]/40 text-[#B89A5A] bg-transparent hover:border-[#B89A5A] hover:bg-[#B89A5A]/5 hover:shadow-[0_0_16px_rgba(184,154,90,0.15)] hover:-translate-y-0.5 rounded-xl transition-all duration-300"
+              className="h-12 px-8 border border-primary/40 text-primary bg-transparent hover:border-primary hover:bg-primary/5 hover:-translate-y-0.5 rounded-xl transition-all duration-300"
               asChild
             >
-              <Link to="/for-companies">For Companies</Link>
+              <Link to="/for-companies">{t("hero.cta2")}</Link>
             </Button>
           </motion.div>
 
           {/* Trust indicators */}
-          <motion.div variants={itemVariants} className="mt-8 flex flex-wrap justify-center items-center gap-2 text-sm text-[#8E96A3]">
-            <span>200+ Executives Trained</span>
-            <span className="text-[#B89A5A]/40">·</span>
-            <span>4.9/5 Satisfaction</span>
-            <span className="text-[#B89A5A]/40">·</span>
-            <span>12 Countries</span>
+          <motion.div variants={itemVariants} className="mt-8 flex flex-wrap justify-center items-center gap-2 text-sm text-muted-foreground">
+            <span>{t("hero.stat1")}</span>
+            <span className="text-primary/40">·</span>
+            <span>{t("hero.stat3")}</span>
+            <span className="text-primary/40">·</span>
+            <span>{t("hero.stat4")}</span>
           </motion.div>
 
           {/* Animated stats */}
           <div ref={statsRef} className="flex flex-wrap justify-center items-center gap-0 mt-16">
             {stats.map((stat, i) => (
-              <div key={stat.label} className="flex items-center">
+              <div key={stat.labelKey} className="flex items-center">
                 <div className="px-8 text-center">
-                  <p className="font-serif text-3xl md:text-4xl font-semibold text-[#B89A5A]">
+                  <p className="font-serif text-3xl md:text-4xl font-semibold text-primary">
                     {"display" in stat
                       ? (stat as typeof stats[2]).display(counts[i])
                       : `${counts[i]}${stat.suffix}`}
                   </p>
-                  <p className="text-xs text-[#8E96A3] mt-1 tracking-wider uppercase">{stat.label}</p>
+                  <p className="text-xs text-muted-foreground mt-1 tracking-wider uppercase">
+                    {t(stat.labelKey).replace(/^[\d+%★.\s]+/, "")}
+                  </p>
                 </div>
-                {i < stats.length - 1 && (
-                  <div className="w-px h-10 bg-[#B89A5A]/30" />
-                )}
+                {i < stats.length - 1 && <div className="w-px h-10 bg-primary/30" />}
               </div>
             ))}
           </div>
@@ -199,22 +202,19 @@ const Hero = () => {
 
       {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1 text-[#8E96A3]/60"
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1 text-muted-foreground/60"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.5, duration: 0.6 }}
       >
-        <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-        >
+        <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}>
           <ChevronDown className="h-5 w-5" />
         </motion.div>
       </motion.div>
 
-      {/* Gold divider */}
+      {/* Bottom divider */}
       <div className="absolute bottom-0 left-0 right-0">
-        <div className="h-px bg-gradient-to-r from-transparent via-[#B89A5A]/40 to-transparent" />
+        <div className="h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
       </div>
     </section>
   );
