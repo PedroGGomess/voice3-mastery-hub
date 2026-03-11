@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import TourOverlay from "@/components/TourOverlay";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -129,10 +130,19 @@ function Initials({ name }: { name: string }) {
 // ── Tab: Overview ─────────────────────────────────────────────────────────────
 
 function OverviewTab({ companyName }: { companyName: string }) {
+  const [seatsUsed, setSeatsUsed] = useState(0);
+  const [totalSessions, setTotalSessions] = useState(0);
   const seatsTotal = 15;
-  const seatsUsed = 8;
   const seatsAvailable = seatsTotal - seatsUsed;
-  const totalSessions = 148;
+
+  useEffect(() => {
+    (async () => {
+      const { count: sc } = await supabase.from('profiles').select('*', { count:'exact', head:true }).eq('company', companyName);
+      setSeatsUsed(sc || 0);
+      const { count: bc } = await supabase.from('bookings').select('*', { count:'exact', head:true }).eq('status','completed');
+      setTotalSessions(bc || 0);
+    })();
+  }, [companyName]);
   const avgScore = 76;
   const avgProgress = 62;
 
