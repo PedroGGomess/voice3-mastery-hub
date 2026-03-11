@@ -44,6 +44,7 @@ const Index = () => {
       <Navbar />
       <main>
         <Hero />
+        <ClientTicker />
         <HowItWorks />
         <Packs />
         <WhatYouLearn />
