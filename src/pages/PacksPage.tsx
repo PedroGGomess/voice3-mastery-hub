@@ -148,36 +148,8 @@ export default function PacksPage() {
     };
 
     const loadPacks = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("packs")
-          .select("*")
-          .eq("status", "active")
-          .order("sort_order");
-
-        if (controller.signal.aborted) return;
-        if (error || !data || data.length === 0) return;
-
-        // Merge DB data with static metadata (tagline, promise, features)
-        const merged: Pack[] = data.map((dbPack) => {
-          const staticFallback = staticPacks.find((p) => p.slug === dbPack.slug);
-          return {
-            id: dbPack.id,
-            name: dbPack.name,
-            slug: dbPack.slug,
-            price: dbPack.price,
-            sessionsIncluded: dbPack.sessions_included,
-            badge: dbPack.badge,
-            tagline: staticFallback?.tagline ?? "",
-            promise: staticFallback?.promise ?? "",
-            features: extractFeatures(dbPack.features, staticFallback?.features ?? []),
-          };
-        });
-
-        setPacks(merged);
-      } catch {
-        // Silently fall back to static data
-      }
+      // Use static packs - no DB table exists yet
+    };
     };
 
     loadPacks();
