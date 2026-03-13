@@ -166,7 +166,7 @@ const Perfil = () => {
 
           {/* Change password */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <Card>
+            <Card hover>
             <h3 className="font-semibold mb-4 flex items-center gap-2"><Lock className="h-4 w-4 text-primary" /> Alterar Password</h3>
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div className="space-y-2">
