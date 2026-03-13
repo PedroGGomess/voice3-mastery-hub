@@ -85,7 +85,7 @@ const Perfil = () => {
         <p className="text-muted-foreground mb-8">Gere as tuas informações e acompanha o teu progresso.</p>
 
         {/* Avatar + stats */}
-        <Card style={{ marginBottom: 24, display: "flex", flexDirection: "column", gap: 24 }} className="flex-col sm:flex-row items-start sm:items-center">
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm flex-col sm:flex-row items-start sm:items-center" style={{ marginBottom: 24, display: "flex", flexDirection: "column", gap: 24, padding: 24 }}>
           <Avatar name={currentUser?.name || "U"} size={80} />
           <div>
             <h2 className="text-xl font-bold">{currentUser?.name}</h2>
