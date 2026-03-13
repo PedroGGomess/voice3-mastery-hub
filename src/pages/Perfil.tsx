@@ -85,7 +85,7 @@ const Perfil = () => {
         <p className="text-muted-foreground mb-8">Gere as tuas informações e acompanha o teu progresso.</p>
 
         {/* Avatar + stats */}
-        <Card hover style={{ marginBottom: 24, display: "flex", flexDirection: "column", gap: 24 }} className="flex-col sm:flex-row items-start sm:items-center">
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm flex-col sm:flex-row items-start sm:items-center" style={{ marginBottom: 24, display: "flex", flexDirection: "column", gap: 24, padding: 24 }}>
           <Avatar name={currentUser?.name || "U"} size={80} />
           <div>
             <h2 className="text-xl font-bold">{currentUser?.name}</h2>
@@ -107,7 +107,7 @@ const Perfil = () => {
               <p className="text-xs text-muted-foreground">Tempo</p>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* Executive Profile section */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-6">
