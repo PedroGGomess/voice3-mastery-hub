@@ -107,7 +107,7 @@ const Perfil = () => {
               <p className="text-xs text-muted-foreground">Tempo</p>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* Executive Profile section */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-6">
