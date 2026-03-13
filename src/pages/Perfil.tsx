@@ -111,7 +111,7 @@ const Perfil = () => {
 
         {/* Executive Profile section */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-6">
-          <Card>
+          <Card hover>
           <h3 className="font-semibold mb-4 flex items-center gap-2"><Briefcase className="h-4 w-4 text-primary" /> Executive Profile</h3>
           {onboardingCompleted && onboardingData ? (
             <div className="grid sm:grid-cols-2 gap-3">
