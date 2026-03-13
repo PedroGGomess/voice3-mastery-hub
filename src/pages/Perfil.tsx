@@ -189,7 +189,7 @@ const Perfil = () => {
 
         {/* Achievements */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mt-6">
-          <Card hover>
+          <Card>
           <h3 className="font-semibold mb-4 flex items-center gap-2"><Trophy className="h-4 w-4 text-primary" /> Conquistas</h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {achievements.map(a => (
