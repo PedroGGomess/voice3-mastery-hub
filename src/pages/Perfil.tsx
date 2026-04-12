@@ -1,14 +1,15 @@
 import PlatformLayout from "@/components/PlatformLayout";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User, Mail, Building, Trophy, Clock, Target, Flame, Lock, CheckCircle2, Star, Zap, BookOpen, Briefcase } from "lucide-react";
+import { User, Mail, Building, Trophy, Clock, Target, Flame, Lock, CheckCircle2, Star, Zap, BookOpen, Briefcase, CreditCard, Package, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { Card, Avatar } from "@/components/ui/VoiceUI";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Achievement {
   id: string;
@@ -16,6 +17,111 @@ interface Achievement {
   description: string;
   icon: React.ReactNode;
   unlocked: boolean;
+}
+
+interface Payment {
+  id: string;
+  pack: string | null;
+  amount: number | null;
+  currency: string | null;
+  status: string | null;
+  created_at: string | null;
+}
+
+const packInfoMap: Record<string, { label: string; color: string; sessions: string }> = {
+  starter: { label: "Starter", color: "#10b981", sessions: "4 AI + 1 Live" },
+  pro: { label: "Pro", color: "#C9A84C", sessions: "8 AI + 3 Live" },
+  advanced: { label: "Advanced", color: "#8b5cf6", sessions: "12 AI + 5 Live" },
+  "business-master": { label: "Business Master", color: "#f59e0b", sessions: "Ilimitado" },
+};
+
+function PackAndPayments({ userId, pack }: { userId: string; pack?: string }) {
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!userId) { setLoading(false); return; }
+    supabase
+      .from("payments")
+      .select("id, pack, amount, currency, status, created_at")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(10)
+      .then(({ data }) => {
+        setPayments((data as Payment[]) || []);
+        setLoading(false);
+      });
+  }, [userId]);
+
+  const info = pack ? packInfoMap[pack.toLowerCase()] || { label: pack, color: "#C9A84C", sessions: "—" } : null;
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-6">
+      <Card hover>
+        <h3 className="font-semibold mb-5 flex items-center gap-2">
+          <Package className="h-4 w-4 text-primary" /> Pack & Pagamentos
+        </h3>
+        <div className="mb-5">
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Pack Ativo</p>
+          {info ? (
+            <div className="flex items-center gap-3 p-4 rounded-xl border border-primary/20 bg-primary/5">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${info.color}20`, color: info.color }}>
+                <CreditCard className="h-5 w-5" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold" style={{ color: info.color }}>{info.label}</p>
+                <p className="text-xs text-muted-foreground">{info.sessions}</p>
+              </div>
+              <CheckCircle2 className="h-5 w-5 text-green-400 shrink-0" />
+            </div>
+          ) : (
+            <div className="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+              <p className="text-sm text-muted-foreground">Nenhum pack ativo</p>
+              <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg">
+                <Link to="/packs">Escolher Pack <ArrowRight className="ml-1 h-3 w-3" /></Link>
+              </Button>
+            </div>
+          )}
+        </div>
+        <div>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Histórico de Pagamentos</p>
+          {loading ? (
+            <div className="flex justify-center py-4">
+              <span className="inline-block w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : payments.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-3">Sem pagamentos registados.</p>
+          ) : (
+            <div className="space-y-2">
+              {payments.map((p) => (
+                <div key={p.id} className="flex items-center justify-between p-3 rounded-xl border border-white/5 bg-white/[0.02] text-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <CreditCard className="h-4 w-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium">{p.pack ? (packInfoMap[p.pack]?.label || p.pack) : "Pagamento"}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {p.created_at ? new Date(p.created_at).toLocaleDateString("pt-PT", { day: "numeric", month: "short", year: "numeric" }) : "—"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold">
+                      {p.amount != null ? `€${(p.amount / 100).toFixed(2)}` : "—"}
+                    </p>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${p.status === "completed" ? "bg-green-500/10 text-green-400" : "bg-yellow-500/10 text-yellow-400"}`}>
+                      {p.status === "completed" ? "Pago" : p.status || "Pendente"}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </Card>
+    </motion.div>
+  );
 }
 
 const Perfil = () => {
@@ -108,6 +214,9 @@ const Perfil = () => {
             </div>
           </div>
         </div>
+
+        {/* Pack & Payment History */}
+        <PackAndPayments userId={userId} pack={currentUser?.pack} />
 
         {/* Executive Profile section */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-6">
