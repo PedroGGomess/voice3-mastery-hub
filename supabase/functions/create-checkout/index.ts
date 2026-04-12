@@ -19,15 +19,43 @@ serve(async (req) => {
     const env = (environment || 'sandbox') as StripeEnv;
     const stripe = createStripeClient(env);
 
-    // Resolve human-readable price ID to Stripe price ID via lookup_keys
-    const prices = await stripe.prices.list({ lookup_keys: [priceId] });
-    if (!prices.data.length) {
-      return new Response(JSON.stringify({ error: "Price not found" }), {
+    // Try lookup_keys first, then fall back to searching by product name
+    let stripePrice: any = null;
+    const prices = await stripe.prices.list({ lookup_keys: [priceId], active: true });
+    if (prices?.data?.length) {
+      stripePrice = prices.data[0];
+    } else {
+      // Fallback: list all active prices
+      try {
+        const allPrices = await stripe.prices.list({ active: true, limit: 100 });
+        console.log("Prices response:", JSON.stringify(allPrices));
+        console.log("Prices data type:", typeof allPrices?.data, "is array:", Array.isArray(allPrices?.data));
+        if (Array.isArray(allPrices?.data) && allPrices.data.length > 0) {
+          // Try to expand products separately
+          for (const p of allPrices.data) {
+            try {
+              const prod = await stripe.products.retrieve(p.product as string);
+              console.log("Price", p.id, "amount:", p.unit_amount, "product:", prod.name);
+              if (prod.name === priceId || prod.name.toLowerCase() === priceId.toLowerCase()) {
+                stripePrice = p;
+                break;
+              }
+            } catch (e) {
+              console.log("Error retrieving product for price", p.id, e);
+            }
+          }
+        }
+      } catch (listErr) {
+        console.error("Error listing prices:", listErr);
+      }
+    }
+
+    if (!stripePrice) {
+      return new Response(JSON.stringify({ error: `Price not found for: ${priceId}` }), {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const stripePrice = prices.data[0];
     const isRecurring = stripePrice.type === "recurring";
 
     const session = await stripe.checkout.sessions.create({
