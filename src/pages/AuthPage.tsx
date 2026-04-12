@@ -121,6 +121,7 @@ const AuthPage = () => {
     }
   };
 
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
