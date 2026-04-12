@@ -55,6 +55,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import DiagnosticSession from "./pages/DiagnosticSession";
 import ChaptersOverview from "./pages/ChaptersOverview";
 import ChapterDetail from "./pages/ChapterDetail";
+import CheckoutPage from "./pages/CheckoutPage";
+import CheckoutReturn from "./pages/CheckoutReturn";
 
 const queryClient = new QueryClient();
 
@@ -110,6 +112,8 @@ const App = () => (
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/for-companies" element={<ForCompaniesPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/checkout/return" element={<CheckoutReturn />} />
 
             {/* Student routes */}
             <Route path="/onboarding" element={<ProtectedRoute requiredRole="student"><Onboarding /></ProtectedRoute>} />
