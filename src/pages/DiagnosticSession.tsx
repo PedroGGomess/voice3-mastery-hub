@@ -69,6 +69,8 @@ export default function DiagnosticSession() {
     }
   }, [userId]);
 
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
 
   const wordCount = writingSample.trim().split(/\s+/).filter(Boolean).length;
   const progressPct = ((currentStep - 1) / 5) * 100;
