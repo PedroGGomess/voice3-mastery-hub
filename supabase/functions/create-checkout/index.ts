@@ -28,7 +28,7 @@ serve(async (req) => {
       // Fallback: list all active prices
       try {
         const allPrices = await stripe.prices.list({ active: true, limit: 100 });
-        console.log("Prices response type:", typeof allPrices, "keys:", Object.keys(allPrices || {}));
+        console.log("Prices response:", JSON.stringify(allPrices));
         console.log("Prices data type:", typeof allPrices?.data, "is array:", Array.isArray(allPrices?.data));
         if (Array.isArray(allPrices?.data) && allPrices.data.length > 0) {
           // Try to expand products separately
