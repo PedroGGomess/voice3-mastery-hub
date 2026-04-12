@@ -195,12 +195,12 @@ const AuthPage = () => {
       });
 
       const signupData = await signupRes.json();
-      if (!signupRes.ok || !signupData.id) {
+      if (!signupRes.ok || !(signupData.id || signupData.user?.id)) {
         throw new Error(signupData.msg || signupData.error_description || signupData.message || 'Erro ao criar conta');
       }
 
-      const userId = signupData.id;
-      const email = signupData.email || regData.email;
+      const userId = signupData.user?.id || signupData.id;
+      const email = signupData.user?.email || signupData.email || regData.email;
 
       // Let the auth context pick up the session in the background
       // (supabase client will eventually process it via onAuthStateChange)
