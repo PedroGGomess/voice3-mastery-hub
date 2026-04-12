@@ -27,7 +27,11 @@ async function fetchUserProfile(userId: string, email: string): Promise<User | n
     else if (rawRole === 'admin') role = 'admin';
     else if (rawRole === 'company_admin') role = 'company_admin';
     return { id: userId, name: profile?.name || email.split('@')[0] || 'User', email: profile?.email || email, company: profile?.company || undefined, role, createdAt: profile?.created_at || new Date().toISOString(), pack: profile?.pack || undefined, timezone: profile?.timezone || 'Europe/Lisbon' };
-  } catch (e) { console.error('Error fetching user profile', e); return null; }
+  } catch (e) {
+    console.error('Error fetching user profile', e);
+    // Return a basic user even if profile fetch fails
+    return { id: userId, name: email.split('@')[0] || 'User', email, role: 'student', createdAt: new Date().toISOString() };
+  }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -35,16 +39,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (session?.user) setCurrentUser(await fetchUserProfile(session.user.id, session.user.email || ''));
+    // Timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
       setIsLoading(false);
+    }, 5000);
+
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session?.user) {
+        setCurrentUser(await fetchUserProfile(session.user.id, session.user.email || ''));
+      }
+      setIsLoading(false);
+      clearTimeout(timeout);
+    }).catch(() => {
+      setIsLoading(false);
+      clearTimeout(timeout);
     });
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event: string, session: Session | null) => {
       if (session?.user) setCurrentUser(await fetchUserProfile(session.user.id, session.user.email || ''));
       else setCurrentUser(null);
       setIsLoading(false);
     });
-    return () => subscription.unsubscribe();
+    return () => { subscription.unsubscribe(); clearTimeout(timeout); };
   }, []);
 
   const login = async (email: string, password: string) => {

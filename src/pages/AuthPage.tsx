@@ -52,9 +52,10 @@ const demoUsers = [
 const inputClass = "w-full h-[52px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-white text-[15px] outline-none transition-all duration-200 focus:border-[#C9A84C]/60 focus:shadow-[0_0_0_3px_rgba(201,168,76,0.08)] placeholder:text-white/25";
 
 const AuthPage = () => {
-  const [mode, setMode] = useState<"login" | "register">("login");
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const initialMode = searchParams.get("mode") === "register" ? "register" : "login";
+  const [mode, setMode] = useState<"login" | "register">(initialMode);
+  const navigate = useNavigate();
   const [regStep, setRegStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -441,9 +442,9 @@ const AuthPage = () => {
           {/* Features list */}
           <div style={{ display: "flex", flexDirection: "column", gap: 12, textAlign: "left", maxWidth: 280, margin: "0 auto" }}>
             {[
-              { icon: <Award className="h-4 w-4" />, text: "Executive Communication" },
-              { icon: <Sparkles className="h-4 w-4" />, text: "AI-Powered Coaching" },
-              { icon: <Users className="h-4 w-4" />, text: "Live Professor Sessions" },
+              { icon: <Award className="h-4 w-4" />, text: "Comunicação Executiva" },
+              { icon: <Sparkles className="h-4 w-4" />, text: "Coaching com IA" },
+              { icon: <Users className="h-4 w-4" />, text: "Sessões ao Vivo com Professor" },
             ].map((item, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <div style={{ color: "rgba(201,168,76,0.6)" }}>{item.icon}</div>
@@ -454,7 +455,7 @@ const AuthPage = () => {
 
           <div style={{ marginTop: 36, display: "flex", gap: 12, justifyContent: "center", alignItems: "center" }}>
             <span style={{ color: "#C9A84C", fontSize: 13 }}>★★★★★</span>
-            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>4.9/5 from 200+ executives</span>
+            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>4.9/5 de 200+ executivos</span>
           </div>
           <div style={{ marginTop: 24, display: "flex", gap: 24, justifyContent: "center" }}>
             {["GALP", "NOS", "EDP"].map(name => (
@@ -468,7 +469,7 @@ const AuthPage = () => {
           <div style={{ width: 44, height: 44, borderRadius: "50%", background: "linear-gradient(135deg,#C9A84C,#8B6914)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#060f1d" }}>SS</div>
           <div>
             <p style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.7)", margin: 0 }}>Sandra Stuttaford</p>
-            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", margin: 0 }}>Your Executive Coach</p>
+            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", margin: 0 }}>A Tua Coach Executiva</p>
           </div>
         </div>
       </div>
@@ -501,14 +502,14 @@ const AuthPage = () => {
 
           <form onSubmit={handleLoginSubmit}>
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: "block", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Email Address</label>
-              <input type="email" placeholder="your@email.com" required value={loginEmail} onChange={e => setLoginEmail(e.target.value)}
+              <label style={{ display: "block", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Email</label>
+              <input type="email" placeholder="teu@email.com" required value={loginEmail} onChange={e => setLoginEmail(e.target.value)}
                 className={inputClass} />
             </div>
             <div style={{ marginBottom: 8 }}>
               <label style={{ display: "block", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Password</label>
               <div style={{ position: "relative" }}>
-                <input type={showLoginPassword ? "text" : "password"} placeholder="Enter your password" required value={loginPassword} onChange={e => setLoginPassword(e.target.value)}
+                <input type={showLoginPassword ? "text" : "password"} placeholder="Insere a tua password" required value={loginPassword} onChange={e => setLoginPassword(e.target.value)}
                   className={inputClass}
                   style={{ paddingRight: 48 }} />
                 <button type="button" onClick={() => setShowLoginPassword(!showLoginPassword)}
@@ -521,7 +522,7 @@ const AuthPage = () => {
               <button type="button" style={{ fontSize: 13, color: "rgba(201,168,76,0.5)", cursor: "pointer", background: "none", border: "none", transition: "color 0.2s" }}
                 onMouseEnter={e => (e.currentTarget.style.color = "#C9A84C")}
                 onMouseLeave={e => (e.currentTarget.style.color = "rgba(201,168,76,0.5)")}>
-                Forgot password?
+                Esqueceste a password?
               </button>
             </div>
             <button type="submit" disabled={loading} style={{
@@ -537,9 +538,9 @@ const AuthPage = () => {
               {loading ? (
                 <>
                   <span className="inline-block w-4 h-4 border-2 border-[#060f1d] border-t-transparent rounded-full animate-spin" />
-                  Signing in...
+                  A entrar...
                 </>
-              ) : "Sign In  →"}
+              ) : "Entrar  →"}
             </button>
           </form>
 
@@ -558,12 +559,12 @@ const AuthPage = () => {
           }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.35)"; e.currentTarget.style.color = "#C9A84C"; e.currentTarget.style.background = "rgba(201,168,76,0.03)"; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.15)"; e.currentTarget.style.color = "rgba(201,168,76,0.6)"; e.currentTarget.style.background = "transparent"; }}>
-            Explore with Demo Credentials
+            Explorar com Credenciais Demo
           </button>
 
           <div style={{ overflow: "hidden", maxHeight: isShowingDemo ? 300 : 0, transition: "max-height 0.4s ease" }}>
             <div style={{ background: "rgba(201,168,76,0.03)", border: "1px solid rgba(201,168,76,0.1)", borderRadius: 12, padding: 16, marginTop: 12 }}>
-              <p style={{ fontSize: 10, color: "rgba(201,168,76,0.5)", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase" as const, marginBottom: 10 }}>Demo Accounts</p>
+              <p style={{ fontSize: 10, color: "rgba(201,168,76,0.5)", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase" as const, marginBottom: 10 }}>Contas Demo</p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
                 {demoUsers.map(user => (
                   <button key={user.role} onClick={() => { setLoginEmail(user.email); setLoginPassword(user.pass); }}
@@ -580,9 +581,9 @@ const AuthPage = () => {
 
           <div style={{ marginTop: 32, textAlign: "center" }}>
             <p style={{ fontSize: 13, color: "rgba(255,255,255,0.35)" }}>
-              Don't have an account?{" "}
+              Ainda não tens conta?{" "}
               <button onClick={() => { setMode("register"); setError(""); }} style={{ color: "#C9A84C", background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
-                Create account
+                Criar conta
               </button>
             </p>
           </div>

@@ -150,7 +150,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'en',
+    fallbackLng: 'pt',
+    lng: 'pt',
     defaultNS: 'translation',
     interpolation: { escapeValue: false },
     detection: {
