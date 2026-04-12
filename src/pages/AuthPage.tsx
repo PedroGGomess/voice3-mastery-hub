@@ -91,7 +91,7 @@ const AuthPage = () => {
   // If authenticated and a pack checkout is pending, redirect to checkout instead of dashboard
   if (isAuthenticated) {
     const pendingPack = searchParams.get("pack");
-    const priceMap: Record<string, string> = { starter: "starter_once", pro: "pro_once", advanced: "advanced_once" };
+    const priceMap: Record<string, string> = { starter: "starter", pro: "pro", advanced: "advanced" };
     if (pendingPack && priceMap[pendingPack]) {
       return <Navigate to={`/checkout?price=${priceMap[pendingPack]}`} replace />;
     }
@@ -207,7 +207,7 @@ const AuthPage = () => {
 
       if (selectedPack && selectedPack.price !== null && selectedPack.slug !== "business-master") {
         toast.success("Conta criada! A redirecionar para pagamento...");
-        const priceMap: Record<string, string> = { starter: "starter_once", pro: "pro_once", advanced: "advanced_once" };
+        const priceMap: Record<string, string> = { starter: "starter", pro: "pro", advanced: "advanced" };
         const priceId = priceMap[selectedPack.slug];
         if (priceId) {
           const checkoutParams = new URLSearchParams({
