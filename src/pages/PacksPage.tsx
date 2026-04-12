@@ -163,18 +163,16 @@ export default function PacksPage() {
                 key={pack.id}
                 className="relative rounded-2xl p-7 flex flex-col"
                 style={{
-                  background: isPro ? "linear-gradient(180deg, rgba(201,168,76,0.04), #11263A)" : "#11263A",
+                  background: "#11263A",
                   border: isPro
-                    ? "2px solid rgba(201,168,76,0.5)"
+                    ? "2px solid rgba(201,168,76,0.4)"
                     : "1px solid rgba(255,255,255,0.06)",
-                  transform: isPro ? "scale(1.04)" : undefined,
-                  boxShadow: isPro ? "0 0 40px rgba(201,168,76,0.12)" : undefined,
                 }}
                 initial={{ opacity: 0, y: 32 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
-                whileHover={!isPro ? { borderColor: "rgba(201,168,76,0.3)" } : undefined}
+                whileHover={{ borderColor: "rgba(201,168,76,0.3)" }}
               >
                 {/* Badge */}
                 {pack.badge && (
@@ -246,15 +244,6 @@ export default function PacksPage() {
                     >
                       Falar com Comercial <ArrowRight className="ml-1.5 h-4 w-4" />
                     </Button>
-                  ) : isPro ? (
-                    <Button
-                      className="w-full h-12 rounded-xl font-semibold bg-[#C9A84C] text-[#0B1A2A] hover:bg-[#d4b56a] hover:shadow-[0_0_32px_rgba(201,168,76,0.3)] hover:-translate-y-0.5 transition-all duration-300"
-                      asChild
-                    >
-                      <Link to={`/auth?mode=register&pack=${pack.slug}`}>
-                        Escolher Pro <ArrowRight className="ml-1.5 h-4 w-4" />
-                      </Link>
-                    </Button>
                   ) : (
                     <Button
                       variant="outline"
@@ -262,7 +251,7 @@ export default function PacksPage() {
                       asChild
                     >
                       <Link to={`/auth?mode=register&pack=${pack.slug}`}>
-                        {pack.slug === "starter" ? "Começar Agora" : "Escolher " + pack.name} <ArrowRight className="ml-1.5 h-4 w-4" />
+                        Escolher {pack.name} <ArrowRight className="ml-1.5 h-4 w-4" />
                       </Link>
                     </Button>
                   )}
@@ -314,7 +303,7 @@ export default function PacksPage() {
                     <td
                       key={ci}
                       className="py-3.5 px-4 text-center"
-                      style={ci === 1 ? { background: "rgba(201,168,76,0.03)" } : undefined}
+                      style={undefined}
                     >
                       <CellValue v={v} colIdx={ci} />
                     </td>

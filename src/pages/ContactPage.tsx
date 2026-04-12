@@ -11,50 +11,50 @@ const contactItems = [
   {
     icon: "✉️",
     label: "Email",
-    value: "hello@voice3.pt",
-    href: "mailto:hello@voice3.pt",
+    value: "voice3.couch@gmail.com",
+    href: "mailto:voice3.couch@gmail.com",
   },
   {
     icon: "📍",
-    label: "Location",
-    value: "Lisboa, Portugal · Serving clients globally",
+    label: "Localização",
+    value: "Lisboa, Portugal · Clientes globais",
     href: null,
   },
   {
     icon: "⏰",
-    label: "Response Time",
-    value: "Within 24h · Mon–Fri 9:00–18:00 WET",
+    label: "Tempo de Resposta",
+    value: "Até 24h · Seg–Sex 9:00–18:00 WET",
     href: null,
   },
   {
     icon: "💬",
-    label: "Live Chat",
-    value: "Available via widget",
+    label: "Chat",
+    value: "Disponível via widget",
     href: null,
   },
 ];
 
 const faqs = [
   {
-    q: "Is there a free trial?",
-    a: "Yes — every new member begins with the AI Diagnostic Session completely free.",
+    q: "Existe um período de teste gratuito?",
+    a: "Sim — cada novo membro começa com a Sessão de Diagnóstico AI completamente gratuita.",
   },
   {
-    q: "Can I pay in instalments?",
-    a: "Yes. We offer flexible payment plans. Contact us for details.",
+    q: "Posso pagar em prestações?",
+    a: "Sim. Oferecemos planos de pagamento flexíveis. Contacte-nos para mais detalhes.",
   },
   {
-    q: "How quickly can I start?",
-    a: "Immediately after registration. Your diagnostic session is available 24/7.",
+    q: "Quando posso começar?",
+    a: "Imediatamente após o registo. A sessão de diagnóstico está disponível 24/7.",
   },
 ];
 
 const subjectOptions = [
-  "General Enquiry",
-  "Enterprise Solutions",
-  "Press & Media",
-  "Partnership",
-  "Technical Support",
+  "Informação Geral",
+  "Soluções Empresariais",
+  "Imprensa & Media",
+  "Parcerias",
+  "Suporte Técnico",
 ];
 
 const fadeUp = {
@@ -87,26 +87,31 @@ export default function ContactPage() {
       await new Promise((res) => setTimeout(res, 1500));
       setSubmitted(true);
     } catch {
-      setError("Something went wrong. Please email us directly at hello@voice3.pt.");
+      setError("Algo correu mal. Envie-nos um email directamente para voice3.couch@gmail.com.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1A2A]">
+    <div className="min-h-screen" style={{ background: "#0A0A0F" }}>
       <Navbar />
 
       {/* ── Hero ── */}
       <section className="pt-32 pb-16 px-6 text-center">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
-          <p className="text-xs tracking-[0.2em] text-[#C9A84C] uppercase mb-4">Get In Touch</p>
-          <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-bold text-[#F4F2ED] leading-tight mb-5">
-            Let's Talk.
+          <p className="text-xs tracking-[0.2em] uppercase mb-4" style={{ color: "#D4A853" }}>
+            Contacto
+          </p>
+          <h1
+            className="font-serif font-bold leading-tight mb-5"
+            style={{ fontSize: "clamp(32px, 5vw, 48px)", color: "#F5F5F5" }}
+          >
+            Vamos Conversar.
           </h1>
-          <div className="w-[60px] h-[2px] bg-[#C9A84C] mx-auto mb-5" />
-          <p className="text-[17px] text-[#8E96A3] max-w-lg mx-auto leading-relaxed">
-            Questions, enterprise solutions, or press enquiries — we respond within 24 hours.
+          <div className="w-[60px] h-[2px] mx-auto mb-5" style={{ background: "#D4A853" }} />
+          <p className="text-[17px] max-w-lg mx-auto leading-relaxed" style={{ color: "#9A9AB0" }}>
+            Questões, soluções empresariais ou parcerias — respondemos em 24 horas.
           </p>
         </motion.div>
       </section>
@@ -125,38 +130,42 @@ export default function ContactPage() {
               <div key={item.label} className="flex items-start gap-3">
                 <div
                   className="w-10 h-10 flex items-center justify-center rounded-lg text-xl flex-shrink-0"
-                  style={{ background: "rgba(201,168,76,0.1)" }}
+                  style={{ background: "rgba(212,168,83,0.1)" }}
                 >
                   {item.icon}
                 </div>
                 <div>
-                  <p className="text-[11px] text-[#8E96A3] uppercase tracking-wider mb-0.5">
+                  <p
+                    className="text-[11px] uppercase tracking-wider mb-0.5"
+                    style={{ color: "#9A9AB0" }}
+                  >
                     {item.label}
                   </p>
                   {item.href ? (
                     <a
                       href={item.href}
-                      className="text-sm text-[#F4F2ED] hover:text-[#C9A84C] transition-colors"
+                      className="text-sm transition-colors hover:text-[#D4A853]"
+                      style={{ color: "#F5F5F5" }}
                     >
                       {item.value}
                     </a>
                   ) : (
-                    <p className="text-sm text-[#F4F2ED]">{item.value}</p>
+                    <p className="text-sm" style={{ color: "#F5F5F5" }}>{item.value}</p>
                   )}
                 </div>
               </div>
             ))}
 
             {/* Divider */}
-            <div className="w-full h-px bg-[#B89A5A]/15 my-2" />
+            <div className="w-full h-px my-2" style={{ background: "rgba(212,168,83,0.15)" }} />
 
             <Link to="/auth">
               <Button
                 variant="outline"
-                className="font-bold text-[#C9A84C] rounded-xl"
-                style={{ borderColor: "rgba(201,168,76,0.5)" }}
+                className="font-bold rounded-xl"
+                style={{ borderColor: "rgba(212,168,83,0.5)", color: "#D4A853" }}
               >
-                Start Free Diagnostic <ArrowRight className="ml-2 w-4 h-4" />
+                Diagnóstico Gratuito <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </Link>
           </motion.div>
@@ -185,16 +194,17 @@ export default function ContactPage() {
                   }}
                 >
                   <div className="text-5xl mb-4">✓</div>
-                  <h3 className="text-xl font-bold text-[#F4F2ED] mb-2">
-                    Message sent. We reply in 24h.
+                  <h3 className="text-xl font-bold mb-2" style={{ color: "#F5F5F5" }}>
+                    Mensagem enviada. Respondemos em 24h.
                   </h3>
-                  <p className="text-[#8E96A3] text-sm mb-4">
-                    You can also email us directly at{" "}
+                  <p className="text-sm mb-4" style={{ color: "#9A9AB0" }}>
+                    Também pode contactar-nos directamente em{" "}
                     <a
-                      href="mailto:hello@voice3.pt"
-                      className="text-[#C9A84C] hover:underline"
+                      href="mailto:voice3.couch@gmail.com"
+                      className="hover:underline"
+                      style={{ color: "#D4A853" }}
                     >
-                      hello@voice3.pt
+                      voice3.couch@gmail.com
                     </a>
                   </p>
                 </div>
@@ -202,20 +212,21 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs text-[#8E96A3] uppercase tracking-wide mb-1.5">
-                        Full Name
+                      <label className="block text-xs uppercase tracking-wide mb-1.5" style={{ color: "#9A9AB0" }}>
+                        Nome Completo
                       </label>
                       <input
                         required
                         type="text"
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        className="w-full h-11 px-4 rounded-lg bg-[#0B1A2A] border border-[rgba(255,255,255,0.08)] text-[#F4F2ED] text-sm focus:outline-none focus:border-[#C9A84C]/50 transition-colors"
-                        placeholder="Your full name"
+                        className="w-full h-11 px-4 rounded-lg text-sm focus:outline-none transition-colors"
+                        style={{ background: "#0A0A0F", border: "1px solid rgba(255,255,255,0.08)", color: "#F5F5F5" }}
+                        placeholder="O seu nome"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-[#8E96A3] uppercase tracking-wide mb-1.5">
+                      <label className="block text-xs uppercase tracking-wide mb-1.5" style={{ color: "#9A9AB0" }}>
                         Email
                       </label>
                       <input
@@ -223,61 +234,62 @@ export default function ContactPage() {
                         type="email"
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        className="w-full h-11 px-4 rounded-lg bg-[#0B1A2A] border border-[rgba(255,255,255,0.08)] text-[#F4F2ED] text-sm focus:outline-none focus:border-[#C9A84C]/50 transition-colors"
-                        placeholder="you@company.com"
+                        className="w-full h-11 px-4 rounded-lg text-sm focus:outline-none transition-colors"
+                        style={{ background: "#0A0A0F", border: "1px solid rgba(255,255,255,0.08)", color: "#F5F5F5" }}
+                        placeholder="email@empresa.com"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs text-[#8E96A3] uppercase tracking-wide mb-1.5">
-                      Company{" "}
-                      <span className="normal-case text-[10px] text-[#8E96A3]/60">(optional)</span>
+                    <label className="block text-xs uppercase tracking-wide mb-1.5" style={{ color: "#9A9AB0" }}>
+                      Empresa{" "}
+                      <span className="normal-case text-[10px]" style={{ color: "rgba(154,154,176,0.6)" }}>(opcional)</span>
                     </label>
                     <input
                       type="text"
                       value={form.company}
                       onChange={(e) => setForm({ ...form, company: e.target.value })}
-                      className="w-full h-11 px-4 rounded-lg bg-[#0B1A2A] border border-[rgba(255,255,255,0.08)] text-[#F4F2ED] text-sm focus:outline-none focus:border-[#C9A84C]/50 transition-colors"
-                      placeholder="Company name"
+                      className="w-full h-11 px-4 rounded-lg text-sm focus:outline-none transition-colors"
+                      style={{ background: "#0A0A0F", border: "1px solid rgba(255,255,255,0.08)", color: "#F5F5F5" }}
+                      placeholder="Nome da empresa"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-[#8E96A3] uppercase tracking-wide mb-1.5">
-                      Subject
+                    <label className="block text-xs uppercase tracking-wide mb-1.5" style={{ color: "#9A9AB0" }}>
+                      Assunto
                     </label>
                     <select
                       required
                       value={form.subject}
                       onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                      className="w-full h-11 px-4 rounded-lg bg-[#0B1A2A] border border-[rgba(255,255,255,0.08)] text-[#F4F2ED] text-sm focus:outline-none focus:border-[#C9A84C]/50 transition-colors"
+                      className="w-full h-11 px-4 rounded-lg text-sm focus:outline-none transition-colors"
+                      style={{ background: "#0A0A0F", border: "1px solid rgba(255,255,255,0.08)", color: "#F5F5F5" }}
                     >
-                      <option value="" disabled>Select a subject</option>
+                      <option value="" disabled>Selecione um assunto</option>
                       {subjectOptions.map((o) => (
-                        <option key={o} value={o}>
-                          {o}
-                        </option>
+                        <option key={o} value={o}>{o}</option>
                       ))}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-[#8E96A3] uppercase tracking-wide mb-1.5">
-                      Message
+                    <label className="block text-xs uppercase tracking-wide mb-1.5" style={{ color: "#9A9AB0" }}>
+                      Mensagem
                     </label>
                     <textarea
                       required
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
-                      style={{ minHeight: 140 }}
-                      className="w-full px-4 py-3 rounded-lg bg-[#0B1A2A] border border-[rgba(255,255,255,0.08)] text-[#F4F2ED] text-sm focus:outline-none focus:border-[#C9A84C]/50 transition-colors resize-none"
-                      placeholder="How can we help you?"
+                      style={{ minHeight: 140, background: "#0A0A0F", border: "1px solid rgba(255,255,255,0.08)", color: "#F5F5F5" }}
+                      className="w-full px-4 py-3 rounded-lg text-sm focus:outline-none transition-colors resize-none"
+                      placeholder="Como podemos ajudar?"
                     />
                   </div>
 
                   {error && (
                     <p className="text-sm text-red-400">
                       {error}{" "}
-                      <a href="mailto:hello@voice3.pt" className="underline">
-                        hello@voice3.pt
+                      <a href="mailto:voice3.couch@gmail.com" className="underline">
+                        voice3.couch@gmail.com
                       </a>
                     </p>
                   )}
@@ -286,18 +298,16 @@ export default function ContactPage() {
                     type="submit"
                     disabled={loading}
                     className="w-full h-[52px] text-base font-bold rounded-xl"
-                    style={{ background: "linear-gradient(135deg, #C9A84C, #E8C87A)", color: "#060f1d" }}
+                    style={{ background: "linear-gradient(135deg, #D4A853, #E8C97A)", color: "#0A0A0F" }}
                   >
                     {loading ? (
                       <span className="flex items-center gap-2">
-                        <span
-                          className="inline-block w-4 h-4 border-2 border-[#060f1d]/40 border-t-[#060f1d] rounded-full animate-spin"
-                        />
-                        Sending...
+                        <span className="inline-block w-4 h-4 border-2 border-[#0A0A0F]/40 border-t-[#0A0A0F] rounded-full animate-spin" />
+                        A enviar...
                       </span>
                     ) : (
                       <>
-                        Send Message <ArrowRight className="ml-2 w-5 h-5" />
+                        Enviar Mensagem <ArrowRight className="ml-2 w-5 h-5" />
                       </>
                     )}
                   </Button>
@@ -311,13 +321,14 @@ export default function ContactPage() {
       {/* ── FAQ ── */}
       <section className="px-6 pb-32 max-w-2xl mx-auto">
         <motion.h2
-          className="text-center font-serif text-2xl font-bold text-[#F4F2ED] mb-8"
+          className="text-center font-serif text-2xl font-bold mb-8"
+          style={{ color: "#F5F5F5" }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          Quick Answers
+          Perguntas Frequentes
         </motion.h2>
         <div className="space-y-3">
           {faqs.map((faq, i) => {
@@ -327,8 +338,8 @@ export default function ContactPage() {
                 key={faq.q}
                 className="rounded-xl border overflow-hidden transition-colors duration-200"
                 style={{
-                  background: "#1C1F26",
-                  borderColor: isOpen ? "rgba(201,168,76,0.3)" : "rgba(255,255,255,0.08)",
+                  background: "#12121A",
+                  borderColor: isOpen ? "rgba(212,168,83,0.3)" : "rgba(255,255,255,0.08)",
                 }}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -341,21 +352,21 @@ export default function ContactPage() {
                 >
                   <span
                     className="text-sm font-semibold"
-                    style={{ color: isOpen ? "#C9A84C" : "#F4F2ED" }}
+                    style={{ color: isOpen ? "#D4A853" : "#F5F5F5" }}
                   >
                     {faq.q}
                   </span>
                   <ChevronDown
                     className="w-4 h-4 flex-shrink-0 transition-transform duration-300"
                     style={{
-                      color: "#8E96A3",
+                      color: "#9A9AB0",
                       transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
                     }}
                   />
                 </button>
                 {isOpen && (
                   <div className="px-6 pb-4">
-                    <p className="text-sm text-[#8E96A3] leading-relaxed">{faq.a}</p>
+                    <p className="text-sm leading-relaxed" style={{ color: "#9A9AB0" }}>{faq.a}</p>
                   </div>
                 )}
               </motion.div>
