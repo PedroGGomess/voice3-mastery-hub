@@ -11,6 +11,9 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
 
   try {
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
     const sb = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -38,79 +41,69 @@ serve(async (req) => {
 
     const studentCtx = profile_data
       ? `
-STUDENT: ${profile_data.full_name || profile_data.name || "Student"} | Pack: ${
-          profile_data.pack || "Pro"
-        } | Level: ${eval_data?.level || "B2"} | Style: ${
-          eval_data?.teaching_style || "Balanced"
-        }
+STUDENT: ${profile_data.name || "Student"} | Pack: ${profile_data.pack || "Pro"} | Level: ${eval_data?.level || "B2"} | Style: ${eval_data?.teaching_style || "Balanced"}
 WEAK AREAS: ${JSON.stringify(eval_data?.weak_points || {})}
 AI CONCLUSIONS: ${eval_data?.ai_conclusions || "Diagnostic not completed"}`
       : "";
 
     const prompts: Record<string, string> = {
-      chat: `You are VOICE³ AI Coach — elite executive English trainer.\n${studentCtx}\nBe direct, personalised, results-oriented. Focus on weak areas. Keep responses concise and actionable.`,
-      "rescue-mode": `You are VOICE³ Emergency Meeting Coach.\n${studentCtx}\nMeeting: ${
-        context?.meetingType || "General"
-      }. Topic: ${
-        context?.topic
-      }.\nRespond in EXACT structure:\n## 🎯 3 Key Messages\n## 🗣️ Opening Line\n## ⚡ Power Phrases (5)\n## ⚠️ Watch Out For (2)\n## 🔚 Closing Statement\nMilitary precision. No generic advice.`,
+      chat: `You are VOICE³ AI Coach — elite executive English trainer for Portuguese-speaking professionals.\n${studentCtx}\nBe direct, personalised, results-oriented. Focus on weak areas. Keep responses concise and actionable. You may respond in Portuguese when the student writes in Portuguese, but always teach English content. Use markdown formatting for clarity.`,
+      "rescue-mode": `You are VOICE³ Emergency Meeting Coach.\n${studentCtx}\nMeeting: ${context?.meetingType || "General"}. Topic: ${context?.topic}.\nRespond in EXACT structure:\n## 🎯 3 Key Messages\n## 🗣️ Opening Line\n## ⚡ Power Phrases (5)\n## ⚠️ Watch Out For (2)\n## 🔚 Closing Statement\nMilitary precision. No generic advice.`,
       grammar: `You are VOICE³ Grammar Expert.\n${studentCtx}\nRespond: 1.Issue 2.Rule 3.Fix 4.Executive Example 5.Quick Test`,
-      "qa-gauntlet": `You are VOICE³ Q&A Gauntlet. Fire hard executive questions (board/investor/media). After each answer: brutal-but-fair feedback + next question. Focus on weak areas: ${JSON.stringify(
-        eval_data?.weak_points || {}
-      )}`,
-      simulation: `You are VOICE³ Simulation Coach. Session: "${
-        context?.sessionTitle
-      }".\nAfter each response: exactly 2 lines (1 strength + 1 improvement), then next scenario.`,
-      "session-feedback": `You are VOICE³ Session Evaluator. Session: "${
-        context?.sessionTitle
-      }". Score: ${context?.score}%.\n${studentCtx}\nStructure:\n## ✅ What You Did Well\n## 🔧 Areas to Sharpen\n## 💡 Key Insight\n## 🎯 Next Session Focus\nPersonalised only — no generic feedback.`,
+      "qa-gauntlet": `You are VOICE³ Q&A Gauntlet. Fire hard executive questions (board/investor/media). After each answer: brutal-but-fair feedback + next question. Focus on weak areas: ${JSON.stringify(eval_data?.weak_points || {})}`,
+      simulation: `You are VOICE³ AI Professor — an elite executive English communication coach.\n${studentCtx}\nSession: "${context?.sessionTitle}".\nScenario: "${context?.scenario || ""}"\n\nYou ARE the professor. Act as a demanding but supportive executive communication coach. After each student response:\n1. Give specific, actionable feedback (what was good, what to improve)\n2. Correct any grammar or vocabulary issues with the corrected version\n3. Suggest a more executive/professional way to phrase their response\n4. Present the next challenge or follow-up question\n\nBe encouraging but honest. Use real-world executive scenarios. Push them to use transition phrases, hedging language, and professional register. Keep exchanges focused and practical.`,
+      "session-feedback": `You are VOICE³ Session Evaluator. Session: "${context?.sessionTitle}". Score: ${context?.score}%.\n${studentCtx}\nStructure:\n## ✅ What You Did Well\n## 🔧 Areas to Sharpen\n## 💡 Key Insight\n## 🎯 Next Session Focus\nPersonalised only — no generic feedback.`,
       diagnostic: `Evaluate diagnostic submission. Return ONLY valid JSON:\n{"level":"B2","teaching_style":"balanced","weak_points":{"pronunciation":6,"structure":4,"vocabulary":7,"confidence":5,"filler":8,"clarity":6},"recommended_path":["structure"],"ai_conclusions":"2-3 sentences","professor_focus_points":["area1"],"suggested_drills":["drill1"]}`,
     };
 
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    const systemPrompt = prompts[feature] || prompts["chat"];
+
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
+        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
-        "x-api-key": Deno.env.get("ANTHROPIC_API_KEY")!,
-        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-5-20251001",
-        max_tokens: 1024,
-        system: prompts[feature] || prompts["chat"],
-        messages,
+        model: "google/gemini-3-flash-preview",
+        messages: [
+          { role: "system", content: systemPrompt },
+          ...messages,
+        ],
       }),
     });
 
-    const aiData = await res.json();
-    const msg =
-      aiData.content?.[0]?.text ?? "Could not generate response.";
-
-    if (feature === "chat" && student_id) {
-      await sb.from("ai_chat_history").insert([
-        {
-          student_id,
-          role: "user",
-          content: messages[messages.length - 1].content,
-          feature: "chat",
-        },
-        {
-          student_id,
-          role: "assistant",
-          content: msg,
-          feature: "chat",
-        },
-      ]);
+    if (!res.ok) {
+      if (res.status === 429) {
+        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please wait a moment and try again." }), {
+          status: 429,
+          headers: { ...cors, "Content-Type": "application/json" },
+        });
+      }
+      if (res.status === 402) {
+        return new Response(JSON.stringify({ error: "AI credits exhausted. Please contact support." }), {
+          status: 402,
+          headers: { ...cors, "Content-Type": "application/json" },
+        });
+      }
+      const errText = await res.text();
+      console.error("AI gateway error:", res.status, errText);
+      throw new Error(`AI gateway error: ${res.status}`);
     }
+
+    const aiData = await res.json();
+    console.log("AI response structure:", JSON.stringify(aiData).substring(0, 500));
+    const msg = aiData.choices?.[0]?.message?.content ?? "Could not generate response.";
 
     return new Response(JSON.stringify({ message: msg }), {
       headers: { ...cors, "Content-Type": "application/json" },
     });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
+    console.error("ai-coach error:", message);
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
-      headers: cors,
+      headers: { ...cors, "Content-Type": "application/json" },
     });
   }
 });

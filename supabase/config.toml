@@ -11,3 +11,5 @@ project_id = "obwcehfrbvzyitqgdvje"
     verify_jwt = false
   [functions.process-email-queue]
     verify_jwt = true
+  [functions.ai-coach]
+    verify_jwt = false

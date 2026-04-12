@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Send, Bot, User, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAICoach } from "@/hooks/useAICoach";
 
 interface ChatMessage {
   role: "ai" | "user";
@@ -24,24 +25,6 @@ const TONE_COLORS: Record<string, string> = {
 
 const MAX_EXCHANGES = 4;
 
-function generateFeedback(userText: string, exchangeIndex: number): string {
-  const text = userText.trim();
-  if (!text) {
-    return "Please write a response so I can give you feedback. Take your time — precision matters more than speed.";
-  }
-
-  const wordCount = text.split(/\s+/).length;
-
-  const feedbacks = [
-    `Good start. Your response covers the key point. For executive English, try adding a specific metric or outcome: instead of stating what you do, quantify it — e.g., "I lead a team of 12 across three markets." Now respond to this: **How would you handle a disagreement with a senior stakeholder in a board meeting?**`,
-    `Clear and direct. ${wordCount < 10 ? "Aim for slightly more detail — executives are concise but not abrupt." : "Good length."} One refinement: open with a connector phrase like "Building on that..." or "My position is..." to sound more composed. Now try: **A client asks you to justify your pricing. Respond in 2–3 sentences.**`,
-    `Solid professional tone. ${text.match(/\b(however|therefore|consequently|furthermore)\b/i) ? "Good use of a transition word — that signals structured thinking." : "Consider adding a transition word (however, therefore) to connect your ideas more authoritatively."} Final scenario: **Close a negotiation — summarise the agreement and confirm next steps.**`,
-    `Strong finish. You've demonstrated structured, executive-level communication across this session. Key strengths: clarity, professional register, and purposeful language. Your practice score reflects consistent performance throughout.`,
-  ];
-
-  return feedbacks[Math.min(exchangeIndex, feedbacks.length - 1)];
-}
-
 function calculateScore(messages: ChatMessage[]): number {
   const userMessages = messages.filter((m) => m.role === "user");
   if (userMessages.length === 0) return 0;
@@ -61,6 +44,7 @@ function calculateScore(messages: ChatMessage[]): number {
 
 const SessionAIChat = ({ sessionTitle, scenario, onComplete }: SessionAIChatProps) => {
   const { currentUser } = useAuth();
+  const { sendMessage: sendAIMessage } = useAICoach();
 
   const userTone = (() => {
     try {
@@ -88,7 +72,7 @@ const SessionAIChat = ({ sessionTitle, scenario, onComplete }: SessionAIChatProp
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!input.trim() || isTyping || finished) return;
     const userMsg: ChatMessage = { role: "user", text: input.trim() };
     const newMessages = [...messages, userMsg];
@@ -98,18 +82,39 @@ const SessionAIChat = ({ sessionTitle, scenario, onComplete }: SessionAIChatProp
 
     const nextExchange = exchangeCount + 1;
 
-    setTimeout(() => {
-      const feedback = generateFeedback(userMsg.text, exchangeCount);
-      const aiMsg: ChatMessage = { role: "ai", text: feedback };
+    try {
+      // Build conversation history for the AI
+      const history = newMessages.map(m => ({
+        role: (m.role === "ai" ? "assistant" : "user") as "user" | "assistant",
+        content: m.text,
+      }));
+
+      const reply = await sendAIMessage(history, "simulation", {
+        sessionTitle,
+        scenario,
+        exchangeNumber: nextExchange,
+        maxExchanges: MAX_EXCHANGES,
+        userTone,
+      });
+
+      const aiMsg: ChatMessage = { role: "ai", text: reply };
       const withAI = [...newMessages, aiMsg];
       setMessages(withAI);
-      setIsTyping(false);
       setExchangeCount(nextExchange);
 
       if (nextExchange >= MAX_EXCHANGES) {
         setFinished(true);
       }
-    }, 1200);
+    } catch (err) {
+      console.error("AI error:", err);
+      const aiMsg: ChatMessage = {
+        role: "ai",
+        text: "I'm having trouble connecting right now. Please try again in a moment.",
+      };
+      setMessages([...newMessages, aiMsg]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleComplete = () => {
@@ -157,7 +162,7 @@ const SessionAIChat = ({ sessionTitle, scenario, onComplete }: SessionAIChatProp
             <Bot className="h-4 w-4 text-[#B89A5A]" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-[#F4F2ED]">VOICE³ Performance Coach</p>
+            <p className="text-sm font-semibold text-[#F4F2ED]">VOICE³ AI Professor</p>
             <p className="text-xs text-[#8E96A3]">
               {finished ? "Session complete" : `Exchange ${exchangeCount + 1} of ${MAX_EXCHANGES}`}
             </p>
