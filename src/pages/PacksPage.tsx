@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, Sparkles } from "lucide-react";
@@ -113,16 +113,20 @@ const fadeUp = {
 
 function CellValue({ v, colIdx }: { v: boolean | string; colIdx: number }) {
   if (v === true)
-    return <span style={{ color: "#52C41A", fontWeight: 700 }}>✓</span>;
+    return (
+      <span style={{ color: "var(--gold)", fontWeight: 700 }}>✓</span>
+    );
   if (v === false)
-    return <span style={{ color: "#8E96A3" }}>—</span>;
+    return (
+      <span style={{ color: "var(--text-muted)" }}>—</span>
+    );
   return (
     <span
       className="text-xs font-bold px-2 py-0.5 rounded"
       style={
         colIdx === 1
-          ? { color: "#C9A84C", background: "rgba(201,168,76,0.1)" }
-          : { color: "#F4F2ED" }
+          ? { color: "var(--text-gold)", background: "var(--gold-10)" }
+          : { color: "var(--text-primary)" }
       }
     >
       {v}
@@ -135,18 +139,32 @@ export default function PacksPage() {
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0B1A2A]">
+    <div style={{ background: "var(--bg-base)", minHeight: "100vh" }}>
       <Navbar />
 
       {/* ── Hero ── */}
       <section className="pt-32 pb-16 px-6 text-center">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
-          <p className="text-xs tracking-[0.2em] text-[#C9A84C] uppercase mb-4 font-semibold">Investimento</p>
-          <h1 className="font-serif text-[clamp(36px,5vw,52px)] font-bold text-[#F4F2ED] leading-tight mb-4">
+          <p
+            className="text-xs tracking-[0.2em] uppercase mb-4 font-semibold"
+            style={{ color: "var(--gold)" }}
+          >
+            Investimento
+          </p>
+          <h1
+            className="font-serif text-[clamp(36px,5vw,52px)] font-bold leading-tight mb-4"
+            style={{ color: "var(--text-primary)" }}
+          >
             Escolhe o Teu Nível
           </h1>
-          <div className="w-[60px] h-[2px] bg-[#C9A84C] mx-auto mb-5" />
-          <p className="text-[18px] text-[#8E96A3] max-w-lg mx-auto leading-relaxed">
+          <div
+            className="w-[60px] h-[2px] mx-auto mb-5"
+            style={{ background: "var(--gold)" }}
+          />
+          <p
+            className="text-[18px] max-w-lg mx-auto leading-relaxed"
+            style={{ color: "var(--text-secondary)" }}
+          >
             Todos os packs incluem sessões ao vivo com professor, coaching AI e certificado de domínio.
           </p>
         </motion.div>
@@ -163,24 +181,24 @@ export default function PacksPage() {
                 key={pack.id}
                 className="relative rounded-2xl p-7 flex flex-col"
                 style={{
-                  background: "#11263A",
+                  background: "var(--bg-elevated)",
                   border: isPro
-                    ? "2px solid rgba(201,168,76,0.4)"
-                    : "1px solid rgba(255,255,255,0.06)",
+                    ? "2px solid var(--border-gold-strong)"
+                    : "1px solid var(--border)",
                 }}
                 initial={{ opacity: 0, y: 32 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
-                whileHover={{ borderColor: "rgba(201,168,76,0.3)" }}
+                whileHover={{ borderColor: "var(--gold-15)" }}
               >
                 {/* Badge */}
                 {pack.badge && (
                   <div
                     className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 whitespace-nowrap tracking-wider"
                     style={{
-                      background: "linear-gradient(135deg, #C9A84C, #E8C87A)",
-                      color: "#0B1A2A",
+                      background: "linear-gradient(135deg, var(--gold), var(--gold-light))",
+                      color: "var(--bg-base)",
                     }}
                   >
                     <Sparkles className="h-3 w-3" /> {pack.badge.toUpperCase()}
@@ -188,38 +206,67 @@ export default function PacksPage() {
                 )}
 
                 <div className={pack.badge ? "pt-4" : ""}>
-                  <h3 className="font-serif text-xl font-semibold text-[#F4F2ED] mb-1">{pack.name}</h3>
-                  <p className="text-[13px] italic text-[#8E96A3] mb-5">{pack.tagline}</p>
+                  <h3
+                    className="font-serif text-xl font-semibold mb-1"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    {pack.name}
+                  </h3>
+                  <p
+                    className="text-[13px] italic mb-5"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    {pack.tagline}
+                  </p>
 
                   {/* Price */}
                   <div className="flex items-end gap-1 mb-4">
                     {typeof pack.price === "string" ? (
-                      <span className="text-2xl font-serif italic text-[#C9A84C]">{pack.price}</span>
+                      <span
+                        className="text-2xl font-serif italic"
+                        style={{ color: "var(--text-gold)" }}
+                      >
+                        {pack.price}
+                      </span>
                     ) : (
                       <>
-                        <span className="font-serif font-bold leading-none" style={{ fontSize: 56, color: "#C9A84C" }}>
+                        <span
+                          className="font-serif font-bold leading-none"
+                          style={{ fontSize: 56, color: "var(--text-gold)" }}
+                        >
                           €{pack.price}
                         </span>
-                        <span className="text-[#8E96A3] text-sm mb-3">/pack</span>
+                        <span
+                          className="text-sm mb-3"
+                          style={{ color: "var(--text-secondary)" }}
+                        >
+                          /pack
+                        </span>
                       </>
                     )}
                   </div>
 
                   {/* Promise */}
-                  <p className="text-sm italic mb-4" style={{ color: "#C9A84C" }}>
+                  <p
+                    className="text-sm italic mb-4"
+                    style={{ color: "var(--text-gold)" }}
+                  >
                     "{pack.promise}"
                   </p>
 
-                  <div className="w-full h-px bg-[#C9A84C]/10 mb-4" />
+                  <div
+                    className="w-full h-px mb-4"
+                    style={{ background: "var(--gold-10)" }}
+                  />
 
                   {/* Sessions pill */}
                   <div className="mb-5">
                     <span
                       className="text-xs px-3 py-1 rounded-full"
                       style={{
-                        background: "rgba(201,168,76,0.1)",
-                        border: "1px solid rgba(201,168,76,0.2)",
-                        color: "#C9A84C",
+                        background: "var(--gold-10)",
+                        border: "1px solid var(--gold-15)",
+                        color: "var(--text-gold)",
                       }}
                     >
                       Inclui {isBusiness ? "10+" : pack.sessionsIncluded} × Sessão de 45 min com Professor
@@ -229,8 +276,15 @@ export default function PacksPage() {
                   {/* Features */}
                   <ul className="space-y-2.5 mb-8 flex-1">
                     {pack.features.map((f) => (
-                      <li key={f} className="text-sm text-[#8E96A3] flex items-start gap-2.5">
-                        <Check className="h-4 w-4 text-[#C9A84C] mt-0.5 shrink-0" />
+                      <li
+                        key={f}
+                        className="text-sm flex items-start gap-2.5"
+                        style={{ color: "var(--text-secondary)" }}
+                      >
+                        <Check
+                          className="h-4 w-4 mt-0.5 shrink-0"
+                          style={{ color: "var(--gold)" }}
+                        />
                         {f}
                       </li>
                     ))}
@@ -240,14 +294,39 @@ export default function PacksPage() {
                   {isBusiness ? (
                     <Button
                       onClick={() => setModalOpen(true)}
-                      className="w-full h-12 rounded-xl font-semibold bg-[#C9A84C] text-[#0B1A2A] hover:bg-[#d4b56a] hover:shadow-[0_0_24px_rgba(201,168,76,0.3)] hover:-translate-y-0.5 transition-all duration-300"
+                      className="w-full h-12 rounded-xl font-semibold hover:-translate-y-0.5 transition-all duration-300"
+                      style={{
+                        background: "var(--gold)",
+                        color: "var(--bg-base)",
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLElement).style.background = "var(--gold-light)";
+                        (e.currentTarget as HTMLElement).style.boxShadow = "0 0 24px var(--gold-20)";
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLElement).style.background = "var(--gold)";
+                        (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                      }}
                     >
                       Falar com Comercial <ArrowRight className="ml-1.5 h-4 w-4" />
                     </Button>
                   ) : (
                     <Button
                       variant="outline"
-                      className="w-full h-12 rounded-xl font-medium border border-[#C9A84C]/30 text-[#C9A84C] bg-transparent hover:border-[#C9A84C]/60 hover:bg-[#C9A84C]/5 hover:-translate-y-0.5 transition-all duration-300"
+                      className="w-full h-12 rounded-xl font-medium hover:-translate-y-0.5 transition-all duration-300"
+                      style={{
+                        borderColor: "var(--gold-20)",
+                        color: "var(--text-gold)",
+                        background: "transparent",
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLElement).style.borderColor = "var(--gold-40)";
+                        (e.currentTarget as HTMLElement).style.background = "var(--gold-5)";
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLElement).style.borderColor = "var(--gold-20)";
+                        (e.currentTarget as HTMLElement).style.background = "transparent";
+                      }}
                       asChild
                     >
                       <Link to={`/auth?mode=register&pack=${pack.slug}`}>
@@ -265,7 +344,8 @@ export default function PacksPage() {
       {/* ── Comparison Table ── */}
       <section className="px-6 pb-24 max-w-5xl mx-auto">
         <motion.h2
-          className="text-center font-serif text-3xl font-bold text-[#F4F2ED] mb-10"
+          className="text-center font-serif text-3xl font-bold mb-10"
+          style={{ color: "var(--text-primary)" }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -275,7 +355,8 @@ export default function PacksPage() {
         </motion.h2>
 
         <motion.div
-          className="overflow-x-auto rounded-2xl border border-[#C9A84C]/10"
+          className="overflow-x-auto rounded-2xl"
+          style={{ border: "1px solid var(--gold-10)" }}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -283,10 +364,19 @@ export default function PacksPage() {
         >
           <table className="w-full text-sm">
             <thead>
-              <tr style={{ background: "rgba(201,168,76,0.06)" }}>
-                <th className="text-left py-4 px-5 text-[#C9A84C] font-bold tracking-wide">Funcionalidade</th>
+              <tr style={{ background: "var(--gold-5)" }}>
+                <th
+                  className="text-left py-4 px-5 font-bold tracking-wide"
+                  style={{ color: "var(--text-gold)" }}
+                >
+                  Funcionalidade
+                </th>
                 {packs.map((p) => (
-                  <th key={p.id} className="py-4 px-4 text-center text-[#C9A84C] font-bold">
+                  <th
+                    key={p.id}
+                    className="py-4 px-4 text-center font-bold"
+                    style={{ color: "var(--text-gold)" }}
+                  >
                     {p.name}
                   </th>
                 ))}
@@ -296,14 +386,20 @@ export default function PacksPage() {
               {comparison.map((row, ri) => (
                 <tr
                   key={row.label}
-                  style={{ background: ri % 2 === 0 ? "#11263A" : "#0B1A2A" }}
+                  style={{
+                    background: ri % 2 === 0 ? "var(--bg-elevated)" : "var(--bg-base)"
+                  }}
                 >
-                  <td className="py-3.5 px-5 text-[#8E96A3]">{row.label}</td>
+                  <td
+                    className="py-3.5 px-5"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    {row.label}
+                  </td>
                   {row.values.map((v, ci) => (
                     <td
                       key={ci}
                       className="py-3.5 px-4 text-center"
-                      style={undefined}
                     >
                       <CellValue v={v} colIdx={ci} />
                     </td>
@@ -320,23 +416,42 @@ export default function PacksPage() {
         <motion.div
           className="text-center rounded-2xl p-10"
           style={{
-            background: "rgba(201,168,76,0.04)",
-            border: "1px solid rgba(201,168,76,0.12)",
+            background: "var(--gold-5)",
+            border: "1px solid var(--gold-15)",
           }}
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h3 className="font-serif text-2xl font-bold text-[#F4F2ED] mb-3">
+          <h3
+            className="font-serif text-2xl font-bold mb-3"
+            style={{ color: "var(--text-primary)" }}
+          >
             Não tens a certeza de qual é o plano ideal?
           </h3>
-          <p className="text-[#8E96A3] mb-7">Agenda uma chamada de diagnóstico gratuita de 15 minutos.</p>
+          <p
+            className="mb-7"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            Agenda uma chamada de diagnóstico gratuita de 15 minutos.
+          </p>
           <Button
             onClick={() => setModalOpen(true)}
             variant="outline"
-            className="h-12 px-8 font-bold text-[#C9A84C] rounded-xl"
-            style={{ borderColor: "rgba(201,168,76,0.5)" }}
+            className="h-12 px-8 font-bold rounded-xl"
+            style={{
+              borderColor: "var(--gold-30)",
+              color: "var(--text-gold)",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = "var(--gold)";
+              (e.currentTarget as HTMLElement).style.background = "var(--gold-5)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = "var(--gold-30)";
+              (e.currentTarget as HTMLElement).style.background = "transparent";
+            }}
           >
             Agendar Chamada <ArrowRight className="ml-2 w-4 h-4" />
           </Button>

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { awardPoints } from "@/lib/persistence";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useEffect } from "react";
@@ -106,12 +107,13 @@ function AppContent() {
   return (
     <>
       <StreakTracker />
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <Routes>
             {/* Public */}
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<AuthPage />} />
@@ -177,9 +179,10 @@ function AppContent() {
             <Route path="/capitulos/:chapterId" element={<ProtectedRoute requiredRole="student"><ChapterDetail /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </>
   );
 }

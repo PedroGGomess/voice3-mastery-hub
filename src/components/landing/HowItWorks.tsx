@@ -5,36 +5,36 @@ const steps = [
   {
     icon: Zap,
     number: "01",
-    title: "Diagnóstico de Precisão",
-    description: "Mapeamos o teu Voice DNA — palavras por minuto, frequência de fillers, vocabulário activo e nível de fluência.",
-    tags: ["VOICE DNA", "ANÁLISE"],
+    title: "Precision Diagnostic",
+    description: "We map your Voice DNA — words per minute, filler frequency, active vocabulary and fluency level. This creates your personalised baseline and tracks every improvement.",
+    tags: ["VOICE DNA", "ANALYSIS"],
   },
   {
     icon: Layers,
     number: "02",
-    title: "Os 6 Programas",
-    description: "Domina domínios específicos: DEFEND, TRANSLATE, LEAD, OPERATE, DECODE, PREPARE. Cada um ataca um desafio executivo real.",
-    tags: ["DEFEND", "TRANSLATE", "LEAD", "OPERATE", "DECODE", "PREPARE"],
+    title: "The 6 Programmes",
+    description: "Master specific domains of executive communication through AI-structured sessions. From high-pressure presentations (DEFEND) to industry-specific vocabulary (TRANSLATE) to crisis communication (PREPARE).",
+    tags: ["DEFEND", "TRANSLATE", "LEAD"],
   },
   {
     icon: Flame,
     number: "03",
-    title: "Teste de Pressão AI",
-    description: "Enfrenta Q&A hostis, simulações de boardroom e debates AI. Treina sob pressão antes do momento real.",
-    tags: ["Q&A", "BOARDROOM", "PRESSÃO"],
+    title: "AI Pressure Testing",
+    description: "Face hostile Q&A, boardroom simulations and AI debate clubs that push you beyond your comfort zone. Choose your AI opponent — Tough CEO, Analytical German Director, Sceptical Investor.",
+    tags: ["Q&A", "BOARDROOM", "PRESSURE"],
   },
   {
     icon: UserCheck,
     number: "04",
-    title: "Calibração com Professor",
-    description: "Sessões 1-on-1 com professores que refinam o teu Tone — Diplomat, Anchor, American Direct ou Collaborator.",
+    title: "Coach Calibration",
+    description: "1-on-1 sessions with specialist coaches who refine your Tone Calibration — choosing between Diplomat, Anchor, American Direct or Collaborator for your audience.",
     tags: ["TONE", "1-ON-1", "COACHING"],
   },
 ];
 
 const HowItWorks = () => {
   return (
-    <section id="como-funciona" style={{ backgroundColor: "#0A0A0F" }} className="py-28 relative overflow-hidden">
+    <section id="como-funciona" style={{ backgroundColor: "var(--bg-base)" }} className="py-28 relative overflow-hidden">
       {/* Background gradient */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -52,17 +52,17 @@ const HowItWorks = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          <p className="text-[#D4A853] tracking-[0.15em] uppercase text-xs md:text-sm mb-4 font-semibold">
-            05 — A PLATAFORMA
+          <p className="text-[var(--gold)] tracking-[0.15em] uppercase text-xs md:text-sm mb-4 font-semibold">
+            05 — HOW IT WORKS
           </p>
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-[#F5F5F5] mb-6 leading-tight">
-            Coaching Humano. Precisão AI. Resultados Executivos.
+          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 leading-tight" style={{ color: "var(--text-primary)" }}>
+            Human Coaching. AI Precision. Executive Results.
           </h2>
           <p
             className="max-w-2xl mx-auto text-lg"
-            style={{ color: "#9A9AB0", lineHeight: "1.8" }}
+            style={{ color: "var(--text-secondary)", lineHeight: "1.8" }}
           >
-            Um motor de quatro etapas que te leva do diagnóstico ao boardroom.
+            A four-stage engine that takes you from diagnostic to boardroom ready.
           </p>
         </motion.div>
 
@@ -89,9 +89,9 @@ const HowItWorks = () => {
               <div
                 className="rounded-lg overflow-hidden border transition-all duration-300 h-full flex flex-col hover:shadow-xl"
                 style={{
-                  backgroundColor: "#12121A",
-                  borderLeft: "3px solid #D4A853",
-                  borderTop: "1px solid rgba(212,168,83,0.1)",
+                  backgroundColor: "var(--bg-surface)",
+                  borderLeft: "3px solid var(--gold)",
+                  borderTop: "1px solid var(--border-gold)",
                   borderRight: "1px solid rgba(212,168,83,0.05)",
                   borderBottom: "1px solid rgba(212,168,83,0.05)",
                   padding: "32px 24px",
@@ -107,24 +107,24 @@ const HowItWorks = () => {
                   {/* Icon */}
                   <div
                     className="w-12 h-12 rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
-                    style={{ backgroundColor: "rgba(212,168,83,0.1)" }}
+                    style={{ backgroundColor: "var(--gold-10)" }}
                   >
-                    <step.icon className="h-6 w-6" style={{ color: "#D4A853" }} />
+                    <step.icon className="h-6 w-6" style={{ color: "var(--gold)" }} />
                   </div>
 
                   {/* Number + Title */}
                   <p
                     className="text-xs tracking-[0.2em] uppercase font-semibold mb-3"
-                    style={{ color: "rgba(212,168,83,0.6)" }}
+                    style={{ color: "var(--text-gold)" }}
                   >
                     {step.number}
                   </p>
-                  <h3 className="font-serif text-xl font-bold text-[#F5F5F5] mb-4 leading-tight">
+                  <h3 className="font-serif text-xl font-bold mb-4 leading-tight" style={{ color: "var(--text-primary)" }}>
                     {step.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-sm leading-relaxed mb-6 flex-grow" style={{ color: "#9A9AB0" }}>
+                  <p className="text-sm leading-relaxed mb-6 flex-grow" style={{ color: "var(--text-secondary)" }}>
                     {step.description}
                   </p>
 
@@ -135,9 +135,9 @@ const HowItWorks = () => {
                         key={idx}
                         className="text-xs px-2.5 py-1 rounded-full font-medium"
                         style={{
-                          backgroundColor: "rgba(212,168,83,0.08)",
-                          color: "#D4A853",
-                          border: "1px solid rgba(212,168,83,0.2)",
+                          backgroundColor: "var(--gold-10)",
+                          color: "var(--gold)",
+                          border: "1px solid var(--border-gold)",
                         }}
                       >
                         {tag}
@@ -164,9 +164,9 @@ const HowItWorks = () => {
               <div
                 className="rounded-lg overflow-hidden border transition-all duration-300"
                 style={{
-                  backgroundColor: "#12121A",
-                  borderLeft: "3px solid #D4A853",
-                  borderTop: "1px solid rgba(212,168,83,0.1)",
+                  backgroundColor: "var(--bg-surface)",
+                  borderLeft: "3px solid var(--gold)",
+                  borderTop: "1px solid var(--border-gold)",
                   borderRight: "1px solid rgba(212,168,83,0.05)",
                   borderBottom: "1px solid rgba(212,168,83,0.05)",
                   padding: "24px",
@@ -175,20 +175,20 @@ const HowItWorks = () => {
                 <div className="flex gap-4">
                   <div
                     className="w-12 h-12 shrink-0 rounded-lg flex items-center justify-center"
-                    style={{ backgroundColor: "rgba(212,168,83,0.1)" }}
+                    style={{ backgroundColor: "var(--gold-10)" }}
                   >
-                    <step.icon className="h-6 w-6" style={{ color: "#D4A853" }} />
+                    <step.icon className="h-6 w-6" style={{ color: "var(--gold)" }} />
                   </div>
 
                   <div className="flex-1">
                     <p
                       className="text-xs tracking-[0.2em] uppercase font-semibold mb-2"
-                      style={{ color: "rgba(212,168,83,0.6)" }}
+                      style={{ color: "var(--text-gold)" }}
                     >
                       {step.number}
                     </p>
-                    <h3 className="font-serif text-lg font-bold text-[#F5F5F5] mb-3">{step.title}</h3>
-                    <p className="text-sm leading-relaxed mb-4" style={{ color: "#9A9AB0" }}>
+                    <h3 className="font-serif text-lg font-bold mb-3" style={{ color: "var(--text-primary)" }}>{step.title}</h3>
+                    <p className="text-sm leading-relaxed mb-4" style={{ color: "var(--text-secondary)" }}>
                       {step.description}
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -197,9 +197,9 @@ const HowItWorks = () => {
                           key={idx}
                           className="text-xs px-2.5 py-1 rounded-full font-medium"
                           style={{
-                            backgroundColor: "rgba(212,168,83,0.08)",
-                            color: "#D4A853",
-                            border: "1px solid rgba(212,168,83,0.2)",
+                            backgroundColor: "var(--gold-10)",
+                            color: "var(--gold)",
+                            border: "1px solid var(--border-gold)",
                           }}
                         >
                           {tag}
@@ -218,7 +218,7 @@ const HowItWorks = () => {
       <div
         className="mt-20 h-px max-w-7xl mx-auto"
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(212,168,83,0.15), transparent)",
+          background: "linear-gradient(90deg, transparent, var(--border-gold), transparent)",
         }}
       />
     </section>

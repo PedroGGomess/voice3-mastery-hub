@@ -18,19 +18,19 @@ import {
 } from "@/lib/chaptersData";
 
 /* ═══════════════════════════════════════════════
-   COLOUR SYSTEM (VAULT reference)
+   COLOUR SYSTEM (CSS CUSTOM PROPERTIES)
    ═══════════════════════════════════════════════ */
 const C = {
-  bg: "#0d1117",
-  card: "#1c2333",
-  cardHover: "#222d3f",
-  border: "#30363d",
-  gold: "#c9a84c",
-  goldLight: "#e0c068",
-  goldDim: "rgba(201,168,76,0.15)",
-  text: "#e6edf3",
-  textSec: "#8b949e",
-  textMuted: "#6e7681",
+  bg: "var(--bg-base)",
+  card: "var(--bg-elevated)",
+  cardHover: "var(--bg-surface)",
+  border: "var(--border)",
+  gold: "var(--gold)",
+  goldLight: "var(--gold-light)",
+  goldDim: "var(--gold-10)",
+  text: "var(--text-primary)",
+  textSec: "var(--text-secondary)",
+  textMuted: "var(--text-muted)",
   green: "#3fb950",
   blue: "#58a6ff",
   red: "#f85149",

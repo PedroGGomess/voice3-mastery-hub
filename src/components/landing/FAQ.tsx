@@ -4,28 +4,64 @@ import { ChevronDown } from "lucide-react";
 
 const faqs = [
   {
-    q: "O que é o VOICE³?",
-    a: "VOICE³ é uma plataforma de comunicação executiva com inteligência artificial, desenhada para líderes globais que precisam operar sob pressão. Não é um curso de inglês tradicional — é um programa de treino executivo focado em presença vocal, autoridade e impacto em cenários reais como board meetings, negociações e pitch internacional.",
+    q: "How does the 7-Day Trial work?",
+    a: "When you register, you enter your payment details to unlock the platform. For the first 7 days, you will not be charged. You receive full, unlimited access to all AI-driven features. If you decide the platform isn't for you, simply cancel before the 7 days are up with one click.",
   },
   {
-    q: "Preciso de ter um nível avançado de inglês?",
-    a: "Não. VOICE³ é desenhado para falantes em nível B1/B2 (intermediate). O programa trabalha a partir do teu nível atual e desenvolve não apenas a gramática, mas a confiança, presença vocal e autoridade na comunicação executiva.",
+    q: "Why do I need to provide a credit card for a free trial?",
+    a: "VOICE³ uses advanced, highly responsive AI voice technology that requires significant computing power. Requiring a payment method ensures our servers remain dedicated to serious professionals.",
   },
   {
-    q: "Como funcionam as sessões com professor?",
-    a: "As sessões 1-on-1 com professor são personalizadas para a tua jornada. Trabalhas com calibração de tom (escolhendo entre Diplomat, Anchor, American Direct ou Collaborator), análise de performance e feedback prático sobre como soar mais assertivo, persuasivo e impactante em contextos executivos.",
+    q: "Does the 7-Day Trial include a session with a live human coach?",
+    a: "No. The 7-Day Trial gives you unlimited access to the complete AI engine. Live 1-on-1 sessions with our elite human coaches are reserved exclusively for fully paid subscribers on the Hybrid tier.",
   },
   {
-    q: "Posso cancelar a qualquer momento?",
-    a: "Sim. VOICE³ oferece plena flexibilidade. Podes cancelar a tua subscrição a qualquer momento, sem penalizações ou contratos de longa duração. Acreditamos que resultados reais falam por si.",
+    q: "What happens if I cancel my trial or subscription?",
+    a: "If you cancel, you will immediately lose access to your personalised data — your Error Bank, Vocabulary Vault, Voice DNA progress, and your custom-built curriculum. You will be downgraded to a free Maintenance Tier.",
   },
   {
-    q: "Quanto tempo demora a ver resultados?",
-    a: "87% dos participantes reportam melhoria mensurável em 4 semanas. A maioria nota mudanças significativas em presença vocal e confiança em 2 semanas. Os resultados mais profundos (transformação de como és percebido) emergem com consistência ao longo de 8-12 semanas.",
+    q: "What is the step-by-step experience once I subscribe?",
+    a: "Your journey starts with the Precision Diagnostic to map your Voice DNA baseline. Next comes your Voice DNA profile revealing your current speaking patterns. You then enter your First Block of structured AI sessions. Daily Practice reinforces the material. Coach Calibration fine-tunes your tone with a specialist. Finally, you progress to the Next Block with advanced challenges.",
   },
   {
-    q: "O que é o Voice DNA?",
-    a: "Voice DNA Analytics é o sistema de métricas do VOICE³. Acompanha em tempo real: palavras por minuto, redução de preenchimentos (fillers), pacing, entoação, vocabulário executivo e muito mais. Recebe um relatório personalizado após cada sessão com dados precisos sobre o teu progresso.",
+    q: "What are the different subscription packages available?",
+    a: "We offer three tiers: The AI-Only tier gives you access to our complete AI engine with 7-day trial entry. The Hybrid tier is our most popular option, combining unlimited AI sessions with 4 live coaching sessions per month. The Business/Enterprise tier is fully customised for teams with dedicated account management and bespoke curriculum.",
+  },
+  {
+    q: "I already speak English well. Why do I need this?",
+    a: "The Speaking Gap exists because native fluency doesn't equal executive presence. You might speak English perfectly in casual conversation but sound uncertain in high-stakes situations. VOICE³ bridges the gap between linguistic ability and executive impact — building the psychological resilience, strategic vocabulary, and vocal authority that commands boardrooms.",
+  },
+  {
+    q: "Is this just another language app like Duolingo or Babbel?",
+    a: "No. VOICE³ is not a language app. It's an executive performance engine. While language apps teach vocabulary and grammar, VOICE³ focuses on executive communication dynamics: pressure resilience, tone calibration, real-time feedback, boardroom simulations, and persona development. It's designed for professionals who must perform, not students learning a language.",
+  },
+  {
+    q: "How does the AI adapt to my specific needs?",
+    a: "Your Voice DNA profile is your foundation. The AI maps your baseline — words per minute, filler frequency, vocabulary range, pitch patterns — then creates a personalised curriculum addressing your specific weak points. As you progress, the AI continuously learns from your sessions, adapting difficulty, content focus, and feedback intensity to match your trajectory.",
+  },
+  {
+    q: "How do you ensure the exercises match my English level?",
+    a: "We calibrate from Foundation to Mastery. Your diagnostic assessment determines your starting level. The AI then serves content at the right difficulty — challenging enough to drive improvement but not so difficult you lose confidence. The system automatically escalates as you master each block.",
+  },
+  {
+    q: "Are there custom-made or highly personalised products available?",
+    a: "Yes. Beyond our standard Hybrid and Business tiers, we offer fully custom bespoke modules tailored to your industry, company culture, and communication challenges. Enterprise programmes include team-wide assessments, competitive benchmarking, and a dedicated account manager. Contact our team for a custom consultation.",
+  },
+  {
+    q: "How much time do I need to commit each week?",
+    a: "Minimal but consistent. Most executives spend 10-15 minutes on daily micro-chapters—short, focused sessions that fit between meetings. The Prep Room simulations take 5 minutes to set up. If you choose live coaching on the Hybrid tier, sessions are 1 hour monthly, scheduled around your calendar.",
+  },
+  {
+    q: "Who are the live coaches on the Hybrid and Business tiers?",
+    a: "Our coaches are Elite Executive Communication Specialists — former C-suite executives, international diplomats, and professional speech coaches with 15+ years of experience training high-stakes communicators. Each brings real-world boardroom and negotiation experience.",
+  },
+  {
+    q: "What happens during a live coaching session?",
+    a: "Your coach reviews your Voice DNA analytics and Error Bank to identify patterns and opportunities. You then focus on a specific challenge — a presentation technique, tone shift, or high-pressure scenario — and get real-time feedback and refinement. Sessions are highly practical and immediately applicable to your upcoming challenges.",
+  },
+  {
+    q: "Can I try VOICE³ for free?",
+    a: "Yes. We offer a 7-Day Trial with full, unlimited access to our entire AI platform. No watermarks, no restrictions. Just register, enter your payment details, and you get 7 days free. Cancel anytime before day 7 with one click if it's not right for you.",
   },
 ];
 
@@ -55,7 +91,7 @@ const FAQ = () => {
   return (
     <section
       className="py-28 relative overflow-hidden"
-      style={{ backgroundColor: "#0A0A0F" }}
+      style={{ backgroundColor: "var(--bg-base)" }}
       id="faq"
     >
       {/* Decorative background */}
@@ -78,18 +114,18 @@ const FAQ = () => {
         >
           <p
             className="tracking-[0.2em] uppercase text-sm mb-6 font-medium"
-            style={{ color: "#D4A853" }}
+            style={{ color: "var(--gold)" }}
           >
             FAQ
           </p>
           <h2
             className="font-serif text-4xl md:text-5xl font-semibold mb-6"
-            style={{ color: "#F5F5F5" }}
+            style={{ color: "var(--text-primary)" }}
           >
-            Perguntas Frequentes
+            Frequently Asked Questions
           </h2>
-          <p style={{ color: "#9A9AB0" }}>
-            Tudo o que precisas saber sobre VOICE³.
+          <p style={{ color: "var(--text-secondary)" }}>
+            Everything you need to know about VOICE³.
           </p>
         </motion.div>
 
@@ -110,9 +146,9 @@ const FAQ = () => {
                   className="transition-all duration-300"
                   style={{
                     borderRadius: 12,
-                    backgroundColor: isOpen ? "rgba(212, 168, 83, 0.05)" : "rgba(255, 255, 255, 0.02)",
+                    backgroundColor: isOpen ? "var(--gold-10)" : "rgba(255, 255, 255, 0.02)",
                     border: isOpen
-                      ? "1px solid rgba(212, 168, 83, 0.25)"
+                      ? "1px solid var(--border-gold)"
                       : "1px solid rgba(255, 255, 255, 0.05)",
                     overflow: "hidden",
                   }}
@@ -123,7 +159,7 @@ const FAQ = () => {
                     className="w-full px-6 py-5 md:px-8 md:py-6 flex items-center justify-between cursor-pointer transition-colors duration-300 hover:bg-opacity-40"
                     style={{
                       backgroundColor: isOpen
-                        ? "rgba(212, 168, 83, 0.03)"
+                        ? "var(--gold-15)"
                         : "transparent",
                       fontSize: 15,
                       fontWeight: 500,
@@ -133,7 +169,7 @@ const FAQ = () => {
                     <span
                       className="font-semibold transition-colors duration-300"
                       style={{
-                        color: isOpen ? "#D4A853" : "rgba(245, 245, 245, 0.9)",
+                        color: isOpen ? "var(--gold)" : "var(--text-primary)",
                       }}
                     >
                       {faq.q}
@@ -148,7 +184,7 @@ const FAQ = () => {
                       <ChevronDown
                         className="h-5 w-5 transition-colors duration-300"
                         style={{
-                          color: isOpen ? "#D4A853" : "#9A9AB0",
+                          color: isOpen ? "var(--gold)" : "var(--text-secondary)",
                         }}
                       />
                     </motion.div>
@@ -169,12 +205,12 @@ const FAQ = () => {
                         <div
                           className="px-6 md:px-8 py-5 md:py-6 border-t"
                           style={{
-                            borderColor: "rgba(212, 168, 83, 0.1)",
+                            borderColor: "var(--border-gold)",
                           }}
                         >
                           <p
                             className="text-sm md:text-base leading-relaxed"
-                            style={{ color: "rgba(245, 245, 245, 0.75)" }}
+                            style={{ color: "var(--text-secondary)" }}
                           >
                             {faq.a}
                           </p>
@@ -196,22 +232,22 @@ const FAQ = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-16 p-8 md:p-10 rounded-lg text-center"
           style={{
-            backgroundColor: "rgba(212, 168, 83, 0.05)",
-            border: "1px solid rgba(212, 168, 83, 0.15)",
+            backgroundColor: "var(--gold-10)",
+            border: "1px solid var(--border-gold)",
           }}
         >
-          <p className="mb-4" style={{ color: "#F5F5F5" }}>
-            Não encontras a resposta que procuras?
+          <p className="mb-4" style={{ color: "var(--text-primary)" }}>
+            Can't find the answer you're looking for?
           </p>
           <a
-            href="mailto:support@voice3.com"
+            href="mailto:voice3.couch@gmail.com"
             className="inline-flex items-center justify-center px-8 py-3 rounded-lg font-medium transition-all duration-300 hover:brightness-110"
             style={{
-              backgroundColor: "#D4A853",
+              backgroundColor: "var(--gold)",
               color: "#000",
             }}
           >
-            Contacta o Suporte
+            Contact Support
           </a>
         </motion.div>
       </div>
@@ -220,7 +256,7 @@ const FAQ = () => {
       <div
         className="h-px w-full mt-20"
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(212, 168, 83, 0.2), transparent)",
+          background: "linear-gradient(90deg, transparent, var(--border-gold), transparent)",
         }}
       />
     </section>

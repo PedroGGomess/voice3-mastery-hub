@@ -1,20 +1,30 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Menu, X, LayoutDashboard, ArrowRight } from "lucide-react";
+import { Menu, X, LayoutDashboard, ArrowRight, Sun, Moon, Globe } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useTranslation } from "react-i18next";
 
 const navLinks: [string, string][] = [
-  ["Como Funciona", "/how-it-works"],
+  ["How It Works", "/how-it-works"],
   ["Packs", "/packs"],
-  ["Para Empresas", "/for-companies"],
-  ["Contacto", "/contact"],
+  ["For Companies", "/for-companies"],
+  ["Contact", "/contact"],
 ];
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const { isAuthenticated, currentUser } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language?.startsWith("pt") ? "PT" : "EN";
+  const switchLang = (lang: string) => {
+    i18n.changeLanguage(lang);
+    setLangOpen(false);
+  };
 
   const dashboardLink =
     currentUser?.role === "company_admin" ? "/empresa" :
@@ -36,7 +46,7 @@ const Navbar = () => {
         background: scrolled ? "rgba(10,10,15,0.97)" : "rgba(10,10,15,0.6)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
-        borderBottom: `1px solid ${scrolled ? "rgba(212,168,83,0.1)" : "transparent"}`,
+        borderBottom: `1px solid ${scrolled ? "var(--border-gold)" : "transparent"}`,
       }}
     >
       <div
@@ -47,9 +57,9 @@ const Navbar = () => {
         <Link to="/" className="flex items-center group">
           <span
             className="font-sans font-bold text-lg uppercase transition-colors duration-200"
-            style={{ letterSpacing: "6px", color: "#F5F5F5" }}
+            style={{ letterSpacing: "6px", color: "var(--text-primary)" }}
           >
-            VOICE<sup style={{ color: "#D4A853", fontSize: "12px" }}>3</sup>
+            VOICE<sup style={{ color: "var(--gold)", fontSize: "12px" }}>3</sup>
           </span>
         </Link>
 
@@ -60,9 +70,9 @@ const Navbar = () => {
               key={href}
               to={href}
               className="text-sm transition-colors duration-300"
-              style={{ color: "#9A9AB0" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "#F5F5F5")}
-              onMouseLeave={e => (e.currentTarget.style.color = "#9A9AB0")}
+              style={{ color: "var(--text-secondary)" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "var(--text-primary)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-secondary)")}
             >
               {label}
             </Link>
@@ -71,19 +81,66 @@ const Navbar = () => {
 
         {/* Desktop Right */}
         <div className="hidden md:flex items-center gap-3 justify-end">
+          {/* Language Selector */}
+          <div className="relative">
+            <button
+              onClick={() => setLangOpen(!langOpen)}
+              className="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-md transition-colors"
+              style={{ color: "var(--text-secondary)", border: "1px solid var(--border)" }}
+            >
+              <Globe className="h-3.5 w-3.5" />
+              {currentLang}
+            </button>
+            {langOpen && (
+              <div
+                className="absolute top-full right-0 mt-1 rounded-lg py-1 min-w-[80px] z-50"
+                style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)", boxShadow: "var(--shadow-card)" }}
+              >
+                <button
+                  onClick={() => switchLang("en")}
+                  className="w-full text-left px-3 py-1.5 text-xs transition-colors"
+                  style={{ color: currentLang === "EN" ? "var(--gold)" : "var(--text-secondary)" }}
+                >
+                  English
+                </button>
+                <button
+                  onClick={() => switchLang("pt")}
+                  className="w-full text-left px-3 py-1.5 text-xs transition-colors"
+                  style={{ color: currentLang === "PT" ? "var(--gold)" : "var(--text-secondary)" }}
+                >
+                  Portugues
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="w-8 h-8 rounded-md flex items-center justify-center transition-colors"
+            style={{ border: "1px solid var(--border)" }}
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === "dark" ? (
+              <Sun className="h-3.5 w-3.5" style={{ color: "var(--gold)" }} />
+            ) : (
+              <Moon className="h-3.5 w-3.5" style={{ color: "var(--text-secondary)" }} />
+            )}
+          </button>
+
           {isAuthenticated ? (
             <>
-              <span className="text-sm" style={{ color: "#9A9AB0" }}>
+              <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
                 {currentUser?.name?.split(" ")[0]}
               </span>
               <Button
                 size="sm"
                 className="font-semibold rounded-md transition-all duration-300"
-                style={{ background: "#D4A853", color: "#000", border: "none" }}
+                style={{ background: "var(--gold)", color: "#000", border: "none" }}
                 asChild
               >
                 <Link to={dashboardLink}>
-                  <LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Plataforma
+                  <LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Platform
                 </Link>
               </Button>
             </>
@@ -92,20 +149,20 @@ const Navbar = () => {
               <Link
                 to="/auth"
                 className="text-sm transition-colors duration-300"
-                style={{ color: "#9A9AB0" }}
-                onMouseEnter={e => (e.currentTarget.style.color = "#F5F5F5")}
-                onMouseLeave={e => (e.currentTarget.style.color = "#9A9AB0")}
+                style={{ color: "var(--text-secondary)" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "var(--text-primary)")}
+                onMouseLeave={e => (e.currentTarget.style.color = "var(--text-secondary)")}
               >
-                Entrar
+                Sign In
               </Link>
               <Button
                 size="sm"
                 className="font-semibold rounded-md px-5 transition-all duration-300 hover:brightness-110"
-                style={{ background: "#D4A853", color: "#000", border: "none" }}
+                style={{ background: "var(--gold)", color: "#000", border: "none" }}
                 asChild
               >
                 <Link to="/auth?mode=register">
-                  Candidatar-me <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                  Apply Now <ArrowRight className="ml-1 h-3.5 w-3.5" />
                 </Link>
               </Button>
             </>
@@ -115,7 +172,7 @@ const Navbar = () => {
         {/* Mobile Toggle */}
         <button
           className="md:hidden justify-self-end"
-          style={{ color: "#F5F5F5" }}
+          style={{ color: "var(--text-primary)" }}
           onClick={() => setOpen(!open)}
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -128,7 +185,7 @@ const Navbar = () => {
           className="md:hidden"
           style={{
             background: "rgba(10,10,15,0.98)",
-            borderTop: "1px solid rgba(212,168,83,0.1)",
+            borderTop: "1px solid var(--border-gold)",
             backdropFilter: "blur(16px)",
           }}
         >
@@ -138,7 +195,7 @@ const Navbar = () => {
                 key={href}
                 to={href}
                 className="block text-sm py-2 transition-colors"
-                style={{ color: "#9A9AB0" }}
+                style={{ color: "var(--text-secondary)" }}
                 onClick={() => setOpen(false)}
               >
                 {label}
@@ -149,11 +206,11 @@ const Navbar = () => {
                 <Button
                   size="sm"
                   className="flex-1 font-semibold rounded-md"
-                  style={{ background: "#D4A853", color: "#000" }}
+                  style={{ background: "var(--gold)", color: "#000" }}
                   asChild
                 >
                   <Link to={dashboardLink} onClick={() => setOpen(false)}>
-                    <LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Plataforma
+                    <LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Platform
                   </Link>
                 </Button>
               ) : (
@@ -162,19 +219,19 @@ const Navbar = () => {
                     variant="outline"
                     size="sm"
                     className="flex-1 rounded-md"
-                    style={{ borderColor: "rgba(212,168,83,0.3)", color: "#F5F5F5" }}
+                    style={{ borderColor: "var(--border)", color: "var(--text-primary)" }}
                     asChild
                   >
-                    <Link to="/auth" onClick={() => setOpen(false)}>Entrar</Link>
+                    <Link to="/auth" onClick={() => setOpen(false)}>Sign In</Link>
                   </Button>
                   <Button
                     size="sm"
                     className="flex-1 font-semibold rounded-md"
-                    style={{ background: "#D4A853", color: "#000" }}
+                    style={{ background: "var(--gold)", color: "#000" }}
                     asChild
                   >
                     <Link to="/auth?mode=register" onClick={() => setOpen(false)}>
-                      Candidatar-me
+                      Apply Now
                     </Link>
                   </Button>
                 </>

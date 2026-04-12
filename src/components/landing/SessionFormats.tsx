@@ -11,35 +11,33 @@ import {
 const features = [
   {
     icon: Target,
-    title: "My Case",
-    subtitle: "Real-World Threading",
-    desc: "O teu cenário real (apresentação ao board, negociação, pitch) percorre todas as sessões.",
+    title: "Tone Calibration",
+    desc: "Shift between Diplomat, Anchor, American Direct and Collaborator depending on your audience.",
   },
   {
     icon: Sliders,
-    title: "Calibração de Tom",
-    desc: "Escolhe o teu estilo: Diplomat, Anchor, American Direct ou Collaborator.",
+    title: "Voice DNA Analytics",
+    desc: "Track words per minute, filler frequency, vocabulary range and pitch variation over time.",
   },
   {
     icon: Zap,
-    title: "Rescue Mode",
-    subtitle: "Preparação de Emergência",
-    desc: "Preparação de emergência de 15 minutos para uma reunião que acontece hoje.",
+    title: "High-Stakes Q&A",
+    desc: "Face hostile board questions, sceptical investor challenges and rapid-fire scenarios.",
   },
   {
     icon: BarChart3,
-    title: "Voice DNA Analytics",
-    desc: "Acompanha palavras por minuto, redução de fillers, crescimento de vocabulário em tempo real.",
+    title: "The Shadow Coach",
+    desc: "A continuous AI engine that tracks your Voice DNA even during live human coaching sessions.",
   },
   {
     icon: Eye,
-    title: "Q&A Hostil",
-    desc: "Teste de pressão rápido onde a IA faz perguntas agressivas. Perdes 'vidas' por fillers.",
+    title: "The Prep Room",
+    desc: "Upload your CV and generate a bespoke interview simulation based on your actual scenario.",
   },
   {
     icon: Headphones,
-    title: "Shadow Coach",
-    desc: "Liga-se ao teu Zoom ou Teams para feedback privado em tempo real durante reuniões.",
+    title: "The Error Bank",
+    desc: "Your chronological, categorised record of fossilised errors and pronunciation patterns.",
   },
 ];
 
@@ -67,7 +65,7 @@ const SessionFormats = () => {
   return (
     <section
       className="py-28 relative overflow-hidden"
-      style={{ backgroundColor: "#0A0A0F" }}
+      style={{ backgroundColor: "var(--bg-base)" }}
       id="experiencia"
     >
       {/* Decorative background gradient */}
@@ -90,19 +88,19 @@ const SessionFormats = () => {
         >
           <p
             className="tracking-[0.2em] uppercase text-sm mb-6 font-medium"
-            style={{ color: "#D4A853" }}
+            style={{ color: "var(--gold)" }}
           >
-            06 — A EXPERIÊNCIA
+            06 — THE EXPERIENCE
           </p>
           <h2
             className="font-serif text-4xl md:text-5xl font-semibold mb-6"
-            style={{ color: "#F5F5F5" }}
+            style={{ color: "var(--text-primary)" }}
           >
-            Feito para Executivos.{" "}
-            <span style={{ color: "#D4A853" }}>Não para Estudantes.</span>
+            Built for Executives.{" "}
+            <span style={{ color: "var(--gold)" }}>Not for Students.</span>
           </h2>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto" style={{ color: "#9A9AB0" }}>
-            Cada funcionalidade é desenhada para cenários executivos reais.
+          <p className="text-lg md:text-xl max-w-2xl mx-auto" style={{ color: "var(--text-secondary)" }}>
+            Every feature is designed for real executive scenarios.
           </p>
         </motion.div>
 
@@ -129,11 +127,11 @@ const SessionFormats = () => {
                 <div
                   className="relative h-full rounded-xl p-8 backdrop-blur-sm transition-all duration-300"
                   style={{
-                    backgroundColor: "#12121A",
+                    backgroundColor: "var(--bg-surface)",
                     border: "1px solid rgba(255, 255, 255, 0.05)",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "#D4A853";
+                    e.currentTarget.style.borderColor = "var(--gold)";
                     e.currentTarget.style.boxShadow =
                       "0 0 20px rgba(212, 168, 83, 0.15)";
                   }}
@@ -144,22 +142,22 @@ const SessionFormats = () => {
                   }}
                 >
                   {/* Icon */}
-                  <div className="mb-6 inline-flex p-3 rounded-lg" style={{ backgroundColor: "rgba(212, 168, 83, 0.08)" }}>
-                    <Icon className="h-6 w-6" style={{ color: "#D4A853" }} />
+                  <div className="mb-6 inline-flex p-3 rounded-lg" style={{ backgroundColor: "var(--gold-10)" }}>
+                    <Icon className="h-6 w-6" style={{ color: "var(--gold)" }} />
                   </div>
 
                   {/* Title and Subtitle */}
-                  <h3 className="font-serif text-xl font-semibold mb-1" style={{ color: "#F5F5F5" }}>
+                  <h3 className="font-serif text-xl font-semibold mb-1" style={{ color: "var(--text-primary)" }}>
                     {feature.title}
                   </h3>
                   {feature.subtitle && (
-                    <p className="text-sm font-medium mb-4" style={{ color: "#D4A853" }}>
+                    <p className="text-sm font-medium mb-4" style={{ color: "var(--gold)" }}>
                       {feature.subtitle}
                     </p>
                   )}
 
                   {/* Description */}
-                  <p className="text-sm leading-relaxed" style={{ color: "#9A9AB0" }}>
+                  <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
                     {feature.desc}
                   </p>
 
@@ -168,7 +166,7 @@ const SessionFormats = () => {
                     className="absolute bottom-0 left-0 h-1 bg-gradient-to-r transition-all duration-300"
                     style={{
                       width: "0%",
-                      background: `linear-gradient(90deg, #D4A853, transparent)`,
+                      background: `linear-gradient(90deg, var(--gold), transparent)`,
                     }}
                     onMouseEnter={(e) => {
                       (e.currentTarget as HTMLElement).style.width = "100%";
@@ -188,7 +186,7 @@ const SessionFormats = () => {
       <div
         className="h-px w-full mt-20"
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(212, 168, 83, 0.2), transparent)",
+          background: "linear-gradient(90deg, transparent, var(--border-gold), transparent)",
         }}
       />
     </section>

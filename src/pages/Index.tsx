@@ -12,6 +12,7 @@ import FAQ from "@/components/landing/FAQ";
 import FinalCTA from "@/components/landing/FinalCTA";
 import Footer from "@/components/landing/Footer";
 import ChatWidget from "@/components/ChatWidget";
+import VideoDemos from "@/components/landing/VideoDemos";
 
 const Index = () => {
   const [showTop, setShowTop] = useState(false);
@@ -23,7 +24,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ background: "#0A0A0F", color: "#F5F5F5" }}>
+    <div className="min-h-screen" style={{ background: "var(--bg-base)", color: "var(--text-primary)" }}>
       <Navbar />
       <main>
         {/* 01 — HERO + SOCIAL PROOF BAR */}
@@ -35,22 +36,25 @@ const Index = () => {
         {/* 03 — PAIN & PROMISE + METHOD */}
         <WhatYouLearn />
 
-        {/* 05 — HOW IT WORKS (4 steps) */}
+        {/* 04 — HOW IT WORKS (4 steps) */}
         <HowItWorks />
 
-        {/* 06 — FEATURES */}
+        {/* 05 — CORE FEATURES */}
         <SessionFormats />
 
-        {/* 07 — FOR COMPANIES */}
+        {/* 05b — VIDEO DEMOS */}
+        <VideoDemos />
+
+        {/* 06 — FOR COMPANIES */}
         <ForCompanies />
 
-        {/* 08 — TESTIMONIALS */}
+        {/* 07 — TESTIMONIALS */}
         <Testimonials />
 
-        {/* 09 — FAQ */}
+        {/* 08 — FAQ */}
         <FAQ />
 
-        {/* 10 — FINAL CTA */}
+        {/* 09 — FINAL CTA */}
         <FinalCTA />
       </main>
       <Footer />
@@ -59,9 +63,9 @@ const Index = () => {
       {showTop && (
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label="Voltar ao topo"
+          aria-label="Back to top"
           className="fixed bottom-8 right-6 z-50 w-11 h-11 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:brightness-110"
-          style={{ background: "#D4A853", color: "#0A0A0F" }}
+          style={{ background: "var(--gold)", color: "#000" }}
         >
           <ChevronUp className="h-5 w-5" />
         </button>

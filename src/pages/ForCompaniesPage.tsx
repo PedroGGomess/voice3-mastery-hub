@@ -7,26 +7,26 @@ import Footer from "@/components/landing/Footer";
 import ChatWidget from "@/components/ChatWidget";
 
 const features = [
-  { icon: BarChart3, title: "Dashboard Centralizado", desc: "Uma visão completa do progresso de toda a equipa, pontuações e trajectórias de aprendizagem." },
-  { icon: BookOpen, title: "Percursos Personalizados", desc: "Conteúdo adaptado à tua indústria, clientes e desafios executivos específicos." },
-  { icon: Users, title: "Gestão de Equipas", desc: "Alocação flexível de lugares, onboarding simplificado e gestão de licenças." },
-  { icon: Shield, title: "Segurança Enterprise", desc: "SSO, conformidade RGPD e infraestrutura segura para dados corporativos." },
-  { icon: TrendingUp, title: "Relatórios de ROI", desc: "Relatórios mensais detalhados que demonstram o retorno do investimento em comunicação." },
-  { icon: Globe, title: "Suporte Global", desc: "Account manager dedicado, suporte em português e inglês, totalmente remoto." },
+  { icon: BarChart3, title: "Centralised Dashboard", desc: "A complete view of your entire team's progress, scores and learning trajectories." },
+  { icon: BookOpen, title: "Custom Learning Paths", desc: "Content adapted to your industry, clients and specific executive challenges." },
+  { icon: Users, title: "Team Management", desc: "Flexible seat allocation, simplified onboarding and licence management." },
+  { icon: Shield, title: "Enterprise Security", desc: "SSO, GDPR compliance and secure infrastructure for corporate data." },
+  { icon: TrendingUp, title: "ROI Reports", desc: "Detailed monthly reports demonstrating the return on investment in communication." },
+  { icon: Globe, title: "Global Support", desc: "Dedicated account manager, support in Portuguese and English, fully remote." },
 ];
 
 const benefits = [
-  "Formação de comunicação executiva para toda a equipa",
-  "Dashboard centralizado com progresso individual",
-  "Account manager dedicado para clientes enterprise",
-  "Currículo personalizado para a tua indústria",
-  "Relatórios mensais detalhados de performance",
-  "Gestão flexível de equipas e alocação de lugares",
+  "Executive communication training for your entire team",
+  "Centralised dashboard with individual progress",
+  "Dedicated account manager for enterprise clients",
+  "Custom curriculum for your industry",
+  "Detailed monthly performance reports",
+  "Flexible team management and seat allocation",
 ];
 
 export default function ForCompaniesPage() {
   return (
-    <div className="min-h-screen" style={{ background: "#0A0A0F", color: "#F5F5F5" }}>
+    <div className="min-h-screen" style={{ background: "var(--bg-base)", color: "var(--text-primary)" }}>
       <Navbar />
 
       {/* Hero */}
@@ -39,41 +39,41 @@ export default function ForCompaniesPage() {
         >
           <span
             className="inline-block text-[11px] font-semibold uppercase tracking-[3px] mb-6"
-            style={{ color: "#D4A853" }}
+            style={{ color: "var(--gold)" }}
           >
-            Para Empresas
+            For Companies
           </span>
           <h1 className="font-serif text-[clamp(32px,5vw,52px)] font-bold leading-[1.15] mb-6">
-            Desenhado para Empresas que Exigem{" "}
-            <span className="italic" style={{ color: "#D4A853" }}>Performance</span>
+            Designed for Companies That Demand{" "}
+            <span className="italic" style={{ color: "var(--gold)" }}>Performance</span>
           </h1>
-          <p className="text-lg leading-relaxed mb-8" style={{ color: "#9A9AB0" }}>
-            Implementa formação de comunicação executiva em toda a equipa. Acompanha resultados. Mede o ROI. Dá à tua liderança a vantagem competitiva em cada interação internacional.
+          <p className="text-lg leading-relaxed mb-8" style={{ color: "var(--text-secondary)" }}>
+            Deploy executive communication training across your entire team. Track results. Measure ROI. Give your leadership the competitive edge in every international interaction.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button
               className="h-12 px-8 font-semibold rounded-md text-base"
-              style={{ background: "#D4A853", color: "#000" }}
+              style={{ background: "var(--gold)", color: "#000" }}
               asChild
             >
               <Link to="/contact">
-                Agendar Demo <ArrowRight className="ml-2 h-4 w-4" />
+                Book a Demo <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
             <Button
               variant="outline"
               className="h-12 px-8 rounded-md text-base"
-              style={{ borderColor: "#D4A853", color: "#D4A853" }}
+              style={{ borderColor: "var(--gold)", color: "var(--gold)" }}
               asChild
             >
-              <Link to="/packs">Ver Packs</Link>
+              <Link to="/packs">View Packs</Link>
             </Button>
           </div>
         </motion.div>
       </section>
 
       {/* Divider */}
-      <div className="h-px max-w-5xl mx-auto" style={{ background: "linear-gradient(90deg, transparent, rgba(212,168,83,0.2), transparent)" }} />
+      <div className="h-px max-w-5xl mx-auto" style={{ background: "linear-gradient(90deg, transparent, var(--border-gold), transparent)" }} />
 
       {/* Benefits grid */}
       <section className="py-20 px-6 max-w-6xl mx-auto">
@@ -83,11 +83,11 @@ export default function ForCompaniesPage() {
           viewport={{ once: true }}
           className="text-center mb-14"
         >
-          <span className="text-[11px] font-semibold uppercase tracking-[3px]" style={{ color: "#D4A853" }}>
-            Funcionalidades
+          <span className="text-[11px] font-semibold uppercase tracking-[3px]" style={{ color: "var(--gold)" }}>
+            Features
           </span>
           <h2 className="font-serif text-3xl font-bold mt-3">
-            Tudo o que Precisas para Escalar
+            Everything You Need to Scale
           </h2>
         </motion.div>
 
@@ -100,25 +100,25 @@ export default function ForCompaniesPage() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.08 }}
               className="rounded-xl p-6 transition-all duration-200"
-              style={{ background: "#12121A", border: "1px solid rgba(255,255,255,0.05)" }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(212,168,83,0.3)")}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)")}
+              style={{ background: "var(--bg-surface)", border: `1px solid var(--border)` }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = "var(--border-gold)")}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--border)")}
             >
               <div
                 className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
-                style={{ background: "rgba(212,168,83,0.1)" }}
+                style={{ background: "var(--gold-10)" }}
               >
-                <f.icon className="h-5 w-5" style={{ color: "#D4A853" }} />
+                <f.icon className="h-5 w-5" style={{ color: "var(--gold)" }} />
               </div>
               <h3 className="text-base font-semibold mb-2">{f.title}</h3>
-              <p className="text-sm leading-relaxed" style={{ color: "#9A9AB0" }}>{f.desc}</p>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>{f.desc}</p>
             </motion.div>
           ))}
         </div>
       </section>
 
       {/* Divider */}
-      <div className="h-px max-w-5xl mx-auto" style={{ background: "linear-gradient(90deg, transparent, rgba(212,168,83,0.2), transparent)" }} />
+      <div className="h-px max-w-5xl mx-auto" style={{ background: "linear-gradient(90deg, transparent, var(--border-gold), transparent)" }} />
 
       {/* Why VOICE³ */}
       <section className="py-20 px-6 max-w-4xl mx-auto">
@@ -128,7 +128,7 @@ export default function ForCompaniesPage() {
           viewport={{ once: true }}
         >
           <h2 className="font-serif text-3xl font-bold mb-8 text-center">
-            Porquê o VOICE³ para a Tua Empresa?
+            Why VOICE³ for Your Company?
           </h2>
           <div className="space-y-4">
             {benefits.map((b, i) => (
@@ -140,8 +140,8 @@ export default function ForCompaniesPage() {
                 transition={{ delay: i * 0.06 }}
                 className="flex items-center gap-4 py-3"
               >
-                <Check className="h-5 w-5 shrink-0" style={{ color: "#D4A853" }} />
-                <span className="text-base" style={{ color: "#CCCCDD" }}>{b}</span>
+                <Check className="h-5 w-5 shrink-0" style={{ color: "var(--gold)" }} />
+                <span className="text-base" style={{ color: "var(--text-secondary)" }}>{b}</span>
               </motion.div>
             ))}
           </div>
@@ -149,25 +149,25 @@ export default function ForCompaniesPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-6 text-center" style={{ background: "linear-gradient(180deg, #0A0A0F, rgba(212,168,83,0.04))" }}>
+      <section className="py-20 px-6 text-center" style={{ background: "linear-gradient(180deg, var(--bg-base), var(--gold-10))" }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
           <h2 className="font-serif text-3xl font-bold mb-3">
-            Pronto para Transformar a Tua Equipa?
+            Ready to Transform Your Team?
           </h2>
-          <p className="font-serif italic text-lg mb-8" style={{ color: "#D4A853" }}>
-            Agenda uma chamada de 15 minutos.
+          <p className="font-serif italic text-lg mb-8" style={{ color: "var(--gold)" }}>
+            Book a 15-minute call.
           </p>
           <Button
             className="h-12 px-8 font-semibold rounded-md text-base"
-            style={{ background: "#D4A853", color: "#000" }}
+            style={{ background: "var(--gold)", color: "#000" }}
             asChild
           >
             <Link to="/contact">
-              Contactar Equipa Comercial <ArrowRight className="ml-2 h-4 w-4" />
+              Contact Sales Team <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </motion.div>

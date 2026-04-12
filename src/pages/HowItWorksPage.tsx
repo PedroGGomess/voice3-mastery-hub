@@ -10,43 +10,43 @@ const steps = [
   {
     num: "01",
     icon: Zap,
-    title: "Diagnóstico de Precisão",
-    desc: "Mapeamos o teu Voice DNA — palavras por minuto, frequência de fillers, vocabulário activo e nível de fluência. Isto cria a tua baseline personalizada e acompanha cada melhoria ao longo do percurso.",
+    title: "Precision Diagnostic",
+    desc: "We map your Voice DNA — words per minute, filler frequency, active vocabulary and fluency level. This creates your personalised baseline and tracks every improvement along the journey.",
     tags: ["VOICE DNA", "BASELINE"],
   },
   {
     num: "02",
     icon: Layers,
-    title: "Os 6 Programas",
-    desc: "Domina domínios específicos de comunicação executiva através de sessões estruturadas com IA. De apresentações de alta pressão (DEFEND) a vocabulário específico da indústria (TRANSLATE) a comunicação de crise (PREPARE).",
+    title: "The 6 Programmes",
+    desc: "Master specific domains of executive communication through AI-structured sessions. From high-pressure presentations (DEFEND) to industry-specific vocabulary (TRANSLATE) to crisis communication (PREPARE).",
     tags: ["DEFEND", "TRANSLATE", "LEAD", "OPERATE", "DECODE", "PREPARE"],
   },
   {
     num: "03",
     icon: Flame,
-    title: "Teste de Pressão AI",
-    desc: "Enfrenta Q&A hostis, simulações de boardroom e clubes de debate AI que te empurram para lá da zona de conforto. Escolhe o teu oponente AI — CEO Duro, Director Alemão Analítico, Investidor Céptico.",
-    tags: ["AI PERSONAS", "SIMULAÇÕES"],
+    title: "AI Pressure Testing",
+    desc: "Face hostile Q&A, boardroom simulations and AI debate clubs that push you beyond your comfort zone. Choose your AI opponent — Tough CEO, Analytical German Director, Sceptical Investor.",
+    tags: ["AI PERSONAS", "SIMULATIONS"],
   },
   {
     num: "04",
     icon: UserCheck,
-    title: "Calibração com Professor",
-    desc: "Sessões 1-on-1 com professores especialistas que refinam a tua Calibração de Tom — escolhendo entre Diplomat, Anchor, American Direct ou Collaborator conforme a tua audiência.",
-    tags: ["CALIBRAÇÃO DE TOM", "LIVE 1-ON-1"],
+    title: "Coach Calibration",
+    desc: "1-on-1 sessions with specialist coaches who refine your Tone Calibration — choosing between Diplomat, Anchor, American Direct or Collaborator for your audience.",
+    tags: ["TONE CALIBRATION", "LIVE 1-ON-1"],
   },
 ];
 
 const sessionTypes = [
-  { name: "Briefing", desc: "Cenário executivo + Arsenal de frases", time: "15 min", color: "#58a6ff" },
-  { name: "Drill", desc: "Prática controlada com correção AI", time: "15 min", color: "#3fb950" },
-  { name: "Simulação", desc: "Roleplay de pressão com Shadow Coach", time: "20 min", color: "#d29922" },
-  { name: "Error Bank", desc: "Revisão de erros + Language Vault", time: "10 min", color: "#f85149" },
+  { name: "Briefing", desc: "Executive scenario + Phrase Arsenal", time: "15 min", color: "#58a6ff" },
+  { name: "Drill", desc: "Controlled practice with AI correction", time: "15 min", color: "#3fb950" },
+  { name: "Simulation", desc: "Pressure roleplay with Shadow Coach", time: "20 min", color: "#d29922" },
+  { name: "Error Bank", desc: "Error review + Language Vault", time: "10 min", color: "#f85149" },
 ];
 
 export default function HowItWorksPage() {
   return (
-    <div className="min-h-screen" style={{ background: "#0A0A0F", color: "#F5F5F5" }}>
+    <div className="min-h-screen" style={{ background: "var(--bg-base)", color: "var(--text-primary)" }}>
       <Navbar />
 
       {/* Hero */}
@@ -56,15 +56,15 @@ export default function HowItWorksPage() {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-3xl mx-auto"
         >
-          <span className="text-[11px] font-semibold uppercase tracking-[3px] mb-6 block" style={{ color: "#D4A853" }}>
-            A Plataforma
+          <span className="text-[11px] font-semibold uppercase tracking-[3px] mb-6 block" style={{ color: "var(--gold)" }}>
+            The Platform
           </span>
           <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-bold leading-[1.15] mb-5">
-            Coaching Humano. Precisão AI.{" "}
-            <span className="italic" style={{ color: "#D4A853" }}>Resultados Executivos.</span>
+            Human Coaching. AI Precision.{" "}
+            <span className="italic" style={{ color: "var(--gold)" }}>Executive Results.</span>
           </h1>
-          <p className="text-lg leading-relaxed" style={{ color: "#9A9AB0" }}>
-            Um motor de quatro etapas que te leva do diagnóstico ao boardroom-ready.
+          <p className="text-lg leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+            A four-step engine that takes you from diagnostic to boardroom-ready.
           </p>
         </motion.div>
       </section>
@@ -81,25 +81,25 @@ export default function HowItWorksPage() {
               transition={{ delay: i * 0.1 }}
               className="flex gap-8 items-start p-7 rounded-xl"
               style={{
-                background: "#1A1A25",
-                borderLeft: "3px solid #D4A853",
+                background: "var(--bg-elevated)",
+                borderLeft: "3px solid var(--gold)",
               }}
             >
               <div className="shrink-0 text-center">
-                <span className="font-serif text-5xl font-bold block" style={{ color: "rgba(212,168,83,0.3)" }}>
+                <span className="font-serif text-5xl font-bold block" style={{ color: "var(--gold-10)" }}>
                   {step.num}
                 </span>
-                <step.icon className="h-5 w-5 mx-auto mt-2" style={{ color: "#D4A853" }} />
+                <step.icon className="h-5 w-5 mx-auto mt-2" style={{ color: "var(--gold)" }} />
               </div>
               <div>
                 <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
-                <p className="text-sm leading-relaxed mb-4" style={{ color: "#9A9AB0" }}>{step.desc}</p>
+                <p className="text-sm leading-relaxed mb-4" style={{ color: "var(--text-secondary)" }}>{step.desc}</p>
                 <div className="flex flex-wrap gap-2">
                   {step.tags.map(tag => (
                     <span
                       key={tag}
                       className="text-[10px] px-3 py-1 rounded-full font-semibold tracking-wide"
-                      style={{ background: "rgba(212,168,83,0.1)", color: "#D4A853", letterSpacing: "1px" }}
+                      style={{ background: "var(--gold-10)", color: "var(--gold)", letterSpacing: "1px" }}
                     >
                       {tag}
                     </span>
@@ -112,7 +112,7 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Divider */}
-      <div className="h-px max-w-5xl mx-auto" style={{ background: "linear-gradient(90deg, transparent, rgba(212,168,83,0.2), transparent)" }} />
+      <div className="h-px max-w-5xl mx-auto" style={{ background: "linear-gradient(90deg, transparent, var(--border-gold), transparent)" }} />
 
       {/* Session Types */}
       <section className="py-20 px-6 max-w-5xl mx-auto">
@@ -122,14 +122,14 @@ export default function HowItWorksPage() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <span className="text-[11px] font-semibold uppercase tracking-[3px]" style={{ color: "#D4A853" }}>
-            Estrutura de Sessão
+          <span className="text-[11px] font-semibold uppercase tracking-[3px]" style={{ color: "var(--gold)" }}>
+            Session Structure
           </span>
           <h2 className="font-serif text-3xl font-bold mt-3">
-            Cada Micro-Capítulo = 4 Sessões
+            Each Micro-Chapter = 4 Sessions
           </h2>
-          <p className="text-base mt-3" style={{ color: "#9A9AB0" }}>
-            Briefing → Drill → Simulação → Error Bank. Repetir.
+          <p className="text-base mt-3" style={{ color: "var(--text-secondary)" }}>
+            Briefing → Drill → Simulation → Error Bank. Repeat.
           </p>
         </motion.div>
 
@@ -142,37 +142,37 @@ export default function HowItWorksPage() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.08 }}
               className="rounded-xl p-5"
-              style={{ background: "#12121A", borderTop: `3px solid ${s.color}` }}
+              style={{ background: "var(--bg-surface)", borderTop: `3px solid ${s.color}` }}
             >
               <h4 className="font-semibold mb-1" style={{ color: s.color }}>{s.name}</h4>
-              <p className="text-sm mb-3" style={{ color: "#9A9AB0" }}>{s.desc}</p>
-              <span className="text-[11px] font-semibold" style={{ color: "#6E7681" }}>{s.time}</span>
+              <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{s.desc}</p>
+              <span className="text-[11px] font-semibold" style={{ color: "var(--text-muted)" }}>{s.time}</span>
             </motion.div>
           ))}
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-6 text-center" style={{ background: "linear-gradient(180deg, #0A0A0F, rgba(212,168,83,0.04))" }}>
-        <h2 className="font-serif text-3xl font-bold mb-3">Pronto para Começar?</h2>
-        <p className="font-serif italic text-lg mb-8" style={{ color: "#D4A853" }}>Clarity. Control. Command.</p>
+      <section className="py-20 px-6 text-center" style={{ background: "linear-gradient(180deg, var(--bg-base), var(--gold-10))" }}>
+        <h2 className="font-serif text-3xl font-bold mb-3">Ready to Start?</h2>
+        <p className="font-serif italic text-lg mb-8" style={{ color: "var(--gold)" }}>Clarity. Control. Command.</p>
         <div className="flex flex-wrap justify-center gap-4">
           <Button
             className="h-12 px-8 font-semibold rounded-md text-base"
-            style={{ background: "#D4A853", color: "#000" }}
+            style={{ background: "var(--gold)", color: "#000" }}
             asChild
           >
             <Link to="/auth?mode=register">
-              Candidatar-me ao VOICE³ <ArrowRight className="ml-2 h-4 w-4" />
+              Apply to VOICE³ <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
           <Button
             variant="outline"
             className="h-12 px-8 rounded-md text-base"
-            style={{ borderColor: "#D4A853", color: "#D4A853" }}
+            style={{ borderColor: "var(--gold)", color: "var(--gold)" }}
             asChild
           >
-            <Link to="/contact">Falar com a Equipa</Link>
+            <Link to="/contact">Talk to Our Team</Link>
           </Button>
         </div>
       </section>

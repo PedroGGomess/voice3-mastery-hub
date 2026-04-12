@@ -16,11 +16,26 @@ body {
 /* Scrollbar (webkit + firefox) */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.4); }
+::-webkit-scrollbar-thumb { background: var(--gold-20); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold-30); }
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(201,168,76,0.2) transparent;
+  scrollbar-color: var(--gold-20) transparent;
+}
+
+/* Theme transition */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+}
+
+/* Opt-out for animations */
+.no-theme-transition,
+.no-theme-transition *,
+.no-theme-transition *::before,
+.no-theme-transition *::after {
+  transition-property: none !important;
 }
 
 /* ── CARD HOVER ── */

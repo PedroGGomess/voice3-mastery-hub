@@ -2,30 +2,30 @@ import { motion } from "framer-motion";
 
 const testimonials = [
   {
-    text: "Nas apresentações ao board, mudei completamente a minha abordagem. Agora transmito confiança e autoridade. VOICE³ acelerou tudo.",
-    name: "Thomas K.",
+    text: "VOICE³ transformed how I present to our board. The pressure simulations prepared me for questions I never expected.",
+    name: "Marcus Weber",
     role: "CFO",
     company: "Global Tech",
-    location: "Berlin",
-    initials: "TK",
+    location: "Munich",
+    initials: "MW",
     color: "#1a3a5c",
   },
   {
-    text: "Fechei uma deal de €2M depois de usar VOICE³. O feedback em tempo real sobre o meu tom fez toda a diferença na negociação.",
-    name: "Sofia M.",
-    role: "Sales Director",
+    text: "The AI doesn't go easy on you. It challenged me harder than any real investor pitch. That's exactly what I needed.",
+    name: "Priya Sharma",
+    role: "VP Sales",
     company: "Enterprise SaaS",
-    location: "Milan",
-    initials: "SM",
+    location: "Singapore",
+    initials: "PS",
     color: "#2a1a4a",
   },
   {
-    text: "Liderança de equipas internacionais exige presença vocal. VOICE³ transformou como eu sou percebido em calls globais.",
-    name: "Henrik L.",
+    text: "After three months, my team noticed the difference. I command meetings now instead of surviving them.",
+    name: "Carlos Mendes",
     role: "CEO",
     company: "International Ventures",
-    location: "Stockholm",
-    initials: "HL",
+    location: "Lisbon",
+    initials: "CM",
     color: "#1a3a2a",
   },
 ];
@@ -54,7 +54,7 @@ const Testimonials = () => {
   return (
     <section
       className="py-28 relative overflow-hidden"
-      style={{ backgroundColor: "#0A0A0F" }}
+      style={{ backgroundColor: "var(--bg-base)" }}
       id="resultados"
     >
       {/* Decorative background */}
@@ -77,19 +77,19 @@ const Testimonials = () => {
         >
           <p
             className="tracking-[0.2em] uppercase text-sm mb-6 font-medium"
-            style={{ color: "#D4A853" }}
+            style={{ color: "var(--gold)" }}
           >
-            08 — RESULTADOS
+            08 — RESULTS
           </p>
           <h2
             className="font-serif text-4xl md:text-5xl font-semibold mb-6"
-            style={{ color: "#F5F5F5" }}
+            style={{ color: "var(--text-primary)" }}
           >
-            Resultados Mensuráveis.{" "}
-            <span style={{ color: "#D4A853" }}>Transformações Reais.</span>
+            Measurable Results.{" "}
+            <span style={{ color: "var(--gold)" }}>Real Transformations.</span>
           </h2>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto" style={{ color: "#9A9AB0" }}>
-            87% dos participantes reportam melhoria mensurável em 4 semanas.
+          <p className="text-lg md:text-xl max-w-2xl mx-auto" style={{ color: "var(--text-secondary)" }}>
+            87% of participants report measurable improvement in 4 weeks.
           </p>
         </motion.div>
 
@@ -114,11 +114,11 @@ const Testimonials = () => {
               <div
                 className="relative h-full rounded-lg p-8 backdrop-blur-sm transition-all duration-300 overflow-hidden"
                 style={{
-                  backgroundColor: "#12121A",
+                  backgroundColor: "var(--bg-surface)",
                   border: "1px solid rgba(255, 255, 255, 0.05)",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(212, 168, 83, 0.3)";
+                  e.currentTarget.style.borderColor = "var(--border-gold)";
                   e.currentTarget.style.boxShadow =
                     "0 0 24px rgba(212, 168, 83, 0.1)";
                 }}
@@ -131,7 +131,7 @@ const Testimonials = () => {
                 {/* Gold left accent bar */}
                 <div
                   className="absolute left-0 top-0 bottom-0 w-1 transition-all duration-300"
-                  style={{ background: "#D4A853" }}
+                  style={{ background: "var(--gold)" }}
                 />
 
                 {/* Decorative quote mark */}
@@ -139,7 +139,7 @@ const Testimonials = () => {
                   className="absolute top-6 right-6 h-12 w-12 opacity-[0.08]"
                   fill="currentColor"
                   viewBox="0 0 24 24"
-                  style={{ color: "#D4A853" }}
+                  style={{ color: "var(--gold)" }}
                 >
                   <path d="M3 21c3 0 7-1 7-8V5c0-1.25-4.716-5-7-5m0 0c-4.287 0-7 4-7 8v10c0 5 2 8 6 8" />
                 </svg>
@@ -147,7 +147,7 @@ const Testimonials = () => {
                 {/* Star rating */}
                 <div className="relative z-10 mb-6 flex gap-1">
                   {[...Array(5)].map((_, i) => (
-                    <span key={i} style={{ color: "#D4A853", fontSize: 14 }}>
+                    <span key={i} style={{ color: "var(--gold)", fontSize: 14 }}>
                       ★
                     </span>
                   ))}
@@ -164,15 +164,15 @@ const Testimonials = () => {
                 {/* Author info */}
                 <div
                   className="relative z-10 pt-6 border-t"
-                  style={{ borderColor: "rgba(212, 168, 83, 0.1)" }}
+                  style={{ borderColor: "var(--border-gold)" }}
                 >
                   <div className="flex items-center gap-4">
                     <div
                       className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-semibold text-sm"
                       style={{
                         backgroundColor: testimonial.color,
-                        border: "2px solid rgba(212, 168, 83, 0.3)",
-                        color: "#D4A853",
+                        border: "2px solid var(--border-gold)",
+                        color: "var(--gold)",
                       }}
                     >
                       {testimonial.initials}
@@ -180,14 +180,14 @@ const Testimonials = () => {
                     <div>
                       <p
                         className="font-serif font-semibold"
-                        style={{ color: "#F5F5F5" }}
+                        style={{ color: "var(--text-primary)" }}
                       >
                         {testimonial.name}
                       </p>
-                      <p className="text-xs" style={{ color: "#9A9AB0" }}>
+                      <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
                         {testimonial.role}, {testimonial.company}
                       </p>
-                      <p className="text-xs" style={{ color: "#9A9AB0" }}>
+                      <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
                         {testimonial.location}
                       </p>
                     </div>
@@ -209,8 +209,8 @@ const Testimonials = () => {
           <div
             className="relative rounded-lg overflow-hidden aspect-video flex items-center justify-center group cursor-pointer"
             style={{
-              backgroundColor: "#12121A",
-              border: "1px solid rgba(212, 168, 83, 0.15)",
+              backgroundColor: "var(--bg-surface)",
+              border: "1px solid var(--border-gold)",
             }}
           >
             <img
@@ -222,8 +222,8 @@ const Testimonials = () => {
               <motion.div
                 className="w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
                 style={{
-                  border: "2px solid #D4A853",
-                  backgroundColor: "rgba(212, 168, 83, 0.08)",
+                  border: "2px solid var(--gold)",
+                  backgroundColor: "var(--gold-10)",
                 }}
                 whileHover={{ scale: 1.1 }}
               >
@@ -231,16 +231,16 @@ const Testimonials = () => {
                   className="w-7 h-7 ml-1"
                   fill="currentColor"
                   viewBox="0 0 24 24"
-                  style={{ color: "#D4A853" }}
+                  style={{ color: "var(--gold)" }}
                 >
                   <path d="M8 5v14l11-7z" />
                 </svg>
               </motion.div>
               <p
                 className="text-xs tracking-widest uppercase font-medium"
-                style={{ color: "#9A9AB0" }}
+                style={{ color: "var(--text-secondary)" }}
               >
-                Ver Testemunho Executivo
+                Watch Executive Testimonial
               </p>
             </div>
           </div>
@@ -251,7 +251,7 @@ const Testimonials = () => {
       <div
         className="h-px w-full mt-20"
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(212, 168, 83, 0.2), transparent)",
+          background: "linear-gradient(90deg, transparent, var(--border-gold), transparent)",
         }}
       />
     </section>

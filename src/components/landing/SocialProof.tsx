@@ -6,7 +6,7 @@ const SocialProof = () => {
   return (
     <section
       className="py-20"
-      style={{ backgroundColor: "#0A0A0F" }}
+      style={{ backgroundColor: "var(--bg-base)" }}
     >
       <div className="container">
         <motion.div
@@ -18,9 +18,9 @@ const SocialProof = () => {
         >
           <p
             className="tracking-[0.2em] uppercase text-sm font-medium"
-            style={{ color: "#D4A853" }}
+            style={{ color: "var(--gold)" }}
           >
-            EMPRESAS QUE CONFIAM NO VOICE³
+            COMPANIES THAT TRUST VOICE³
           </p>
         </motion.div>
 
@@ -43,7 +43,7 @@ const SocialProof = () => {
             >
               <p
                 className="font-semibold text-lg tracking-wide"
-                style={{ color: "#6E7681" }}
+                style={{ color: "var(--text-muted)" }}
               >
                 {company}
               </p>
@@ -55,7 +55,7 @@ const SocialProof = () => {
       {/* Section divider */}
       <div
         className="h-px w-full mt-12"
-        style={{ background: "linear-gradient(90deg, transparent, rgba(212, 168, 83, 0.2), transparent)" }}
+        style={{ background: "linear-gradient(90deg, transparent, var(--border-gold), transparent)" }}
       />
     </section>
   );

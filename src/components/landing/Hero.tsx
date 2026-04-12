@@ -47,8 +47,8 @@ const Hero = () => {
       <section
         className="relative min-h-screen flex flex-col justify-center items-center text-center overflow-hidden"
         style={{
-          backgroundColor: "#0A0A0F",
-          background: "linear-gradient(180deg, rgba(10,10,15,0.3) 0%, #0A0A0F 100%)",
+          backgroundColor: "var(--bg-base)",
+          background: "linear-gradient(180deg, rgba(10,10,15,0.3) 0%, var(--bg-base) 100%)",
         }}
       >
         {/* Radial gold glow background effect */}
@@ -71,38 +71,38 @@ const Hero = () => {
             <span
               className="inline-flex items-center gap-2 px-6 py-2 rounded-full text-[11px] tracking-[0.2em] uppercase font-medium"
               style={{
-                border: "1px solid rgba(212,168,83,0.4)",
-                color: "#D4A853",
+                border: "1px solid var(--border-gold)",
+                color: "var(--gold)",
               }}
             >
               <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#4CAF50" }} />
-              Programa de Comunicação Executiva
+              Executive Communication Programme
             </span>
           </motion.div>
 
           {/* Headline */}
           <motion.h1
-            className="mt-10 font-serif leading-[1.15] text-[#F5F5F5]"
-            style={{ fontSize: "clamp(36px, 5vw, 56px)", fontWeight: 700 }}
+            className="mt-10 font-serif leading-[1.15]"
+            style={{ fontSize: "clamp(36px, 5vw, 56px)", fontWeight: 700, color: "var(--text-primary)" }}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
           >
-            Tu não vais melhorar o teu inglês.{" "}
-            <span className="italic" style={{ color: "#D4A853" }}>
-              Vais performar com precisão.
+            You will not improve your English.{" "}
+            <span className="italic" style={{ color: "var(--gold)" }}>
+              You will perform with precision.
             </span>
           </motion.h1>
 
           {/* Subtitle */}
           <motion.p
             className="mt-8 mx-auto max-w-[600px] leading-[1.7]"
-            style={{ color: "#9A9AB0", fontSize: "clamp(16px, 1.8vw, 18px)" }}
+            style={{ color: "var(--text-secondary)", fontSize: "clamp(16px, 1.8vw, 18px)" }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            A plataforma de comunicação executiva com IA para líderes globais que precisam de operar sob pressão.
+            The AI-powered communication platform for global executives who must operate under pressure.
           </motion.p>
 
           {/* CTAs */}
@@ -115,20 +115,20 @@ const Hero = () => {
             <Link
               to="/auth?mode=register"
               className="h-[52px] px-8 font-semibold rounded-md text-base transition-all duration-300 hover:brightness-110 inline-flex items-center justify-center"
-              style={{ background: "#D4A853", color: "#000" }}
+              style={{ background: "var(--gold)", color: "#000" }}
             >
-              Candidatar-me ao VOICE³ <ArrowRight className="ml-2 h-5 w-5" />
+              Apply to VOICE³ <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
             <Link
               to="/for-companies"
               className="h-[52px] px-8 rounded-md text-base transition-all duration-300 inline-flex items-center justify-center hover:bg-opacity-10"
               style={{
-                border: "1px solid #D4A853",
-                color: "#D4A853",
+                border: "1px solid var(--gold)",
+                color: "var(--gold)",
                 backgroundColor: "transparent",
               }}
             >
-              Para Empresas
+              For Companies
             </Link>
           </motion.div>
         </div>
@@ -139,16 +139,16 @@ const Hero = () => {
         ref={proofRef}
         className="flex flex-wrap justify-center gap-16 md:gap-20 py-10 md:py-12 px-6"
         style={{
-          backgroundColor: "#12121A",
-          borderTop: "1px solid rgba(212,168,83,0.15)",
-          borderBottom: "1px solid rgba(212,168,83,0.15)",
+          backgroundColor: "var(--bg-surface)",
+          borderTop: "1px solid var(--border-gold)",
+          borderBottom: "1px solid var(--border-gold)",
         }}
       >
         {[
-          { value: `${executives}+`, label: "Executivos Treinados" },
-          { value: `${successRate}%`, label: "Taxa de Sucesso" },
-          { value: `${(rating / 10).toFixed(1)}★`, label: "Avaliação Média" },
-          { value: `${countries}+`, label: "Países" },
+          { value: `${executives}+`, label: "Executives Trained" },
+          { value: `${successRate}%`, label: "Success Rate" },
+          { value: `${(rating / 10).toFixed(1)}★`, label: "Average Rating" },
+          { value: `${countries}+`, label: "Countries" },
         ].map((stat) => (
           <motion.div
             key={stat.label}
@@ -158,10 +158,10 @@ const Hero = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <p className="font-serif text-4xl font-bold" style={{ color: "#D4A853" }}>
+            <p className="font-serif text-4xl font-bold" style={{ color: "var(--gold)" }}>
               {stat.value}
             </p>
-            <p className="mt-1 text-[13px] uppercase tracking-[0.1em]" style={{ color: "#9A9AB0" }}>
+            <p className="mt-1 text-[13px] uppercase tracking-[0.1em]" style={{ color: "var(--text-secondary)" }}>
               {stat.label}
             </p>
           </motion.div>

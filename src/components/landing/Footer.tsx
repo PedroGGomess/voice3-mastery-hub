@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <footer
       style={{
-        background: "#12121A",
+        background: "var(--bg-surface)",
         borderTop: "1px solid rgba(255,255,255,0.05)",
       }}
     >
@@ -13,75 +13,75 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="inline-block mb-4">
-              <span className="font-sans font-bold tracking-[0.25em] text-[#F5F5F5] text-lg">
-                V O I C E<sup className="text-[#D4A853] text-xs ml-0.5">3</sup>
+              <span className="font-sans font-bold tracking-[0.25em] text-lg" style={{ color: "var(--text-primary)" }}>
+                V O I C E<sup className="text-xs ml-0.5" style={{ color: "var(--gold)" }}>3</sup>
               </span>
             </Link>
-            <p className="text-sm leading-relaxed" style={{ color: "#9A9AB0" }}>
+            <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
               A premium branch of Stuttaford Academy.
             </p>
             <p
               className="mt-2 text-sm italic font-serif"
-              style={{ color: "#D4A853" }}
+              style={{ color: "var(--gold)" }}
             >
               Clarity. Control. Command.
             </p>
           </div>
 
-          {/* Programa */}
+          {/* Programme */}
           <div>
             <h4
               className="text-xs font-semibold tracking-[0.15em] uppercase mb-4"
-              style={{ color: "#D4A853" }}
+              style={{ color: "var(--gold)" }}
             >
-              Programa
+              Programme
             </h4>
-            <ul className="space-y-2.5 text-sm" style={{ color: "#9A9AB0" }}>
+            <ul className="space-y-2.5 text-sm" style={{ color: "var(--text-secondary)" }}>
               <li>
-                <Link to="/#como-funciona" className="hover:text-[#F5F5F5] transition-colors">
-                  Como Funciona
+                <Link to="/#como-funciona" className="hover:text-[var(--text-primary)] transition-colors">
+                  How It Works
                 </Link>
               </li>
               <li>
-                <Link to="/#metodo" className="hover:text-[#F5F5F5] transition-colors">
-                  O Método
+                <Link to="/#metodo" className="hover:text-[var(--text-primary)] transition-colors">
+                  The Method
                 </Link>
               </li>
               <li>
-                <Link to="/packs" className="hover:text-[#F5F5F5] transition-colors">
-                  Packs e Preços
+                <Link to="/packs" className="hover:text-[var(--text-primary)] transition-colors">
+                  Packs & Pricing
                 </Link>
               </li>
               <li>
-                <Link to="/#sessoes" className="hover:text-[#F5F5F5] transition-colors">
-                  A Experiência
+                <Link to="/#sessoes" className="hover:text-[var(--text-primary)] transition-colors">
+                  The Experience
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Empresa */}
+          {/* Company */}
           <div>
             <h4
               className="text-xs font-semibold tracking-[0.15em] uppercase mb-4"
-              style={{ color: "#D4A853" }}
+              style={{ color: "var(--gold)" }}
             >
-              Empresa
+              Company
             </h4>
-            <ul className="space-y-2.5 text-sm" style={{ color: "#9A9AB0" }}>
+            <ul className="space-y-2.5 text-sm" style={{ color: "var(--text-secondary)" }}>
               <li>
-                <Link to="/for-companies" className="hover:text-[#F5F5F5] transition-colors">
-                  Para Empresas
+                <Link to="/for-companies" className="hover:text-[var(--text-primary)] transition-colors">
+                  For Companies
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="hover:text-[#F5F5F5] transition-colors">
-                  Contacto
+                <Link to="/contact" className="hover:text-[var(--text-primary)] transition-colors">
+                  Contact
                 </Link>
               </li>
               <li>
-                <Link to="/auth" className="hover:text-[#F5F5F5] transition-colors">
-                  Entrar
+                <Link to="/auth" className="hover:text-[var(--text-primary)] transition-colors">
+                  Sign In
                 </Link>
               </li>
             </ul>
@@ -91,19 +91,19 @@ const Footer = () => {
           <div>
             <h4
               className="text-xs font-semibold tracking-[0.15em] uppercase mb-4"
-              style={{ color: "#D4A853" }}
+              style={{ color: "var(--gold)" }}
             >
               Legal
             </h4>
-            <ul className="space-y-2.5 text-sm" style={{ color: "#9A9AB0" }}>
+            <ul className="space-y-2.5 text-sm" style={{ color: "var(--text-secondary)" }}>
               <li>
-                <a href="#" className="hover:text-[#F5F5F5] transition-colors">
-                  Termos de Serviço
+                <a href="#" className="hover:text-[var(--text-primary)] transition-colors">
+                  Terms of Service
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-[#F5F5F5] transition-colors">
-                  Política de Privacidade
+                <a href="#" className="hover:text-[var(--text-primary)] transition-colors">
+                  Privacy Policy
                 </a>
               </li>
             </ul>
@@ -115,15 +115,14 @@ const Footer = () => {
           className="pt-8 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs"
           style={{
             borderTop: "1px solid rgba(255,255,255,0.05)",
-            color: "#9A9AB0",
+            color: "var(--text-secondary)",
           }}
         >
           <span>
             © 2026{" "}
-            <span style={{ color: "#D4A853" }}>VOICE³</span>. Todos os
-            direitos reservados.
+            <span style={{ color: "var(--gold)" }}>VOICE³</span>. All rights reserved.
           </span>
-          <span className="italic font-serif" style={{ color: "rgba(212,168,83,0.5)" }}>
+          <span className="italic font-serif" style={{ color: "var(--text-muted)" }}>
             A premium branch of Stuttaford Academy
           </span>
         </div>

@@ -6,22 +6,22 @@ const WhatYouLearn = () => {
     {
       title: "CLARITY",
       icon: Lightbulb,
-      description: "Posiciona a tua mensagem com precisão absoluta.",
+      description: "Position messages with absolute precision and eliminate ambiguity.",
     },
     {
       title: "CONTROL",
       icon: Lock,
-      description: "Justifica o teu argumento com autoridade estruturada.",
+      description: "Justify arguments with structured authority and command the room.",
     },
     {
       title: "COMMAND",
       icon: Zap,
-      description: "Fecha com impacto e presença executiva.",
+      description: "Close with impact and executive presence to drive decisive outcomes.",
     },
   ];
 
   return (
-    <section style={{ backgroundColor: "#0A0A0F" }} className="py-28 relative overflow-hidden">
+    <section style={{ backgroundColor: "var(--bg-base)" }} className="py-28 relative overflow-hidden">
       {/* Background gradient */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -39,17 +39,17 @@ const WhatYouLearn = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <p className="text-[#D4A853] tracking-[0.15em] uppercase text-xs md:text-sm mb-4 font-semibold">
-            03 — O DESAFIO
+          <p className="text-[var(--gold)] tracking-[0.15em] uppercase text-xs md:text-sm mb-4 font-semibold">
+            03 — THE CHALLENGE
           </p>
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-[#F5F5F5] mb-6 leading-tight">
-            Pára de perder a sala por causa da língua.
+          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 leading-tight" style={{ color: "var(--text-primary)" }}>
+            Stop losing the room because of your language.
           </h2>
           <p
             className="max-w-2xl mx-auto text-lg"
-            style={{ color: "#9A9AB0", lineHeight: "1.8" }}
+            style={{ color: "var(--text-secondary)", lineHeight: "1.8" }}
           >
-            Para executivos não-nativos, a barreira não é a gramática. É a autoridade. O teu sotaque não é o problema. É a capacidade de manter a sala quando a pressão sobe.
+            The problem isn't your grammar; it's your authority under pressure. When pressure hits, executives don't need English lessons — they need strategic vocabulary and tone control.
           </p>
         </motion.div>
 
@@ -61,16 +61,16 @@ const WhatYouLearn = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="max-w-3xl mx-auto mb-16 rounded-lg p-8 md:p-10"
           style={{
-            backgroundColor: "rgba(212,168,83,0.05)",
-            border: "2px solid #D4A853",
+            backgroundColor: "var(--bg-elevated)",
+            border: "2px solid var(--gold)",
           }}
         >
           <p
-            className="font-serif text-xl md:text-2xl font-bold text-[#F5F5F5] leading-relaxed"
-            style={{ lineHeight: "1.8" }}
+            className="font-serif text-xl md:text-2xl font-bold leading-relaxed"
+            style={{ color: "var(--text-primary)", lineHeight: "1.8" }}
           >
-            VOICE³ faz a ponte entre o teu B2 e o teu intelecto executivo.{" "}
-            <span style={{ color: "#D4A853" }}>Isto não é aprender inglês. É engenharia de performance.</span>
+            The VOICE³ Method bridges the gap.{" "}
+            <span style={{ color: "var(--gold)" }}>This isn't learning English. It's performance engineering.</span>
           </p>
         </motion.div>
 
@@ -88,10 +88,10 @@ const WhatYouLearn = () => {
               <div
                 className="rounded-lg overflow-hidden border transition-all duration-300 h-full flex flex-col hover:shadow-xl"
                 style={{
-                  backgroundColor: "#12121A",
-                  borderTop: "3px solid #D4A853",
-                  borderLeft: "1px solid rgba(212,168,83,0.1)",
-                  borderRight: "1px solid rgba(212,168,83,0.1)",
+                  backgroundColor: "var(--bg-surface)",
+                  borderTop: "3px solid var(--gold)",
+                  borderLeft: "1px solid var(--border-gold)",
+                  borderRight: "1px solid var(--border-gold)",
                   borderBottom: "1px solid rgba(212,168,83,0.05)",
                   padding: "32px 28px",
                 }}
@@ -101,25 +101,25 @@ const WhatYouLearn = () => {
                   {/* Icon */}
                   <div
                     className="w-14 h-14 rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
-                    style={{ backgroundColor: "rgba(212,168,83,0.1)" }}
+                    style={{ backgroundColor: "var(--gold-10)" }}
                   >
-                    <pillar.icon className="h-7 w-7" style={{ color: "#D4A853" }} />
+                    <pillar.icon className="h-7 w-7" style={{ color: "var(--gold)" }} />
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-serif text-2xl font-bold text-[#F5F5F5] mb-4 tracking-wide">
+                  <h3 className="font-serif text-2xl font-bold mb-4 tracking-wide" style={{ color: "var(--text-primary)" }}>
                     {pillar.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-base leading-relaxed" style={{ color: "#9A9AB0" }}>
+                  <p className="text-base leading-relaxed" style={{ color: "var(--text-secondary)" }}>
                     {pillar.description}
                   </p>
 
                   {/* Accent line */}
                   <div
                     className="mt-6 h-1 w-12 rounded-full"
-                    style={{ backgroundColor: "#D4A853" }}
+                    style={{ backgroundColor: "var(--gold)" }}
                   />
                 </div>
               </div>
@@ -132,7 +132,7 @@ const WhatYouLearn = () => {
       <div
         className="mt-20 h-px max-w-7xl mx-auto"
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(212,168,83,0.15), transparent)",
+          background: "linear-gradient(90deg, transparent, var(--border-gold), transparent)",
         }}
       />
     </section>
