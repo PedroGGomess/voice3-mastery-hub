@@ -74,15 +74,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error('Não foi possível criar a conta.');
     }
 
-    // Try to upsert profile/role — may fail if no session (email verification pending)
-    // The handle_new_user trigger creates these automatically, so failure is non-blocking
-    try {
-      await Promise.all([
-        supabase.from('profiles').upsert({ id: authData.user.id, name: data.name, email: data.email, company: data.company || null, pack: data.pack || null, timezone: 'Europe/Lisbon' }),
-        supabase.from('user_roles').upsert({ user_id: authData.user.id, role: data.role as any }),
-      ]);
-    } catch (e) {
-      console.warn('Profile upsert skipped (no session yet):', e);
+    // The handle_new_user trigger creates profile + role automatically.
+    // Fire-and-forget upserts for extra fields (pack, company) — don't await to avoid auth lock deadlock.
+    if (authData.session) {
+      supabase.from('profiles').update({ company: data.company || null, pack: data.pack || null, timezone: 'Europe/Lisbon' }).eq('id', authData.user.id).then(() => {});
     }
 
     return {
