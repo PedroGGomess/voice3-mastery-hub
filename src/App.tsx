@@ -56,6 +56,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import DiagnosticSession from "./pages/DiagnosticSession";
 import ChaptersOverview from "./pages/ChaptersOverview";
 import ChapterDetail from "./pages/ChapterDetail";
+import ChapterSessionPage from "./pages/ChapterSessionPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import CheckoutReturn from "./pages/CheckoutReturn";
 
@@ -177,6 +178,7 @@ function AppContent() {
             <Route path="/sessoes/diagnostico" element={<ProtectedRoute requiredRole="student"><DiagnosticSession /></ProtectedRoute>} />
             <Route path="/capitulos" element={<ProtectedRoute requiredRole="student"><ChaptersOverview /></ProtectedRoute>} />
             <Route path="/capitulos/:chapterId" element={<ProtectedRoute requiredRole="student"><ChapterDetail /></ProtectedRoute>} />
+            <Route path="/capitulos/:chapterId/sessoes/:sessionId" element={<ProtectedRoute requiredRole="student"><ChapterSessionPage /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
             </Routes>
