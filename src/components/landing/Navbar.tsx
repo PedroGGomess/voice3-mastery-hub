@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Menu, X, LayoutDashboard, Search } from "lucide-react";
+import { Menu, X, LayoutDashboard, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "@/components/LanguageSelector";
@@ -19,7 +19,11 @@ const Navbar = () => {
   const { isAuthenticated, currentUser } = useAuth();
   const { t } = useTranslation();
 
-  const dashboardLink = currentUser?.role === "company_admin" ? "/empresa" : "/app";
+  const dashboardLink =
+    currentUser?.role === "company_admin" ? "/empresa" :
+    currentUser?.role === "admin" ? "/admin/dashboard" :
+    currentUser?.role === "professor" ? "/professor/dashboard" :
+    "/app";
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
@@ -29,60 +33,59 @@ const Navbar = () => {
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
       style={{
         height: 64,
-        background: scrolled ? "rgba(4,10,20,0.97)" : "rgba(6,15,29,0.8)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        borderBottom: "1px solid hsla(var(--primary) / 0.1)",
-        boxShadow: scrolled ? "0 4px 32px rgba(0,0,0,0.4)" : "none",
-        transition: "background 0.3s, box-shadow 0.3s",
+        background: scrolled ? "rgba(4,10,20,0.98)" : "rgba(6,15,29,0.6)",
+        backdropFilter: "blur(24px)",
+        WebkitBackdropFilter: "blur(24px)",
+        borderBottom: scrolled ? "1px solid rgba(201,168,76,0.08)" : "1px solid transparent",
+        boxShadow: scrolled ? "0 4px 40px rgba(0,0,0,0.4)" : "none",
       }}
     >
       <div className="container h-16" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
-        {/* Logo (left) */}
-        <Link to="/" className="flex items-center">
-          <span className="font-sans font-bold tracking-[0.2em] text-foreground uppercase text-lg">
-            VOICE<sup className="text-primary text-sm">³</sup>
+        {/* Logo */}
+        <Link to="/" className="flex items-center group">
+          <span className="font-sans font-bold tracking-[0.2em] text-foreground uppercase text-lg transition-colors duration-200 group-hover:text-primary">
+            VOICE<sup className="text-primary text-sm">3</sup>
           </span>
         </Link>
 
-        {/* Center: search bar (premium) */}
-        <div className="hidden md:flex items-center gap-6">
+        {/* Center nav links */}
+        <div className="hidden md:flex items-center gap-8">
           {navLinks.map(([key, href]) => (
             <Link
               key={href}
               to={href}
-              className="text-sm tracking-wider py-1 transition-colors duration-200"
-              style={{ color: "hsl(var(--muted-foreground))" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "hsl(var(--foreground))")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "hsl(var(--muted-foreground))")}
+              className="voice-nav-link text-sm tracking-wider py-1"
             >
               {t(key)}
             </Link>
           ))}
         </div>
 
-        {/* Right: actions */}
+        {/* Right actions */}
         <div className="hidden md:flex items-center gap-3 justify-end">
           <LanguageSelector />
           {isAuthenticated ? (
             <>
-              <span className="text-sm" style={{ color: "hsl(var(--muted-foreground))" }}>{currentUser?.name?.split(" ")[0]}</span>
-              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold rounded-lg transition-all duration-300" asChild>
+              <span className="text-sm text-muted-foreground">{currentUser?.name?.split(" ")[0]}</span>
+              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_rgba(201,168,76,0.2)]" asChild>
                 <Link to={dashboardLink}>
-                  <LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Minha Plataforma
+                  <LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Plataforma
                 </Link>
               </Button>
             </>
           ) : (
             <>
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-white/5" asChild>
-                <Link to="/login">{t("nav.login")}</Link>
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-lg" asChild>
+                <Link to="/auth">{t("nav.login")}</Link>
               </Button>
-              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold rounded-lg px-5 transition-all duration-300" asChild>
-                <Link to="/login">{t("nav.apply")}</Link>
+              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold rounded-lg px-5 transition-all duration-300 hover:shadow-[0_0_24px_rgba(201,168,76,0.25)] hover:-translate-y-0.5" asChild>
+                <Link to="/auth">
+                  {t("nav.apply")}
+                  <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                </Link>
               </Button>
             </>
           )}
@@ -95,10 +98,10 @@ const Navbar = () => {
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-primary/10 backdrop-blur-xl" style={{ background: "rgba(11,26,42,0.98)" }}>
+        <div className="md:hidden border-t border-primary/10 backdrop-blur-xl" style={{ background: "rgba(6,15,29,0.98)" }}>
           <div className="container py-4 space-y-3">
             {navLinks.map(([key, href]) => (
-              <Link key={href} to={href} className="block text-sm py-2 text-muted-foreground hover:text-foreground" onClick={() => setOpen(false)}>
+              <Link key={href} to={href} className="block text-sm py-2 text-muted-foreground hover:text-foreground transition-colors" onClick={() => setOpen(false)}>
                 {t(key)}
               </Link>
             ))}
@@ -114,11 +117,11 @@ const Navbar = () => {
                 </Button>
               ) : (
                 <>
-                  <Button variant="outline" size="sm" className="flex-1 border-primary/30 text-foreground hover:bg-white/5" asChild>
-                    <Link to="/login" onClick={() => setOpen(false)}>{t("nav.login")}</Link>
+                  <Button variant="outline" size="sm" className="flex-1 border-primary/30 text-foreground hover:bg-white/5 rounded-lg" asChild>
+                    <Link to="/auth" onClick={() => setOpen(false)}>{t("nav.login")}</Link>
                   </Button>
-                  <Button size="sm" className="flex-1 bg-primary text-primary-foreground font-semibold" asChild>
-                    <Link to="/login" onClick={() => setOpen(false)}>{t("nav.apply")}</Link>
+                  <Button size="sm" className="flex-1 bg-primary text-primary-foreground font-semibold rounded-lg" asChild>
+                    <Link to="/auth" onClick={() => setOpen(false)}>{t("nav.apply")}</Link>
                   </Button>
                 </>
               )}

@@ -2,8 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate, Navigate, Link } from "react-router-dom";
-import { ArrowRight, Eye, EyeOff, Check, CheckCircle2 } from "lucide-react";
+import { useNavigate, Navigate, Link, useSearchParams } from "react-router-dom";
+import { ArrowRight, Eye, EyeOff, Check, CheckCircle2, Shield, Users, Sparkles, Award } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -11,18 +11,20 @@ import LanguageSelector from "@/components/LanguageSelector";
 
 interface PackOption {
   name: string;
+  slug: string;
   price: number | null;
   sessions: number;
   teacherLessons: number;
   features: string[];
   note?: string;
+  popular?: boolean;
 }
 
 const PACK_OPTIONS: PackOption[] = [
-  { name: "Starter", price: 149, sessions: 4, teacherLessons: 1, features: ["4 sessões AI", "1 aula com professora", "Certificado"] },
-  { name: "Pro", price: 349, sessions: 8, teacherLessons: 2, features: ["8 sessões AI", "2 aulas com professora", "Analytics", "Gravações"] },
-  { name: "Advanced", price: 499, sessions: 12, teacherLessons: 3, features: ["12 sessões AI", "3 aulas com professora", "Percurso personalizado"] },
-  { name: "Business Master", price: null, sessions: 20, teacherLessons: 4, features: ["20 sessões AI", "4 aulas com professora", "Gestor dedicado"], note: "Contacto personalizado" },
+  { name: "Starter", slug: "starter", price: 149, sessions: 4, teacherLessons: 1, features: ["4 AI sessions", "1 live professor session", "Progress tracking", "Certificate"], popular: false },
+  { name: "Pro", slug: "pro", price: 349, sessions: 8, teacherLessons: 3, features: ["8 AI sessions", "3 live professor sessions", "Full analytics", "Priority booking", "Session recordings"], popular: true },
+  { name: "Advanced", slug: "advanced", price: 499, sessions: 12, teacherLessons: 5, features: ["12 AI sessions", "5 live professor sessions", "Custom learning path", "All Pro features"], popular: false },
+  { name: "Business Master", slug: "business-master", price: null, sessions: 20, teacherLessons: 10, features: ["Unlimited AI sessions", "10 professor sessions", "Dedicated manager", "Team dashboard"], note: "Contacto personalizado" },
 ];
 
 interface RegFormData {
@@ -40,41 +42,31 @@ function getPasswordStrength(pw: string): { level: "weak" | "medium" | "strong";
   return { level: "strong", label: "Forte", color: "#10b981", width: "100%" };
 }
 
-const GoldDot = () => (
-  <span className="inline-block w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: "#C9A84C" }} />
-);
-
 const demoUsers = [
-  { icon: "👤", role: "Student",   email: "demo@voice3.pt",      pass: "demo123"    },
+  { icon: "🎓", role: "Student",   email: "demo@voice3.pt",      pass: "demo123"    },
   { icon: "👩‍🏫", role: "Professor", email: "professor@voice3.pt", pass: "prof123"    },
   { icon: "🏢", role: "Company",   email: "empresa@voice3.pt",   pass: "empresa123" },
   { icon: "🔧", role: "Admin",     email: "admin@voice3.pt",     pass: "admin123"   },
 ];
 
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  height: 52,
-  padding: "0 16px",
-  background: "rgba(255,255,255,0.04)",
-  border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: 8,
-  color: "white",
-  fontSize: 15,
-  outline: "none",
-  transition: "border-color 0.2s",
-  boxSizing: "border-box",
-};
+const inputClass = "w-full h-[52px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-white text-[15px] outline-none transition-all duration-200 focus:border-[#C9A84C]/60 focus:shadow-[0_0_0_3px_rgba(201,168,76,0.08)] placeholder:text-white/25";
 
 const AuthPage = () => {
   const [mode, setMode] = useState<"login" | "register">("login");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [regStep, setRegStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [regData, setRegData] = useState<RegFormData>({ name: "", email: "", password: "", confirmPassword: "", company: "", role: "student" });
-  const [selectedPack, setSelectedPack] = useState<PackOption | null>(null);
+
+  // Pre-select pack from URL if coming from PacksPage
+  const preselectedSlug = searchParams.get("pack");
+  const preselectedPack = PACK_OPTIONS.find(p => p.slug === preselectedSlug) || null;
+  const [selectedPack, setSelectedPack] = useState<PackOption | null>(preselectedPack);
+
   const [success, setSuccess] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -134,7 +126,7 @@ const AuthPage = () => {
         pack: selectedPack?.name,
         packDetails,
       });
-      toast.success("Conta criada com sucesso! 🎉");
+      toast.success("Conta criada com sucesso!");
       setSuccess(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Ocorreu um erro.");
@@ -145,7 +137,7 @@ const AuthPage = () => {
   const resetToLogin = () => {
     setMode("login");
     setRegStep(1);
-    setSelectedPack(null);
+    setSelectedPack(preselectedPack);
     setError("");
     setSuccess(false);
     setRegData({ name: "", email: "", password: "", confirmPassword: "", company: "", role: "student" });
@@ -154,45 +146,31 @@ const AuthPage = () => {
   const totalSteps = regData.role === "student" ? 3 : 2;
   const currentStepDisplay = regData.role === "student" ? regStep : regStep === 1 ? 1 : 2;
   const pwStrength = getPasswordStrength(regData.password);
+  const stepLabels = regData.role === "student" ? ["Dados", "Pack", "Confirmar"] : ["Dados", "Confirmar"];
 
   /* ── Success Screen ─────────────────────────────────── */
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={{ background: "#0a1628" }}>
-        <style>{`
-          @keyframes confettiFall {
-            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-          }
-          .confetti-piece {
-            position: absolute; top: -20px; width: 8px; height: 8px;
-            border-radius: 2px; animation: confettiFall linear infinite;
-          }
-        `}</style>
-        {[...Array(20)].map((_, i) => (
-          <div key={i} className="confetti-piece" style={{
-            left: `${(i * 5) + Math.random() * 5}%`,
-            background: i % 3 === 0 ? "#C9A84C" : i % 3 === 1 ? "#F4F2ED" : "#243A5A",
-            animationDuration: `${2.5 + (i % 5) * 0.4}s`,
-            animationDelay: `${(i % 7) * 0.3}s`,
-          }} />
-        ))}
-        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="relative z-10 text-center max-w-md px-8">
-          <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: "rgba(201,168,76,0.08)", border: "2px solid #C9A84C" }}>
-              <CheckCircle2 className="h-10 w-10" style={{ color: "#C9A84C" }} />
-            </div>
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={{ background: "#060f1d" }}>
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, rgba(201,168,76,0.06), transparent 60%)" }} />
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} className="relative z-10 text-center max-w-md px-8">
+          <div className="flex justify-center mb-8">
+            <motion.div
+              className="w-24 h-24 rounded-full flex items-center justify-center"
+              style={{ background: "rgba(201,168,76,0.08)", border: "2px solid rgba(201,168,76,0.3)" }}
+              initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: "spring" }}
+            >
+              <CheckCircle2 className="h-12 w-12" style={{ color: "#C9A84C" }} />
+            </motion.div>
           </div>
           <h1 className="font-serif text-4xl font-bold mb-2" style={{ color: "#F4F2ED" }}>
-            VOICE<sup style={{ color: "#C9A84C" }}>³</sup>
+            VOICE<sup style={{ color: "#C9A84C" }}>3</sup>
           </h1>
-          <p className="text-2xl font-semibold mt-4 mb-3" style={{ color: "#F4F2ED" }}>Welcome to VOICE³</p>
-          <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.5)" }}>A sua conta foi criada com sucesso. Está pronto para começar.</p>
-          <button onClick={() => navigate("/app")} className="w-full py-3.5 rounded-xl font-semibold text-base transition-all"
-            style={{ background: "#C9A84C", color: "#060f1d" }}
-            onMouseEnter={e => (e.currentTarget.style.filter = "brightness(1.1)")}
-            onMouseLeave={e => (e.currentTarget.style.filter = "")}>
-            Aceder à Plataforma <ArrowRight className="inline h-4 w-4 ml-1" />
+          <p className="text-2xl font-semibold mt-6 mb-3" style={{ color: "#F4F2ED" }}>Welcome to VOICE3</p>
+          <p className="text-sm mb-10" style={{ color: "rgba(255,255,255,0.5)" }}>A sua conta foi criada com sucesso. Comece a sua jornada.</p>
+          <button onClick={() => navigate("/app")} className="w-full py-4 rounded-xl font-semibold text-base transition-all duration-300 hover:shadow-[0_8px_32px_rgba(201,168,76,0.3)] hover:-translate-y-0.5"
+            style={{ background: "linear-gradient(135deg, #C9A84C 0%, #B8912A 100%)", color: "#060f1d" }}>
+            Aceder a Plataforma <ArrowRight className="inline h-4 w-4 ml-2" />
           </button>
         </motion.div>
       </div>
@@ -202,172 +180,220 @@ const AuthPage = () => {
   /* ── REGISTER MODE ─────────────────────────────────── */
   if (mode === "register") {
     return (
-      <div className="min-h-screen flex items-center justify-center p-8 overflow-y-auto" style={{ background: "#060f1d" }}>
-        <motion.div key={`${mode}-${regStep}`} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} className="w-full max-w-md">
-          <div className="mb-8">
+      <div className="min-h-screen flex items-center justify-center p-6 overflow-y-auto" style={{ background: "#060f1d" }}>
+        {/* Background decoration */}
+        <div className="fixed inset-0 pointer-events-none">
+          <div style={{ position: "absolute", top: "10%", right: "10%", width: 300, height: 300, borderRadius: "50%", background: "rgba(201,168,76,0.03)", filter: "blur(80px)" }} />
+          <div style={{ position: "absolute", bottom: "10%", left: "10%", width: 200, height: 200, borderRadius: "50%", background: "rgba(36,58,90,0.1)", filter: "blur(60px)" }} />
+        </div>
+
+        <motion.div key={`${mode}-${regStep}`} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} className="w-full max-w-md relative z-10">
+          <div className="mb-8 flex items-center justify-between">
             <Link to="/">
-              <span className="font-serif text-2xl font-bold cursor-pointer" style={{ color: "#C9A84C", letterSpacing: "0.1em" }}>VOICE³</span>
+              <span className="font-serif text-2xl font-bold cursor-pointer" style={{ color: "#C9A84C", letterSpacing: "0.1em" }}>VOICE<sup className="text-sm">3</sup></span>
             </Link>
+            <LanguageSelector />
           </div>
-          <div className="flex items-center gap-2 mb-6">
+
+          {/* Step indicator with labels */}
+          <div className="flex items-center gap-2 mb-8">
             {Array.from({ length: totalSteps }).map((_, i) => (
-              <div key={i} className="h-1.5 flex-1 rounded-full transition-all duration-300"
-                style={{ background: i < currentStepDisplay ? "#C9A84C" : "rgba(255,255,255,0.1)" }} />
+              <div key={i} className="flex-1">
+                <div className="h-1 rounded-full transition-all duration-500"
+                  style={{ background: i < currentStepDisplay ? "linear-gradient(90deg, #C9A84C, #E8C87A)" : "rgba(255,255,255,0.08)" }} />
+                <span className="text-[10px] mt-1 block tracking-wider uppercase" style={{ color: i < currentStepDisplay ? "#C9A84C" : "rgba(255,255,255,0.25)" }}>
+                  {stepLabels[i]}
+                </span>
+              </div>
             ))}
-            <span className="text-xs ml-2" style={{ color: "rgba(255,255,255,0.4)" }}>{currentStepDisplay}/{totalSteps}</span>
           </div>
+
           {error && (
-            <div className="mb-4 p-3 rounded-xl text-sm" style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#f87171" }}>{error}</div>
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+              className="mb-4 p-3.5 rounded-xl text-sm flex items-center gap-2" style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#f87171" }}>
+              <Shield className="h-4 w-4 shrink-0" /> {error}
+            </motion.div>
           )}
+
           <AnimatePresence mode="wait">
             {regStep === 1 && (
               <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                 <h2 className="font-serif text-3xl font-bold mb-1" style={{ color: "#F4F2ED" }}>Cria a tua conta</h2>
-                <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.5)" }}>Preenche os teus dados para começar.</p>
+                <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.45)" }}>Preenche os teus dados para comecar.</p>
                 <form onSubmit={handleRegStep1} className="space-y-4">
                   {[
-                    { label: "Nome completo", key: "name", type: "text", placeholder: "João Silva", required: true },
+                    { label: "Nome completo", key: "name", type: "text", placeholder: "Joao Silva", required: true },
                     { label: "Empresa (opcional)", key: "company", type: "text", placeholder: "Tech Corp Portugal", required: false },
                     { label: "Email", key: "email", type: "email", placeholder: "joao@empresa.pt", required: true },
                   ].map(({ label, key, type, placeholder, required }) => (
                     <div key={key} className="space-y-1.5">
-                      <Label style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>{label}</Label>
-                      <Input type={type} placeholder={placeholder} required={required}
+                      <Label className="text-[11px] uppercase tracking-[0.08em]" style={{ color: "rgba(255,255,255,0.4)" }}>{label}</Label>
+                      <input type={type} placeholder={placeholder} required={required}
                         value={regData[key as keyof RegFormData]}
                         onChange={e => setRegData(d => ({ ...d, [key]: e.target.value }))}
-                        style={{ ...inputStyle }} />
+                        className={inputClass} />
                     </div>
                   ))}
                   <div className="space-y-1.5">
-                    <Label style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>{t('auth.account_type')}</Label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <Label className="text-[11px] uppercase tracking-[0.08em]" style={{ color: "rgba(255,255,255,0.4)" }}>{t('auth.account_type')}</Label>
+                    <div className="grid grid-cols-2 gap-3">
                       {[
-                        { id: "student" as const, icon: "🎓", title: t('auth.student'), desc: "Individual training" },
-                        { id: "company_admin" as const, icon: "🏢", title: t('auth.company'), desc: "Team training" },
+                        { id: "student" as const, icon: <Users className="h-5 w-5" />, title: t('auth.student'), desc: "Treino individual" },
+                        { id: "company_admin" as const, icon: <Shield className="h-5 w-5" />, title: t('auth.company'), desc: "Equipa corporativa" },
                       ].map(type => (
                         <button
                           key={type.id}
                           type="button"
                           onClick={() => setRegData(d => ({ ...d, role: type.id }))}
-                          className="text-left p-3 rounded-xl border transition-all"
+                          className="text-left p-4 rounded-xl border-2 transition-all duration-200"
                           style={{
-                            background: regData.role === type.id ? "rgba(201,168,76,0.1)" : "rgba(255,255,255,0.03)",
-                            border: regData.role === type.id ? "2px solid rgba(201,168,76,0.6)" : "1px solid rgba(255,255,255,0.08)",
+                            background: regData.role === type.id ? "rgba(201,168,76,0.08)" : "rgba(255,255,255,0.02)",
+                            borderColor: regData.role === type.id ? "rgba(201,168,76,0.5)" : "rgba(255,255,255,0.06)",
                             cursor: "pointer",
-                            transform: regData.role === type.id ? "scale(1.02)" : "scale(1)",
                           }}
                         >
-                          <div className="text-xl mb-1">{type.icon}</div>
+                          <div className="mb-2" style={{ color: regData.role === type.id ? "#C9A84C" : "rgba(255,255,255,0.3)" }}>{type.icon}</div>
                           <div className="text-sm font-semibold" style={{ color: regData.role === type.id ? "#C9A84C" : "#F4F2ED" }}>{type.title}</div>
-                          <div className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{type.desc}</div>
+                          <div className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{type.desc}</div>
                         </button>
                       ))}
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <Label style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>Password</Label>
+                    <Label className="text-[11px] uppercase tracking-[0.08em]" style={{ color: "rgba(255,255,255,0.4)" }}>Password</Label>
                     <div className="relative">
-                      <Input type={showPassword ? "text" : "password"} placeholder="••••••••" required
+                      <input type={showPassword ? "text" : "password"} placeholder="Minimo 6 caracteres" required
                         value={regData.password}
                         onChange={e => setRegData(d => ({ ...d, password: e.target.value }))}
-                        style={{ ...inputStyle, paddingRight: 44 }} />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(255,255,255,0.4)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+                        className={inputClass}
+                        style={{ paddingRight: 48 }} />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(255,255,255,0.3)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
                     {regData.password && (
-                      <div className="mt-1.5">
-                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
-                          <div className="h-full rounded-full transition-all duration-300" style={{ width: pwStrength.width, background: pwStrength.color }} />
+                      <div className="mt-2">
+                        <div className="h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                          <motion.div className="h-full rounded-full" initial={{ width: 0 }} animate={{ width: pwStrength.width }} style={{ background: pwStrength.color }} />
                         </div>
-                        <p className="text-xs mt-1" style={{ color: pwStrength.color }}>{pwStrength.label}</p>
+                        <p className="text-[11px] mt-1 font-medium" style={{ color: pwStrength.color }}>{pwStrength.label}</p>
                       </div>
                     )}
                   </div>
                   <div className="space-y-1.5">
-                    <Label style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>Confirmar Password</Label>
-                    <Input type="password" placeholder="••••••••" required
+                    <Label className="text-[11px] uppercase tracking-[0.08em]" style={{ color: "rgba(255,255,255,0.4)" }}>Confirmar Password</Label>
+                    <input type="password" placeholder="Repete a password" required
                       value={regData.confirmPassword}
                       onChange={e => setRegData(d => ({ ...d, confirmPassword: e.target.value }))}
-                      style={{ ...inputStyle }} />
+                      className={inputClass} />
                   </div>
-                  <button type="submit" className="w-full rounded-lg font-semibold text-base transition-all"
-                    style={{ height: 52, background: "linear-gradient(135deg,#C9A84C,#B8912A)", color: "#060f1d", border: "none", cursor: "pointer" }}>
-                    Continuar <ArrowRight className="inline h-4 w-4 ml-1" />
+                  <button type="submit" className="w-full h-[52px] rounded-xl font-semibold text-base transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-[0_8px_32px_rgba(201,168,76,0.25)] hover:-translate-y-0.5"
+                    style={{ background: "linear-gradient(135deg,#C9A84C,#B8912A)", color: "#060f1d", border: "none", cursor: "pointer" }}>
+                    Continuar <ArrowRight className="h-4 w-4" />
                   </button>
                 </form>
-                <div className="mt-5 text-center">
+                <div className="mt-6 text-center">
                   <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
-                    Já tens conta?{" "}
+                    Ja tens conta?{" "}
                     <button onClick={resetToLogin} className="font-medium hover:underline" style={{ color: "#C9A84C", background: "none", border: "none", cursor: "pointer" }}>Entra aqui</button>
                   </p>
                 </div>
               </motion.div>
             )}
+
             {regStep === 2 && regData.role === "student" && (
               <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                 <h2 className="font-serif text-3xl font-bold mb-1" style={{ color: "#F4F2ED" }}>Escolhe o teu Pack</h2>
-                <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.5)" }}>Seleciona o pack que melhor se adapta.</p>
-                <div className="grid grid-cols-2 gap-3 mb-6">
+                <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.45)" }}>Seleciona o pack que melhor se adapta as tuas necessidades.</p>
+                <div className="space-y-3 mb-6">
                   {PACK_OPTIONS.map(pack => (
-                    <button key={pack.name} onClick={() => setSelectedPack(pack)} className="text-left p-4 rounded-xl border transition-all"
-                      style={{ background: selectedPack?.name === pack.name ? "rgba(201,168,76,0.1)" : "rgba(255,255,255,0.03)", borderColor: selectedPack?.name === pack.name ? "#C9A84C" : "rgba(255,255,255,0.08)", cursor: "pointer" }}>
-                      <div className="flex items-start justify-between mb-2">
-                        <span className="font-semibold text-sm" style={{ color: "#F4F2ED" }}>{pack.name}</span>
-                        {selectedPack?.name === pack.name && <Check className="h-4 w-4" style={{ color: "#C9A84C" }} />}
-                      </div>
-                      {pack.price !== null ? (
-                        <div className="font-bold text-lg mb-2" style={{ color: "#C9A84C" }}>€{pack.price}</div>
-                      ) : (
-                        <div className="mb-2">
-                          <div className="font-bold text-sm" style={{ color: "#C9A84C" }}>Sob Consulta</div>
-                          {pack.note && <div className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{pack.note}</div>}
-                        </div>
+                    <button key={pack.name} onClick={() => setSelectedPack(pack)}
+                      className="w-full text-left p-4 rounded-xl border-2 transition-all duration-200 relative overflow-hidden"
+                      style={{
+                        background: selectedPack?.name === pack.name ? "rgba(201,168,76,0.06)" : "rgba(255,255,255,0.02)",
+                        borderColor: selectedPack?.name === pack.name ? "rgba(201,168,76,0.5)" : "rgba(255,255,255,0.06)",
+                        cursor: "pointer"
+                      }}>
+                      {pack.popular && (
+                        <span className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                          style={{ background: "rgba(201,168,76,0.15)", color: "#C9A84C", border: "1px solid rgba(201,168,76,0.3)" }}>
+                          Popular
+                        </span>
                       )}
-                      <ul className="space-y-1">
-                        {pack.features.map(f => (
-                          <li key={f} className="text-xs flex items-center gap-1.5" style={{ color: "rgba(255,255,255,0.5)" }}>
-                            <GoldDot />{f}
-                          </li>
-                        ))}
-                      </ul>
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-semibold text-base" style={{ color: selectedPack?.name === pack.name ? "#C9A84C" : "#F4F2ED" }}>{pack.name}</span>
+                            {selectedPack?.name === pack.name && <Check className="h-4 w-4" style={{ color: "#C9A84C" }} />}
+                          </div>
+                          {pack.price !== null ? (
+                            <div className="flex items-baseline gap-1">
+                              <span className="font-bold text-2xl" style={{ color: "#C9A84C" }}>EUR{pack.price}</span>
+                              <span className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>/pack</span>
+                            </div>
+                          ) : (
+                            <span className="text-sm font-semibold" style={{ color: "#C9A84C" }}>Sob Consulta</span>
+                          )}
+                          <div className="flex flex-wrap gap-1.5 mt-2">
+                            {pack.features.slice(0, 3).map(f => (
+                              <span key={f} className="text-[11px] px-2 py-0.5 rounded-md" style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.5)" }}>{f}</span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                     </button>
                   ))}
                 </div>
                 <div className="flex gap-3">
-                  <button onClick={() => setRegStep(1)} className="flex-1 h-11 rounded-lg font-semibold text-sm border transition-all"
+                  <button onClick={() => setRegStep(1)} className="flex-1 h-12 rounded-xl font-semibold text-sm border transition-all duration-200 hover:border-white/20"
                     style={{ background: "transparent", borderColor: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.5)", cursor: "pointer" }}>Anterior</button>
-                  <button onClick={handleRegStep2} disabled={!selectedPack} className="flex-1 h-11 rounded-lg font-semibold text-sm transition-all disabled:opacity-40"
-                    style={{ background: "#C9A84C", color: "#060f1d", border: "none", cursor: "pointer" }}>
+                  <button onClick={handleRegStep2} disabled={!selectedPack} className="flex-1 h-12 rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-40 hover:shadow-[0_4px_20px_rgba(201,168,76,0.25)]"
+                    style={{ background: "linear-gradient(135deg,#C9A84C,#B8912A)", color: "#060f1d", border: "none", cursor: "pointer" }}>
                     Continuar <ArrowRight className="inline h-4 w-4 ml-1" />
                   </button>
                 </div>
               </motion.div>
             )}
+
             {regStep === 3 && (
               <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                 <h2 className="font-serif text-3xl font-bold mb-1" style={{ color: "#F4F2ED" }}>Confirmar Registo</h2>
-                <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.5)" }}>Revê os teus dados antes de criar a conta.</p>
+                <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.45)" }}>Reve os teus dados antes de criar a conta.</p>
                 <div className="rounded-xl p-5 mb-6 space-y-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}>
                   {[
                     ["Nome", regData.name],
                     ["Email", regData.email],
                     ...(regData.company ? [["Empresa", regData.company]] : []),
                     ["Tipo", regData.role === "student" ? "Aluno" : "Admin Empresa"],
-                    ...(selectedPack ? [["Pack", selectedPack.name], ["Preço", selectedPack.price !== null ? `€${selectedPack.price}` : "Sob Consulta"]] : []),
+                    ...(selectedPack ? [["Pack", selectedPack.name], ["Preco", selectedPack.price !== null ? `EUR${selectedPack.price}` : "Sob Consulta"]] : []),
                   ].map(([k, v]) => (
                     <div key={k} className="flex justify-between text-sm">
                       <span style={{ color: "rgba(255,255,255,0.4)" }}>{k}</span>
-                      <span className="font-medium" style={{ color: k === "Pack" || k === "Preço" ? "#C9A84C" : "#F4F2ED" }}>{v}</span>
+                      <span className="font-medium" style={{ color: k === "Pack" || k === "Preco" ? "#C9A84C" : "#F4F2ED" }}>{v}</span>
                     </div>
                   ))}
                 </div>
+                {selectedPack && selectedPack.price !== null && (
+                  <div className="rounded-xl p-4 mb-6 flex items-center gap-3" style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.15)" }}>
+                    <Sparkles className="h-5 w-5 shrink-0" style={{ color: "#C9A84C" }} />
+                    <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
+                      O pagamento sera processado apos a criacao da conta. Receberas um email com as instrucoes.
+                    </p>
+                  </div>
+                )}
                 <div className="flex gap-3">
-                  <button onClick={() => setRegStep(regData.role === "student" ? 2 : 1)} className="flex-1 h-11 rounded-lg font-semibold text-sm border transition-all"
+                  <button onClick={() => setRegStep(regData.role === "student" ? 2 : 1)} className="flex-1 h-12 rounded-xl font-semibold text-sm border transition-all duration-200 hover:border-white/20"
                     style={{ background: "transparent", borderColor: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.5)", cursor: "pointer" }}>Anterior</button>
-                  <button onClick={handleRegConfirm} disabled={loading} className="flex-1 h-11 rounded-lg font-semibold text-sm transition-all disabled:opacity-60"
-                    style={{ background: "#C9A84C", color: "#060f1d", border: "none", cursor: "pointer" }}>
-                    {loading ? "A criar conta..." : <span>Criar Conta <ArrowRight className="inline h-4 w-4 ml-1" /></span>}
+                  <button onClick={handleRegConfirm} disabled={loading} className="flex-1 h-12 rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-60 hover:shadow-[0_4px_20px_rgba(201,168,76,0.25)]"
+                    style={{ background: "linear-gradient(135deg,#C9A84C,#B8912A)", color: "#060f1d", border: "none", cursor: "pointer" }}>
+                    {loading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <span className="inline-block w-4 h-4 border-2 border-[#060f1d] border-t-transparent rounded-full animate-spin" />
+                        A criar...
+                      </span>
+                    ) : (
+                      <span>Criar Conta <ArrowRight className="inline h-4 w-4 ml-1" /></span>
+                    )}
                   </button>
                 </div>
               </motion.div>
@@ -391,36 +417,58 @@ const AuthPage = () => {
         justifyContent: "center",
         alignItems: "center",
       }}>
-        <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
+        {/* Pattern overlay */}
+        <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.04 }}>
           <defs>
             <pattern id="geo" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
-              <path d="M60 0L0 60M30 0L0 30M60 30L30 60" stroke="#C9A84C" strokeWidth="0.5" opacity="0.06" />
+              <path d="M60 0L0 60M30 0L0 30M60 30L30 60" stroke="#C9A84C" strokeWidth="0.5" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#geo)" />
         </svg>
+
+        {/* Radial glow */}
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, rgba(201,168,76,0.04), transparent 60%)" }} />
+
         <div className="slide-in-left" style={{ position: "relative", zIndex: 10, textAlign: "center", maxWidth: 420, padding: "0 40px" }}>
-          <Link to="/"><h1 style={{ fontFamily: "serif", fontSize: 52, fontWeight: 700, color: "#C9A84C", letterSpacing: "0.15em", margin: 0, cursor: "pointer" }}>VOICE³</h1></Link>
-          <div style={{ width: 48, height: 2, background: "#C9A84C", margin: "28px auto" }} />
-          <p style={{ fontFamily: "serif", fontSize: 22, fontStyle: "italic", color: "rgba(255,255,255,0.82)", maxWidth: 380, lineHeight: 1.75, textAlign: "center", margin: 0 }}>
+          <Link to="/"><h1 style={{ fontFamily: "var(--font-serif)", fontSize: 56, fontWeight: 700, color: "#C9A84C", letterSpacing: "0.15em", margin: 0, cursor: "pointer" }}>VOICE<sup style={{ fontSize: 24 }}>3</sup></h1></Link>
+          <div style={{ width: 60, height: 2, background: "linear-gradient(90deg, transparent, #C9A84C, transparent)", margin: "32px auto" }} />
+          <p style={{ fontFamily: "var(--font-serif)", fontSize: 22, fontStyle: "italic", color: "rgba(255,255,255,0.75)", maxWidth: 380, lineHeight: 1.8, textAlign: "center", margin: 0 }}>
             "You will not improve your English.<br />You will perform with precision."
           </p>
-          <p style={{ color: "rgba(201,168,76,0.4)", fontSize: 20, margin: "28px 0" }}>✦</p>
-          <div style={{ display: "flex", flexDirection: "row", gap: 8, justifyContent: "center", alignItems: "center" }}>
-            <span style={{ color: "#C9A84C", fontSize: 14 }}>★★★★★</span>
-            <span style={{ fontSize: 13, color: "rgba(255,255,255,0.55)" }}>4.9/5 from 200+ executives</span>
+          <p style={{ color: "rgba(201,168,76,0.3)", fontSize: 18, margin: "32px 0" }}>---</p>
+
+          {/* Features list */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, textAlign: "left", maxWidth: 280, margin: "0 auto" }}>
+            {[
+              { icon: <Award className="h-4 w-4" />, text: "Executive Communication" },
+              { icon: <Sparkles className="h-4 w-4" />, text: "AI-Powered Coaching" },
+              { icon: <Users className="h-4 w-4" />, text: "Live Professor Sessions" },
+            ].map((item, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ color: "rgba(201,168,76,0.6)" }}>{item.icon}</div>
+                <span style={{ fontSize: 13, color: "rgba(255,255,255,0.5)" }}>{item.text}</span>
+              </div>
+            ))}
           </div>
-          <div style={{ marginTop: 32, display: "flex", gap: 24, justifyContent: "center" }}>
+
+          <div style={{ marginTop: 36, display: "flex", gap: 12, justifyContent: "center", alignItems: "center" }}>
+            <span style={{ color: "#C9A84C", fontSize: 13 }}>★★★★★</span>
+            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>4.9/5 from 200+ executives</span>
+          </div>
+          <div style={{ marginTop: 24, display: "flex", gap: 24, justifyContent: "center" }}>
             {["GALP", "NOS", "EDP"].map(name => (
-              <span key={name} style={{ fontSize: 12, letterSpacing: "0.12em", color: "rgba(255,255,255,0.25)", fontWeight: 600 }}>{name}</span>
+              <span key={name} style={{ fontSize: 11, letterSpacing: "0.15em", color: "rgba(255,255,255,0.18)", fontWeight: 600 }}>{name}</span>
             ))}
           </div>
         </div>
+
+        {/* Coach indicator */}
         <div style={{ position: "absolute", bottom: 32, left: 32, display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#C9A84C,#8B6914)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#060f1d" }}>SS</div>
+          <div style={{ width: 44, height: 44, borderRadius: "50%", background: "linear-gradient(135deg,#C9A84C,#8B6914)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#060f1d" }}>SS</div>
           <div>
-            <p style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.8)", margin: 0 }}>Sandra Stuttaford</p>
-            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", margin: 0 }}>Your Executive Coach</p>
+            <p style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.7)", margin: 0 }}>Sandra Stuttaford</p>
+            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", margin: 0 }}>Your Executive Coach</p>
           </div>
         </div>
       </div>
@@ -436,40 +484,43 @@ const AuthPage = () => {
         overflowY: "auto",
       }}>
         <div className="lg:hidden flex items-center justify-between" style={{ marginBottom: 32 }}>
-          <Link to="/"><span style={{ fontFamily: "serif", fontSize: 28, fontWeight: 700, color: "#C9A84C", letterSpacing: "0.1em" }}>VOICE³</span></Link>
+          <Link to="/"><span style={{ fontFamily: "var(--font-serif)", fontSize: 28, fontWeight: 700, color: "#C9A84C", letterSpacing: "0.1em" }}>VOICE<sup style={{ fontSize: 14 }}>3</sup></span></Link>
           <LanguageSelector />
         </div>
         <div className="slide-in-right" style={{ maxWidth: 440, width: "100%", margin: "0 auto" }}>
-          <h2 style={{ fontFamily: "serif", fontSize: 32, fontWeight: 700, color: "white", marginBottom: 8 }}>{t('auth.welcome')}</h2>
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", marginBottom: 36 }}>{t('auth.sub')}</p>
-          <div style={{ width: 40, height: 2, background: "#C9A84C", marginBottom: 36 }} />
+          <h2 style={{ fontFamily: "var(--font-serif)", fontSize: 34, fontWeight: 700, color: "white", marginBottom: 8 }}>{t('auth.welcome')}</h2>
+          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", marginBottom: 36 }}>{t('auth.sub')}</p>
+          <div style={{ width: 40, height: 2, background: "linear-gradient(90deg, #C9A84C, transparent)", marginBottom: 36 }} />
+
           {error && (
-            <div style={{ marginBottom: 16, padding: "12px 16px", borderRadius: 8, fontSize: 14, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#f87171" }}>{error}</div>
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+              style={{ marginBottom: 16, padding: "12px 16px", borderRadius: 12, fontSize: 14, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#f87171", display: "flex", alignItems: "center", gap: 8 }}>
+              <Shield className="h-4 w-4 shrink-0" /> {error}
+            </motion.div>
           )}
+
           <form onSubmit={handleLoginSubmit}>
             <div style={{ marginBottom: 20 }}>
               <label style={{ display: "block", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Email Address</label>
-              <input type="email" placeholder="your@email.com" required value={loginEmail} onChange={e => setLoginEmail(e.target.value)} style={inputStyle}
-                onFocus={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.7)")}
-                onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")} />
+              <input type="email" placeholder="your@email.com" required value={loginEmail} onChange={e => setLoginEmail(e.target.value)}
+                className={inputClass} />
             </div>
             <div style={{ marginBottom: 8 }}>
               <label style={{ display: "block", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.08em", color: "rgba(255,255,255,0.4)", marginBottom: 8 }}>Password</label>
               <div style={{ position: "relative" }}>
-                <input type={showLoginPassword ? "text" : "password"} placeholder="••••••••" required value={loginPassword} onChange={e => setLoginPassword(e.target.value)}
-                  style={{ ...inputStyle, paddingRight: 48 }}
-                  onFocus={e => (e.currentTarget.style.borderColor = "rgba(201,168,76,0.7)")}
-                  onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")} />
+                <input type={showLoginPassword ? "text" : "password"} placeholder="Enter your password" required value={loginPassword} onChange={e => setLoginPassword(e.target.value)}
+                  className={inputClass}
+                  style={{ paddingRight: 48 }} />
                 <button type="button" onClick={() => setShowLoginPassword(!showLoginPassword)}
-                  style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", color: "rgba(255,255,255,0.4)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+                  style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", color: "rgba(255,255,255,0.3)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
                   {showLoginPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
-              <button type="button" style={{ fontSize: 13, color: "rgba(201,168,76,0.6)", cursor: "pointer", background: "none", border: "none" }}
+              <button type="button" style={{ fontSize: 13, color: "rgba(201,168,76,0.5)", cursor: "pointer", background: "none", border: "none", transition: "color 0.2s" }}
                 onMouseEnter={e => (e.currentTarget.style.color = "#C9A84C")}
-                onMouseLeave={e => (e.currentTarget.style.color = "rgba(201,168,76,0.6)")}>
+                onMouseLeave={e => (e.currentTarget.style.color = "rgba(201,168,76,0.5)")}>
                 Forgot password?
               </button>
             </div>
@@ -477,55 +528,60 @@ const AuthPage = () => {
               width: "100%", height: 52,
               background: loading ? "rgba(201,168,76,0.6)" : "linear-gradient(135deg, #C9A84C 0%, #B8912A 100%)",
               color: "#060f1d", fontWeight: 700, fontSize: 15, letterSpacing: "0.04em",
-              borderRadius: 8, border: "none", cursor: loading ? "not-allowed" : "pointer",
-              boxShadow: "0 4px 24px rgba(201,168,76,0.25)", transition: "all 0.2s",
+              borderRadius: 12, border: "none", cursor: loading ? "not-allowed" : "pointer",
+              boxShadow: "0 4px 24px rgba(201,168,76,0.2)", transition: "all 0.3s",
               display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
             }}
-              onMouseEnter={e => { if (!loading) { e.currentTarget.style.filter = "brightness(1.1)"; e.currentTarget.style.boxShadow = "0 6px 32px rgba(201,168,76,0.4)"; e.currentTarget.style.transform = "scale(1.01)"; } }}
-              onMouseLeave={e => { e.currentTarget.style.filter = ""; e.currentTarget.style.boxShadow = "0 4px 24px rgba(201,168,76,0.25)"; e.currentTarget.style.transform = ""; }}>
+              onMouseEnter={e => { if (!loading) { e.currentTarget.style.boxShadow = "0 8px 40px rgba(201,168,76,0.35)"; e.currentTarget.style.transform = "translateY(-1px)"; } }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 4px 24px rgba(201,168,76,0.2)"; e.currentTarget.style.transform = ""; }}>
               {loading ? (
                 <>
-                  <span style={{ display: "inline-block", width: 16, height: 16, border: "2px solid #060f1d", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+                  <span className="inline-block w-4 h-4 border-2 border-[#060f1d] border-t-transparent rounded-full animate-spin" />
                   Signing in...
                 </>
               ) : "Sign In  →"}
             </button>
           </form>
-          <div style={{ display: "flex", alignItems: "center", margin: "24px 0" }}>
-            <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.08)" }} />
-            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", padding: "0 12px" }}>or</span>
-            <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.08)" }} />
+
+          <div style={{ display: "flex", alignItems: "center", margin: "28px 0" }}>
+            <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
+            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", padding: "0 16px", textTransform: "uppercase", letterSpacing: "0.1em" }}>or</span>
+            <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.06)" }} />
           </div>
+
           <button onClick={() => setIsShowingDemo(d => !d)} style={{
             width: "100%", height: 46, background: "transparent",
-            border: "1px solid rgba(201,168,76,0.25)",
-            color: "rgba(201,168,76,0.75)", fontSize: 14,
-            borderRadius: 8, cursor: "pointer", transition: "all 0.2s",
+            border: "1px solid rgba(201,168,76,0.15)",
+            color: "rgba(201,168,76,0.6)", fontSize: 13,
+            borderRadius: 12, cursor: "pointer", transition: "all 0.2s",
+            letterSpacing: "0.03em",
           }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.5)"; e.currentTarget.style.color = "rgba(201,168,76,1)"; e.currentTarget.style.background = "rgba(201,168,76,0.04)"; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.25)"; e.currentTarget.style.color = "rgba(201,168,76,0.75)"; e.currentTarget.style.background = "transparent"; }}>
-            ▸&nbsp; Explore with Demo Credentials
+            onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.35)"; e.currentTarget.style.color = "#C9A84C"; e.currentTarget.style.background = "rgba(201,168,76,0.03)"; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.15)"; e.currentTarget.style.color = "rgba(201,168,76,0.6)"; e.currentTarget.style.background = "transparent"; }}>
+            Explore with Demo Credentials
           </button>
-          <div style={{ overflow: "hidden", maxHeight: isShowingDemo ? 300 : 0, transition: "max-height 0.35s ease" }}>
-            <div style={{ background: "rgba(201,168,76,0.04)", border: "1px solid rgba(201,168,76,0.15)", borderRadius: 10, padding: 16, marginTop: 12 }}>
-              <p style={{ fontSize: 11, color: "rgba(201,168,76,0.7)", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" as const, marginBottom: 10 }}>Demo Accounts</p>
+
+          <div style={{ overflow: "hidden", maxHeight: isShowingDemo ? 300 : 0, transition: "max-height 0.4s ease" }}>
+            <div style={{ background: "rgba(201,168,76,0.03)", border: "1px solid rgba(201,168,76,0.1)", borderRadius: 12, padding: 16, marginTop: 12 }}>
+              <p style={{ fontSize: 10, color: "rgba(201,168,76,0.5)", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase" as const, marginBottom: 10 }}>Demo Accounts</p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
                 {demoUsers.map(user => (
                   <button key={user.role} onClick={() => { setLoginEmail(user.email); setLoginPassword(user.pass); }}
-                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 10px", borderRadius: 6, cursor: "pointer", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)", transition: "background 0.15s" }}
-                    onMouseEnter={e => (e.currentTarget.style.background = "rgba(201,168,76,0.06)")}
-                    onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.02)")}>
-                    <span style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>{user.icon} {user.role}</span>
-                    <span style={{ fontSize: 11, color: "rgba(201,168,76,0.7)", fontFamily: "monospace" }}>Use →</span>
+                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", borderRadius: 8, cursor: "pointer", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)", transition: "all 0.15s" }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(201,168,76,0.05)"; e.currentTarget.style.borderColor = "rgba(201,168,76,0.15)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.04)"; }}>
+                    <span style={{ fontSize: 13, color: "rgba(255,255,255,0.6)" }}>{user.icon} {user.role}</span>
+                    <span style={{ fontSize: 10, color: "rgba(201,168,76,0.5)", fontFamily: "monospace" }}>Use →</span>
                   </button>
                 ))}
               </div>
             </div>
           </div>
-          <div style={{ marginTop: 28, textAlign: "center" }}>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>
+
+          <div style={{ marginTop: 32, textAlign: "center" }}>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.35)" }}>
               Don't have an account?{" "}
-              <button onClick={() => { setMode("register"); setError(""); }} style={{ color: "#C9A84C", background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 500 }}>
+              <button onClick={() => { setMode("register"); setError(""); }} style={{ color: "#C9A84C", background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
                 Create account
               </button>
             </p>

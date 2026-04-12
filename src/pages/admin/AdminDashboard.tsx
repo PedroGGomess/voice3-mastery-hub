@@ -454,7 +454,52 @@ function SectionProfessors() {
       setIsLoading(false);
     })();
   }, []);
-  const handleCreate = () => { toast.success(`Professor ${form.name||'created'} successfully`); setShowModal(false); setForm({ name:'', email:'', password:'', bio:'' }); };
+  const handleCreate = async () => {
+    if (!form.name || !form.email || !form.password) {
+      toast.error('Name, email and password are required');
+      return;
+    }
+    try {
+      // Create the auth user via Supabase signUp (creates in auth.users)
+      const { data: authData, error: authErr } = await supabase.auth.signUp({
+        email: form.email,
+        password: form.password,
+        options: { data: { name: form.name } },
+      });
+      if (authErr) throw authErr;
+      if (!authData.user) throw new Error('User creation failed');
+
+      // Create profile and role
+      await Promise.all([
+        supabase.from('profiles').upsert({
+          id: authData.user.id,
+          name: form.name,
+          email: form.email,
+          company: null,
+          pack: null,
+          timezone: 'Europe/Lisbon',
+        }),
+        supabase.from('user_roles').upsert({
+          user_id: authData.user.id,
+          role: 'professor' as any,
+        }),
+      ]);
+
+      // Add to local state
+      setProfessors(prev => [...prev, {
+        id: authData.user!.id,
+        name: form.name,
+        email: form.email,
+        students: 0,
+        status: 'active' as const,
+      }]);
+      toast.success(`Professor ${form.name} created successfully!`);
+      setShowModal(false);
+      setForm({ name: '', email: '', password: '', bio: '' });
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to create professor');
+    }
+  };
 
   if (isLoading) return <div style={{ textAlign:'center', padding:'60px', color:MUTED }}>A carregar...</div>;
 
@@ -1119,6 +1164,18 @@ function SectionSettings() {
   const [contactEmail, setContactEmail] = useState('hello@voice3.pt');
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [adminForm, setAdminForm] = useState({ name:'', email:'', password:'' });
+  const [adminList, setAdminList] = useState<{ id:string; name:string; email:string }[]>([]);
+  const { currentUser } = useAuth();
+
+  useEffect(() => {
+    (async () => {
+      const { data: roles } = await supabase.from('user_roles').select('user_id').eq('role','admin');
+      if (!roles?.length) return;
+      const ids = roles.map(r=>r.user_id);
+      const { data: profiles } = await supabase.from('profiles').select('id,name,email').in('id',ids);
+      setAdminList((profiles||[]).map(p => ({ id:p.id, name:p.name||'Admin', email:p.email||'' })));
+    })();
+  }, [showAdminModal]);
 
   const exportCSV = (filename: string, content: string) => {
     const blob = new Blob([content], { type:'text/csv' });
@@ -1164,7 +1221,40 @@ function SectionSettings() {
             <input type="password" value={adminForm.password} onChange={e => setAdminForm(p => ({ ...p, password:e.target.value }))} style={inputStyle} />
           </Field>
           <div style={{ display:'flex', justifyContent:'flex-end', marginTop:8 }}>
-            <GoldBtn onClick={() => { toast.success(`Admin ${adminForm.email || 'created'} successfully`); setShowAdminModal(false); setAdminForm({ name:'', email:'', password:'' }); }}>Add Admin</GoldBtn>
+            <GoldBtn onClick={async () => {
+              if (!adminForm.name || !adminForm.email || !adminForm.password) {
+                toast.error('All fields are required');
+                return;
+              }
+              try {
+                const { data: authData, error: authErr } = await supabase.auth.signUp({
+                  email: adminForm.email,
+                  password: adminForm.password,
+                  options: { data: { name: adminForm.name } },
+                });
+                if (authErr) throw authErr;
+                if (!authData.user) throw new Error('User creation failed');
+                await Promise.all([
+                  supabase.from('profiles').upsert({
+                    id: authData.user.id,
+                    name: adminForm.name,
+                    email: adminForm.email,
+                    company: null,
+                    pack: null,
+                    timezone: 'Europe/Lisbon',
+                  }),
+                  supabase.from('user_roles').upsert({
+                    user_id: authData.user.id,
+                    role: 'admin' as any,
+                  }),
+                ]);
+                toast.success(`Admin ${adminForm.name} created successfully!`);
+                setShowAdminModal(false);
+                setAdminForm({ name: '', email: '', password: '' });
+              } catch (err: any) {
+                toast.error(err.message || 'Failed to create admin');
+              }
+            }}>Add Admin</GoldBtn>
           </div>
         </Modal>
       )}
@@ -1184,9 +1274,18 @@ function SectionSettings() {
       {/* Admin accounts block */}
       <Card>
         <h3 style={{ color:'white', fontSize:15, fontWeight:600, marginBottom:20 }}>Admin Accounts</h3>
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 0', borderBottom:`1px solid ${WHITE_06}`, marginBottom:16 }}>
-          <span style={{ color:'white', fontSize:13 }}>admin@voice3.pt</span>
-          <Badge variant="gold" size="xs">You</Badge>
+        <div style={{ display:'flex', flexDirection:'column', gap:2, marginBottom:16 }}>
+          {adminList.length > 0 ? adminList.map(a => (
+            <div key={a.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 0', borderBottom:`1px solid ${WHITE_06}` }}>
+              <div>
+                <span style={{ color:'white', fontSize:13, fontWeight:500 }}>{a.name}</span>
+                <span style={{ color:MUTED, fontSize:12, marginLeft:8 }}>{a.email}</span>
+              </div>
+              {currentUser?.id === a.id && <Badge variant="gold" size="xs">You</Badge>}
+            </div>
+          )) : (
+            <div style={{ padding:'12px 0', color:MUTED, fontSize:13 }}>No admin accounts found.</div>
+          )}
         </div>
         <GoldBtn outlined onClick={() => setShowAdminModal(true)}>Add Another Admin →</GoldBtn>
       </Card>

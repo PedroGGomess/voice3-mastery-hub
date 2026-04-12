@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (authData.user) {
       await Promise.all([
         supabase.from('profiles').upsert({ id: authData.user.id, name: data.name, email: data.email, company: data.company || null, pack: data.pack || null, timezone: 'Europe/Lisbon' }),
-        supabase.from('user_roles').upsert({ user_id: authData.user.id, role: (data.role === 'company_admin' ? 'student' : data.role) as any }),
+        supabase.from('user_roles').upsert({ user_id: authData.user.id, role: data.role as any }),
       ]);
     }
   };
