@@ -1,14 +1,15 @@
 import PlatformLayout from "@/components/PlatformLayout";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User, Mail, Building, Trophy, Clock, Target, Flame, Lock, CheckCircle2, Star, Zap, BookOpen, Briefcase } from "lucide-react";
+import { User, Mail, Building, Trophy, Clock, Target, Flame, Lock, CheckCircle2, Star, Zap, BookOpen, Briefcase, CreditCard, Package, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { Card, Avatar } from "@/components/ui/VoiceUI";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Achievement {
   id: string;
@@ -108,6 +109,9 @@ const Perfil = () => {
             </div>
           </div>
         </div>
+
+        {/* Pack & Payment History */}
+        <PackAndPayments userId={userId} pack={currentUser?.pack} />
 
         {/* Executive Profile section */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-6">
