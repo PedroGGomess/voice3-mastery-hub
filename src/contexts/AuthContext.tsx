@@ -10,7 +10,7 @@ interface User {
 interface AuthContextType {
   currentUser: User | null; isAuthenticated: boolean; isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (data: { name: string; email: string; password: string; company?: string; role: 'student' | 'company_admin' | 'professor' | 'admin'; pack?: string; packDetails?: any; }) => Promise<void>;
+  register: (data: { name: string; email: string; password: string; company?: string; role: 'student' | 'company_admin' | 'professor' | 'admin'; pack?: string; packDetails?: any; }) => Promise<{ userId: string; email: string; hasSession: boolean }>;
   logout: () => void; updateProfile: (data: Partial<User>) => void;
 }
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -70,12 +70,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (data: any) => {
     const { data: authData, error } = await supabase.auth.signUp({ email: data.email, password: data.password, options: { data: { name: data.name } } });
     if (error) throw new Error(error.message);
-    if (authData.user) {
-      await Promise.all([
-        supabase.from('profiles').upsert({ id: authData.user.id, name: data.name, email: data.email, company: data.company || null, pack: data.pack || null, timezone: 'Europe/Lisbon' }),
-        supabase.from('user_roles').upsert({ user_id: authData.user.id, role: data.role as any }),
-      ]);
+    if (!authData.user) {
+      throw new Error('Não foi possível criar a conta.');
     }
+
+    await Promise.all([
+      supabase.from('profiles').upsert({ id: authData.user.id, name: data.name, email: data.email, company: data.company || null, pack: data.pack || null, timezone: 'Europe/Lisbon' }),
+      supabase.from('user_roles').upsert({ user_id: authData.user.id, role: data.role as any }),
+    ]);
+
+    return {
+      userId: authData.user.id,
+      email: authData.user.email || data.email,
+      hasSession: !!authData.session,
+    };
   };
   const logout = async () => { await supabase.auth.signOut(); setCurrentUser(null); };
   const updateProfile = async (data: Partial<User>) => {

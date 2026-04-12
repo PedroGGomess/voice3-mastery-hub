@@ -8,7 +8,13 @@ import { Link } from "react-router-dom";
 export default function CheckoutPage() {
   const [searchParams] = useSearchParams();
   const priceId = searchParams.get("price") || "starter_once";
+  const pendingEmail = searchParams.get("email") || undefined;
+  const pendingUserId = searchParams.get("userId") || "";
   const { currentUser, isAuthenticated, isLoading } = useAuth();
+
+  const checkoutEmail = currentUser?.email || pendingEmail;
+  const checkoutUserId = currentUser?.id || pendingUserId;
+  const canCheckout = Boolean(checkoutEmail && checkoutUserId);
 
   if (isLoading) return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#0a1628" }}>
@@ -16,8 +22,7 @@ export default function CheckoutPage() {
     </div>
   );
 
-  // Redirect to register if not authenticated
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !canCheckout) {
     const packSlug = priceId.replace("_once", "");
     return <Navigate to={`/auth?mode=register&pack=${packSlug}`} replace />;
   }
@@ -33,8 +38,8 @@ export default function CheckoutPage() {
         <div className="rounded-2xl overflow-hidden border border-white/[0.06]">
           <StripeEmbeddedCheckout
             priceId={priceId}
-            customerEmail={currentUser?.email || undefined}
-            userId={currentUser?.id || ""}
+            customerEmail={checkoutEmail}
+            userId={checkoutUserId}
             returnUrl={`${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`}
           />
         </div>

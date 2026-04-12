@@ -134,7 +134,7 @@ const AuthPage = () => {
       const packDetails = selectedPack && selectedPack.price !== null
         ? { name: selectedPack.name, sessions: selectedPack.sessions, teacherLessons: selectedPack.teacherLessons, price: selectedPack.price }
         : undefined;
-      await register({
+      const registration = await register({
         name: regData.name,
         email: regData.email,
         password: regData.password,
@@ -144,13 +144,17 @@ const AuthPage = () => {
         packDetails,
       });
 
-      // For paid packs, redirect to embedded checkout page
       if (selectedPack && selectedPack.price !== null && selectedPack.slug !== "business-master") {
         toast.success("Conta criada! A redirecionar para pagamento...");
         const priceMap: Record<string, string> = { starter: "starter_once", pro: "pro_once", advanced: "advanced_once" };
         const priceId = priceMap[selectedPack.slug];
         if (priceId) {
-          navigate(`/checkout?price=${priceId}`);
+          const checkoutParams = new URLSearchParams({
+            price: priceId,
+            email: registration.email,
+            userId: registration.userId,
+          });
+          navigate(`/checkout?${checkoutParams.toString()}`);
           return;
         }
       }
