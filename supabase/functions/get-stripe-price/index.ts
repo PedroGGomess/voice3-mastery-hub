@@ -19,8 +19,18 @@ serve(async (req) => {
     const env = (environment || 'sandbox') as StripeEnv;
     const stripe = createStripeClient(env);
 
-    const prices = await stripe.prices.list({ lookup_keys: [priceId] });
-    if (!prices.data.length) {
+    let prices;
+    try {
+      prices = await stripe.prices.list({ lookup_keys: [priceId] });
+    } catch (priceErr) {
+      console.error("Failed to list prices:", priceErr);
+      return new Response(JSON.stringify({ error: `Failed to resolve price: ${(priceErr as Error).message}` }), {
+        status: 502,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    console.log("prices.list response:", JSON.stringify(prices));
+    if (!prices?.data?.length) {
       return new Response(JSON.stringify({ error: "Price not found" }), {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
