@@ -1,46 +1,31 @@
-import { loadStripe } from "@stripe/stripe-js";
+import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { supabase } from "@/integrations/supabase/client";
 
-let stripePromise: ReturnType<typeof loadStripe> | null = null;
+const clientToken = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN;
+const environment = clientToken?.startsWith('pk_test_') ? 'sandbox' : 'live';
 
-const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY || "pk_test_51TLNagJBWyWZp8IKOYGVhzkbhgVihnlWr907utDyzoWrc5VWDGwywGqu2zU1Rg2qAUtXbg4QtO1m1wJqWnfkVfDA00AaeEHL0V";
+let stripePromise: Promise<Stripe | null> | null = null;
 
-export const getStripe = () => {
+export function getStripe(): Promise<Stripe | null> {
   if (!stripePromise) {
-    stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
+    if (!clientToken) {
+      throw new Error("VITE_PAYMENTS_CLIENT_TOKEN is not set");
+    }
+    stripePromise = loadStripe(clientToken);
   }
   return stripePromise;
-};
+}
 
-export async function createCheckoutSession(pack: string): Promise<{ url: string | null; error: string | null }> {
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.access_token) {
-      return { url: null, error: "Tens de estar autenticado para efectuar o pagamento." };
-    }
-
-    const { data, error } = await supabase.functions.invoke("create-checkout", {
-      body: {
-        pack,
-        successUrl: `${window.location.origin}/app?payment=success`,
-        cancelUrl: `${window.location.origin}/auth?mode=register&payment=cancelled`,
-      },
-    });
-
-    if (error) {
-      return { url: null, error: error.message || "Erro ao criar sessão de pagamento." };
-    }
-
-    if (data?.url) {
-      return { url: data.url, error: null };
-    }
-
-    if (data?.error) {
-      return { url: null, error: data.error };
-    }
-
-    return { url: null, error: "Resposta inesperada do servidor." };
-  } catch (err: any) {
-    return { url: null, error: err.message || "Erro de ligação ao servidor." };
+export async function getStripePriceId(priceId: string): Promise<string> {
+  const { data, error } = await supabase.functions.invoke("get-stripe-price", {
+    body: { priceId, environment },
+  });
+  if (error || !data?.stripeId) {
+    throw new Error(`Failed to resolve price: ${priceId}`);
   }
+  return data.stripeId;
+}
+
+export function getStripeEnvironment(): string {
+  return environment;
 }
