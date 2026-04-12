@@ -201,8 +201,8 @@ export default function ChapterSessionPage() {
           <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${C.border}` }}>
             <SessionAIChat
               sessionTitle={session.title}
-              sessionContext={getAIContext()}
-              onSessionComplete={(score: number) => handleComplete(score)}
+              scenario={getAIContext()}
+              onComplete={(score: number) => handleComplete(score)}
             />
           </div>
         </motion.div>
