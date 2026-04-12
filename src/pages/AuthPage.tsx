@@ -76,7 +76,16 @@ const AuthPage = () => {
   const { t } = useTranslation();
   const { login, register, isAuthenticated, isLoading, currentUser } = useAuth();
 
-  if (isLoading) return null;
+  if (isLoading) return (
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "#060f1d" }}>
+      <div className="text-center">
+        <span className="font-serif text-2xl font-bold" style={{ color: "#C9A84C", letterSpacing: "0.1em" }}>VOICE<sup className="text-sm">3</sup></span>
+        <div className="mt-6 flex justify-center">
+          <span className="inline-block w-6 h-6 border-2 border-[#C9A84C] border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    </div>
+  );
   if (isAuthenticated) {
     if (currentUser?.role === "company_admin") return <Navigate to="/empresa/dashboard" replace />;
     if (currentUser?.role === "admin") return <Navigate to="/admin/dashboard" replace />;
