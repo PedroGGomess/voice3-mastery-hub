@@ -121,9 +121,11 @@ export default function ChapterDetail() {
                         <Link to="/sessoes/diagnostico">{sessStatus === 'completed' ? 'Rever' : 'Iniciar'}</Link>
                       </Button>
                     ) : (
-                      <span className={`text-xs px-2 py-1 rounded font-medium ${sessStatus === 'completed' ? 'bg-[#B89A5A]/10 text-[#B89A5A]' : 'bg-white/5 text-[#8E96A3]'}`}>
-                        {sessStatus === 'completed' ? '✓ Concluída' : 'Em breve'}
-                      </span>
+                      <Button size="sm" className={`h-7 text-xs px-3 border-0 ${sessStatus === 'completed' ? 'bg-[#B89A5A]/10 text-[#B89A5A] hover:bg-[#B89A5A]/20' : 'bg-white/5 text-[#F4F2ED] hover:bg-white/10'}`} asChild>
+                        <Link to={`/capitulos/${chapter.id}/sessoes/${session.id}`}>
+                          {sessStatus === 'completed' ? '✓ Rever' : 'Iniciar'}
+                        </Link>
+                      </Button>
                     )}
                   </div>
                 </div>

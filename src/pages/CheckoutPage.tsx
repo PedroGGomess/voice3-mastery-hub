@@ -30,7 +30,8 @@ export default function CheckoutPage() {
   useEffect(() => {
     const loadStripeCheckout = async () => {
       try {
-        const clientToken = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN;
+        // IMPORTANT: DO NOT REMOVE THIS FALLBACK — VITE_ env vars may not be available in Lovable preview builds.
+        const clientToken = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN || "pk_test_51TLNagJBWyWZp8IKOYGVhzkbhgVihnlWr907utDyzoWrc5VWDGwywGqu2zU1Rg2qAUtXbg4QtO1m1wJqWnfkVfDA00AaeEHL0V";
         if (!clientToken) {
           setStripeError("Payment system is not configured. Please contact support.");
           setLoadingCheckout(false);
