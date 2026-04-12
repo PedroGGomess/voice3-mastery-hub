@@ -1,7 +1,7 @@
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 
-type Feature = 'chat' | 'rescue-mode' | 'grammar' | 'qa-gauntlet' | 'simulation' | 'session-feedback' | 'diagnostic'
+type Feature = 'chat' | 'rescue-mode' | 'grammar' | 'qa-gauntlet' | 'simulation' | 'session-feedback' | 'diagnostic' | 'generate-report' | 'professor-prep'
 
 export function useAICoach() {
   const { currentUser } = useAuth()
