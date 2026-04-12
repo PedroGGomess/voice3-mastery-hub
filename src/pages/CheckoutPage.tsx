@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+€€€—import { useState, useEffect } from "react";
 import { useSearchParams, Navigate, Link } from "react-router-dom";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { useAuth } from "@/contexts/AuthContext";
