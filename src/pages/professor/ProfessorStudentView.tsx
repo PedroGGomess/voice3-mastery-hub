@@ -163,8 +163,8 @@ export default function ProfessorStudentView() {
 
   const submissionsHistory = [
     { title: 'Diagnóstico Inicial', date: '2026-01-10', score: 72, type: 'diagnostic', feedback: 'Nível B2 confirmado. Pontos fortes: vocabulário. Melhorar: filler words e estrutura.' },
-    { title: 'Apresentação Profissional', date: '2026-01-18', score: 85, type: 'audio', feedback: 'Boa estrutura. Reduzir hesitações. Ritmo melhorou significativamente.' },
-    { title: 'Email Executivo', date: '2026-01-25', score: 90, type: 'writing', feedback: 'Excelente clareza e formalidade adequada. Tom assertivo mas diplomático.' },
+    { title: 'Simulação: A Recusa Diplomática', date: '2026-01-18', score: 85, type: 'simulation', feedback: 'Boa estrutura. Reduzir hesitações. Ritmo melhorou significativamente.' },
+    { title: 'Drill: Explicar Complexidade Técnica', date: '2026-01-25', score: 90, type: 'drill', feedback: 'Excelente clareza e formalidade adequada. Tom assertivo mas diplomático.' },
   ];
 
   if (!student) {
