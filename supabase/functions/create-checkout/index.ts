@@ -19,15 +19,31 @@ serve(async (req) => {
     const env = (environment || 'sandbox') as StripeEnv;
     const stripe = createStripeClient(env);
 
-    // Resolve human-readable price ID to Stripe price ID via lookup_keys
-    const prices = await stripe.prices.list({ lookup_keys: [priceId] });
-    if (!prices.data.length) {
-      return new Response(JSON.stringify({ error: "Price not found" }), {
+    // Try lookup_keys first, then fall back to searching by product name
+    let stripePrice: any = null;
+    const prices = await stripe.prices.list({ lookup_keys: [priceId], active: true });
+    if (prices?.data?.length) {
+      stripePrice = prices.data[0];
+    } else {
+      // Fallback: find product by name matching the priceId, then get its price
+      const products = await stripe.products.list({ active: true });
+      const product = products?.data?.find((p: any) => 
+        p.name === priceId || p.name.toLowerCase() === priceId.toLowerCase()
+      );
+      if (product) {
+        const productPrices = await stripe.prices.list({ product: product.id, active: true });
+        if (productPrices?.data?.length) {
+          stripePrice = productPrices.data[0];
+        }
+      }
+    }
+
+    if (!stripePrice) {
+      return new Response(JSON.stringify({ error: `Price not found for: ${priceId}` }), {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const stripePrice = prices.data[0];
     const isRecurring = stripePrice.type === "recurring";
 
     const session = await stripe.checkout.sessions.create({
