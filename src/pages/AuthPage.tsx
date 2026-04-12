@@ -101,7 +101,26 @@ const AuthPage = () => {
     return <Navigate to="/app" replace />;
   }
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
+  const handleGoogleSignIn = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) {
+        setError(result.error instanceof Error ? result.error.message : "Erro ao entrar com Google.");
+        setLoading(false);
+        return;
+      }
+      if (result.redirected) return;
+      toast.success("Bem-vindo!");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Ocorreu um erro.");
+      setLoading(false);
+    }
+  };
+
     e.preventDefault();
     setError("");
     setLoading(true);

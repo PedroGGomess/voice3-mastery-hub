@@ -97,6 +97,14 @@ function StreakTracker() {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  </QueryClientProvider>
+);
+
+function AppContent() {
+  return (
+    <>
       <StreakTracker />
       <TooltipProvider>
         <Toaster />
@@ -172,8 +180,8 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+    </>
+  );
+}
 
 export default App;
