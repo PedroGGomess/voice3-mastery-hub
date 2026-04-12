@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "@/components/LanguageSelector";
-import { createCheckoutSession } from "@/lib/stripe";
+
 
 interface PackOption {
   name: string;
@@ -138,17 +138,14 @@ const AuthPage = () => {
         packDetails,
       });
 
-      // For paid packs, redirect to Stripe Checkout
+      // For paid packs, redirect to embedded checkout page
       if (selectedPack && selectedPack.price !== null && selectedPack.slug !== "business-master") {
         toast.success("Conta criada! A redirecionar para pagamento...");
-        const { url, error: stripeError } = await createCheckoutSession(selectedPack.slug);
-        if (url) {
-          window.location.href = url;
+        const priceMap: Record<string, string> = { starter: "starter_once", pro: "pro_once", advanced: "advanced_once" };
+        const priceId = priceMap[selectedPack.slug];
+        if (priceId) {
+          navigate(`/checkout?price=${priceId}`);
           return;
-        }
-        if (stripeError) {
-          console.warn("Stripe não disponível:", stripeError);
-          // Fall through to success screen if Stripe isn't configured yet
         }
       }
 
