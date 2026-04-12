@@ -56,6 +56,66 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_session_reports: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          fluency_score: number | null
+          grammar_score: number | null
+          id: string
+          learning_style_detected: string | null
+          next_session_suggestions: Json | null
+          overall_score: number | null
+          professor_prep_notes: string | null
+          raw_conversation: Json | null
+          recommendations: Json | null
+          session_title: string
+          session_type: string | null
+          strengths: Json | null
+          student_id: string
+          vocabulary_score: number | null
+          weaknesses: Json | null
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          fluency_score?: number | null
+          grammar_score?: number | null
+          id?: string
+          learning_style_detected?: string | null
+          next_session_suggestions?: Json | null
+          overall_score?: number | null
+          professor_prep_notes?: string | null
+          raw_conversation?: Json | null
+          recommendations?: Json | null
+          session_title: string
+          session_type?: string | null
+          strengths?: Json | null
+          student_id: string
+          vocabulary_score?: number | null
+          weaknesses?: Json | null
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          fluency_score?: number | null
+          grammar_score?: number | null
+          id?: string
+          learning_style_detected?: string | null
+          next_session_suggestions?: Json | null
+          overall_score?: number | null
+          professor_prep_notes?: string | null
+          raw_conversation?: Json | null
+          recommendations?: Json | null
+          session_title?: string
+          session_type?: string | null
+          strengths?: Json | null
+          student_id?: string
+          vocabulary_score?: number | null
+          weaknesses?: Json | null
+        }
+        Relationships: []
+      }
       assignments: {
         Row: {
           assignment_type: string | null
@@ -439,6 +499,57 @@ export type Database = {
           stripe_session_id?: string | null
           timezone?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      student_learning_profiles: {
+        Row: {
+          ai_teaching_notes: string | null
+          avg_score: number | null
+          best_response_format: string | null
+          communication_tone: string | null
+          created_at: string
+          id: string
+          last_session_at: string | null
+          preferred_learning_style: string | null
+          progress_velocity: string | null
+          strong_areas: Json | null
+          student_id: string
+          total_sessions: number | null
+          updated_at: string
+          weak_areas: Json | null
+        }
+        Insert: {
+          ai_teaching_notes?: string | null
+          avg_score?: number | null
+          best_response_format?: string | null
+          communication_tone?: string | null
+          created_at?: string
+          id?: string
+          last_session_at?: string | null
+          preferred_learning_style?: string | null
+          progress_velocity?: string | null
+          strong_areas?: Json | null
+          student_id: string
+          total_sessions?: number | null
+          updated_at?: string
+          weak_areas?: Json | null
+        }
+        Update: {
+          ai_teaching_notes?: string | null
+          avg_score?: number | null
+          best_response_format?: string | null
+          communication_tone?: string | null
+          created_at?: string
+          id?: string
+          last_session_at?: string | null
+          preferred_learning_style?: string | null
+          progress_velocity?: string | null
+          strong_areas?: Json | null
+          student_id?: string
+          total_sessions?: number | null
+          updated_at?: string
+          weak_areas?: Json | null
         }
         Relationships: []
       }
