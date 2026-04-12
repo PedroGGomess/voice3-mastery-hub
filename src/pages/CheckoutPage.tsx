@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Navigate } from "react-router-dom";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,7 +8,19 @@ import { Link } from "react-router-dom";
 export default function CheckoutPage() {
   const [searchParams] = useSearchParams();
   const priceId = searchParams.get("price") || "starter_once";
-  const { currentUser } = useAuth();
+  const { currentUser, isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) return (
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#0a1628" }}>
+      <span className="inline-block w-6 h-6 border-2 border-[#C9A84C] border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+
+  // Redirect to register if not authenticated
+  if (!isAuthenticated) {
+    const packSlug = priceId.replace("_once", "");
+    return <Navigate to={`/auth?mode=register&pack=${packSlug}`} replace />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#0a1628" }}>

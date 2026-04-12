@@ -94,11 +94,11 @@ const Packs = () => {
                 </Button>
               ) : pack.popular ? (
                 <Button className="w-full h-12 rounded-xl font-semibold bg-[#C9A84C] text-[#0B1A2A] hover:bg-[#d4b56a] hover:shadow-[0_0_32px_rgba(201,168,76,0.3)] hover:-translate-y-0.5 transition-all duration-300" asChild>
-                  <Link to={`/checkout?price=${pack.slug}_once`}>{pack.cta} <ArrowRight className="ml-1.5 h-4 w-4" /></Link>
+                  <Link to={`/auth?mode=register&pack=${pack.slug}`}>{pack.cta} <ArrowRight className="ml-1.5 h-4 w-4" /></Link>
                 </Button>
               ) : (
                 <Button variant="outline" className="w-full h-12 rounded-xl font-medium border border-[#C9A84C]/30 text-[#C9A84C] bg-transparent hover:border-[#C9A84C]/60 hover:bg-[#C9A84C]/5 hover:-translate-y-0.5 transition-all duration-300" asChild>
-                  <Link to={`/checkout?price=${pack.slug}_once`}>{pack.cta} <ArrowRight className="ml-1.5 h-4 w-4" /></Link>
+                  <Link to={`/auth?mode=register&pack=${pack.slug}`}>{pack.cta} <ArrowRight className="ml-1.5 h-4 w-4" /></Link>
                 </Button>
               )}
             </motion.div>
