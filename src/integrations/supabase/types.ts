@@ -128,6 +128,119 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number | null
+          amount_cents: number | null
+          created_at: string | null
+          currency: string | null
+          id: string
+          metadata: Json | null
+          pack: string | null
+          payment_method: string | null
+          plan_id: string | null
+          status: string | null
+          stripe_payment_intent: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          amount_cents?: number | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          metadata?: Json | null
+          pack?: string | null
+          payment_method?: string | null
+          plan_id?: string | null
+          status?: string | null
+          stripe_payment_intent?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          amount_cents?: number | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          metadata?: Json | null
+          pack?: string | null
+          payment_method?: string | null
+          plan_id?: string | null
+          status?: string | null
+          stripe_payment_intent?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plans: {
+        Row: {
+          ai_sessions: number | null
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          features: Json | null
+          id: string
+          is_active: boolean | null
+          live_sessions: number | null
+          name: string
+          price_cents: number
+          slug: string
+          sort_order: number | null
+          stripe_price_id: string | null
+          stripe_product_id: string | null
+        }
+        Insert: {
+          ai_sessions?: number | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          live_sessions?: number | null
+          name: string
+          price_cents: number
+          slug: string
+          sort_order?: number | null
+          stripe_price_id?: string | null
+          stripe_product_id?: string | null
+        }
+        Update: {
+          ai_sessions?: number | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          live_sessions?: number | null
+          name?: string
+          price_cents?: number
+          slug?: string
+          sort_order?: number | null
+          stripe_price_id?: string | null
+          stripe_product_id?: string | null
+        }
+        Relationships: []
+      }
       professor_availability: {
         Row: {
           buffer_minutes: number | null
@@ -202,6 +315,11 @@ export type Database = {
           id: string
           name: string | null
           pack: string | null
+          paid_at: string | null
+          payment_status: string | null
+          sessions_remaining: number | null
+          stripe_customer_id: string | null
+          stripe_session_id: string | null
           timezone: string | null
           updated_at: string | null
         }
@@ -212,6 +330,11 @@ export type Database = {
           id: string
           name?: string | null
           pack?: string | null
+          paid_at?: string | null
+          payment_status?: string | null
+          sessions_remaining?: number | null
+          stripe_customer_id?: string | null
+          stripe_session_id?: string | null
           timezone?: string | null
           updated_at?: string | null
         }
@@ -222,6 +345,11 @@ export type Database = {
           id?: string
           name?: string | null
           pack?: string | null
+          paid_at?: string | null
+          payment_status?: string | null
+          sessions_remaining?: number | null
+          stripe_customer_id?: string | null
+          stripe_session_id?: string | null
           timezone?: string | null
           updated_at?: string | null
         }
@@ -274,16 +402,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      book_professor_session: {
-        Args: {
-          p_date: string
-          p_end_time: string
-          p_professor_id: string
-          p_start_time: string
-          p_student_id: string
-        }
-        Returns: Json
-      }
+      book_professor_session:
+        | {
+            Args: {
+              p_date: string
+              p_end_time: string
+              p_professor_id: string
+              p_start_time: string
+              p_student_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_date: string
+              p_end_time: string
+              p_professor_id: string
+              p_start_time: string
+              p_student_id: string
+            }
+            Returns: Json
+          }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
