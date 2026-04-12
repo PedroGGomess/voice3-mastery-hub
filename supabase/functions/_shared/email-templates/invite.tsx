@@ -25,26 +25,25 @@ export const InviteEmail = ({
   siteUrl,
   confirmationUrl,
 }: InviteEmailProps) => (
-  <Html lang="en" dir="ltr">
+  <Html lang="pt" dir="ltr">
     <Head />
-    <Preview>You've been invited to join {siteName}</Preview>
+    <Preview>Foste convidado para o {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>You've been invited</Heading>
+        <Text style={logo}>Voice³</Text>
+        <Heading style={h1}>Foste convidado</Heading>
         <Text style={text}>
-          You've been invited to join{' '}
+          Foste convidado para o{' '}
           <Link href={siteUrl} style={link}>
             <strong>{siteName}</strong>
           </Link>
-          . Click the button below to accept the invitation and create your
-          account.
+          . Clica no botão abaixo para aceitar o convite e criar a tua conta.
         </Text>
         <Button style={button} href={confirmationUrl}>
-          Accept Invitation
+          Aceitar Convite
         </Button>
         <Text style={footer}>
-          If you weren't expecting this invitation, you can safely ignore this
-          email.
+          Se não estavas à espera deste convite, podes ignorar este email.
         </Text>
       </Container>
     </Body>
@@ -53,12 +52,19 @@ export const InviteEmail = ({
 
 export default InviteEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
+const main = { backgroundColor: '#ffffff', fontFamily: "'Inter', Arial, sans-serif" }
 const container = { padding: '20px 25px' }
+const logo = {
+  fontSize: '24px',
+  fontWeight: 'bold' as const,
+  color: '#C9A84C',
+  margin: '0 0 24px',
+  letterSpacing: '-0.5px',
+}
 const h1 = {
   fontSize: '22px',
   fontWeight: 'bold' as const,
-  color: '#000000',
+  color: '#0a1628',
   margin: '0 0 20px',
 }
 const text = {
@@ -67,12 +73,13 @@ const text = {
   lineHeight: '1.5',
   margin: '0 0 25px',
 }
-const link = { color: 'inherit', textDecoration: 'underline' }
+const link = { color: '#C9A84C', textDecoration: 'underline' }
 const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
+  backgroundColor: '#C9A84C',
+  color: '#0a1628',
   fontSize: '14px',
-  borderRadius: '8px',
+  fontWeight: 'bold' as const,
+  borderRadius: '10px',
   padding: '12px 20px',
   textDecoration: 'none',
 }

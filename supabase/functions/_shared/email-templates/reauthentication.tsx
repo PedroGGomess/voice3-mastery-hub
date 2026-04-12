@@ -17,17 +17,17 @@ interface ReauthenticationEmailProps {
 }
 
 export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => (
-  <Html lang="en" dir="ltr">
+  <Html lang="pt" dir="ltr">
     <Head />
-    <Preview>Your verification code</Preview>
+    <Preview>O teu código de verificação</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Confirm reauthentication</Heading>
-        <Text style={text}>Use the code below to confirm your identity:</Text>
+        <Text style={logo}>Voice³</Text>
+        <Heading style={h1}>Confirma a tua identidade</Heading>
+        <Text style={text}>Usa o código abaixo para confirmar a tua identidade:</Text>
         <Text style={codeStyle}>{token}</Text>
         <Text style={footer}>
-          This code will expire shortly. If you didn't request this, you can
-          safely ignore this email.
+          Este código expira em breve. Se não pediste isto, podes ignorar este email.
         </Text>
       </Container>
     </Body>
@@ -36,12 +36,19 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
 
 export default ReauthenticationEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
+const main = { backgroundColor: '#ffffff', fontFamily: "'Inter', Arial, sans-serif" }
 const container = { padding: '20px 25px' }
+const logo = {
+  fontSize: '24px',
+  fontWeight: 'bold' as const,
+  color: '#C9A84C',
+  margin: '0 0 24px',
+  letterSpacing: '-0.5px',
+}
 const h1 = {
   fontSize: '22px',
   fontWeight: 'bold' as const,
-  color: '#000000',
+  color: '#0a1628',
   margin: '0 0 20px',
 }
 const text = {
@@ -51,10 +58,10 @@ const text = {
   margin: '0 0 25px',
 }
 const codeStyle = {
-  fontFamily: 'Courier, monospace',
+  fontFamily: "'JetBrains Mono', Courier, monospace",
   fontSize: '22px',
   fontWeight: 'bold' as const,
-  color: '#000000',
+  color: '#C9A84C',
   margin: '0 0 30px',
 }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
