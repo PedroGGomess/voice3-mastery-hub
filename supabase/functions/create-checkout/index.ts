@@ -25,22 +25,28 @@ serve(async (req) => {
     if (prices?.data?.length) {
       stripePrice = prices.data[0];
     } else {
-      // Fallback: list all active prices and match by product name or metadata
-      const allPrices = await stripe.prices.list({ active: true, limit: 100, expand: ['data.product'] });
-      console.log("All prices:", JSON.stringify(allPrices?.data?.map((p: any) => ({ 
-        id: p.id, 
-        amount: p.unit_amount,
-        product_name: typeof p.product === 'object' ? p.product?.name : p.product,
-        lookup_key: p.lookup_key,
-        metadata: p.metadata
-      }))));
-      if (allPrices?.data) {
-        stripePrice = allPrices.data.find((p: any) => {
-          const prodName = typeof p.product === 'object' ? p.product?.name : '';
-          return prodName === priceId || prodName.toLowerCase() === priceId.toLowerCase()
-            || p.lookup_key === priceId
-            || p.metadata?.lovable_external_id === priceId;
-        });
+      // Fallback: list all active prices
+      try {
+        const allPrices = await stripe.prices.list({ active: true, limit: 100 });
+        console.log("Prices response type:", typeof allPrices, "keys:", Object.keys(allPrices || {}));
+        console.log("Prices data type:", typeof allPrices?.data, "is array:", Array.isArray(allPrices?.data));
+        if (Array.isArray(allPrices?.data) && allPrices.data.length > 0) {
+          // Try to expand products separately
+          for (const p of allPrices.data) {
+            try {
+              const prod = await stripe.products.retrieve(p.product as string);
+              console.log("Price", p.id, "amount:", p.unit_amount, "product:", prod.name);
+              if (prod.name === priceId || prod.name.toLowerCase() === priceId.toLowerCase()) {
+                stripePrice = p;
+                break;
+              }
+            } catch (e) {
+              console.log("Error retrieving product for price", p.id, e);
+            }
+          }
+        }
+      } catch (listErr) {
+        console.error("Error listing prices:", listErr);
       }
     }
 
