@@ -87,7 +87,13 @@ const AuthPage = () => {
       </div>
     </div>
   );
+  // If authenticated and a pack checkout is pending, redirect to checkout instead of dashboard
   if (isAuthenticated) {
+    const pendingPack = searchParams.get("pack");
+    const priceMap: Record<string, string> = { starter: "starter_once", pro: "pro_once", advanced: "advanced_once" };
+    if (pendingPack && priceMap[pendingPack]) {
+      return <Navigate to={`/checkout?price=${priceMap[pendingPack]}`} replace />;
+    }
     if (currentUser?.role === "company_admin") return <Navigate to="/empresa/dashboard" replace />;
     if (currentUser?.role === "admin") return <Navigate to="/admin/dashboard" replace />;
     if (currentUser?.role === "professor") return <Navigate to="/professor/dashboard" replace />;
