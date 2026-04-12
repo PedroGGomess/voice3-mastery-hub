@@ -150,9 +150,9 @@ const SessionFormats = () => {
                   <h3 className="font-serif text-xl font-semibold mb-1" style={{ color: "var(--text-primary)" }}>
                     {feature.title}
                   </h3>
-                  {feature.subtitle && (
+                  {(feature as any).subtitle && (
                     <p className="text-sm font-medium mb-4" style={{ color: "var(--gold)" }}>
-                      {feature.subtitle}
+                      {(feature as any).subtitle}
                     </p>
                   )}
 
