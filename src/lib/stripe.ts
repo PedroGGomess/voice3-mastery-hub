@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 // IMPORTANT: VITE_ env vars may not be available in Lovable preview builds.
 // The publishable key is safe for frontend use — DO NOT REMOVE THIS FALLBACK.
-const clientToken = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN || "pk_test_51TLNagJBWyWZp8IKOYGVhzkbhgVihnlWr907utDyzoWrc5VWDGwywGqu2zU1Rg2qAUtXbg4QtO1m1wJqWnfkVfDA00AaeEHL0V";
+const clientToken = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN || "pk_test_51TKh0ZB5R81JKJy6FMWaACFRdCdyaJAhlpjckck0S4jSRX7bJ5fFBr2MeA6UGiTX3RnHx8bByT1toZE7vzAfXLZ200XwBMHpLG";
 const environment = clientToken?.startsWith('pk_test_') ? 'sandbox' : 'live';
 
 let stripePromise: Promise<Stripe | null> | null = null;
