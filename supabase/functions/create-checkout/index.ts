@@ -26,11 +26,13 @@ serve(async (req) => {
       stripePrice = prices.data[0];
     } else {
       // Fallback: find product by name matching the priceId, then get its price
-      const products = await stripe.products.list({ active: true });
+      const products = await stripe.products.list({ active: true, limit: 100 });
+      console.log("Products found:", products?.data?.map((p: any) => ({ id: p.id, name: p.name })));
       const product = products?.data?.find((p: any) => 
         p.name === priceId || p.name.toLowerCase() === priceId.toLowerCase()
       );
       if (product) {
+        console.log("Matched product:", product.id, product.name);
         const productPrices = await stripe.prices.list({ product: product.id, active: true });
         if (productPrices?.data?.length) {
           stripePrice = productPrices.data[0];
