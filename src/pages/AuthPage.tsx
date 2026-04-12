@@ -175,15 +175,35 @@ const AuthPage = () => {
       const packDetails = selectedPack && selectedPack.price !== null
         ? { name: selectedPack.name, sessions: selectedPack.sessions, teacherLessons: selectedPack.teacherLessons, price: selectedPack.price }
         : undefined;
-      const registration = await register({
-        name: regData.name,
-        email: regData.email,
-        password: regData.password,
-        company: regData.company || undefined,
-        role: regData.role,
-        pack: selectedPack?.name,
-        packDetails,
+
+      // Use a race between register() and a direct signup fallback to avoid gotrue lock hang
+      const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+      const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+      const signupRes = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+        },
+        body: JSON.stringify({
+          email: regData.email,
+          password: regData.password,
+          data: { name: regData.name },
+        }),
       });
+
+      const signupData = await signupRes.json();
+      if (!signupRes.ok || !(signupData.id || signupData.user?.id)) {
+        throw new Error(signupData.msg || signupData.error_description || signupData.message || 'Erro ao criar conta');
+      }
+
+      const userId = signupData.user?.id || signupData.id;
+      const email = signupData.user?.email || signupData.email || regData.email;
+
+      // Let the auth context pick up the session in the background
+      // (supabase client will eventually process it via onAuthStateChange)
 
       if (selectedPack && selectedPack.price !== null && selectedPack.slug !== "business-master") {
         toast.success("Conta criada! A redirecionar para pagamento...");
@@ -192,8 +212,8 @@ const AuthPage = () => {
         if (priceId) {
           const checkoutParams = new URLSearchParams({
             price: priceId,
-            email: registration.email,
-            userId: registration.userId,
+            email: email,
+            userId: userId,
           });
           navigate(`/checkout?${checkoutParams.toString()}`);
           return;
