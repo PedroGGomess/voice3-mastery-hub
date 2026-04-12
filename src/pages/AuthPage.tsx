@@ -3,11 +3,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate, Navigate, Link, useSearchParams } from "react-router-dom";
-import { ArrowRight, Eye, EyeOff, Check, CheckCircle2, Shield, Users, Sparkles, Award } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Check, CheckCircle2, Shield, Users, Sparkles, Award, CreditCard, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "@/components/LanguageSelector";
+import { createCheckoutSession } from "@/lib/stripe";
 
 interface PackOption {
   name: string;
@@ -21,10 +22,10 @@ interface PackOption {
 }
 
 const PACK_OPTIONS: PackOption[] = [
-  { name: "Starter", slug: "starter", price: 149, sessions: 4, teacherLessons: 1, features: ["4 AI sessions", "1 live professor session", "Progress tracking", "Certificate"], popular: false },
-  { name: "Pro", slug: "pro", price: 349, sessions: 8, teacherLessons: 3, features: ["8 AI sessions", "3 live professor sessions", "Full analytics", "Priority booking", "Session recordings"], popular: true },
-  { name: "Advanced", slug: "advanced", price: 499, sessions: 12, teacherLessons: 5, features: ["12 AI sessions", "5 live professor sessions", "Custom learning path", "All Pro features"], popular: false },
-  { name: "Business Master", slug: "business-master", price: null, sessions: 20, teacherLessons: 10, features: ["Unlimited AI sessions", "10 professor sessions", "Dedicated manager", "Team dashboard"], note: "Contacto personalizado" },
+  { name: "Starter", slug: "starter", price: 149, sessions: 4, teacherLessons: 1, features: ["4 Sessões AI", "1 Sessão ao vivo com professor", "Acompanhamento de progresso", "Certificado"], popular: false },
+  { name: "Pro", slug: "pro", price: 349, sessions: 8, teacherLessons: 3, features: ["8 Sessões AI", "3 Sessões ao vivo com professor", "Analytics completo", "Reserva prioritária", "Gravações das sessões"], popular: true },
+  { name: "Advanced", slug: "advanced", price: 499, sessions: 12, teacherLessons: 5, features: ["12 Sessões AI", "5 Sessões ao vivo com professor", "Percurso personalizado", "Tudo do Pro incluído"], popular: false },
+  { name: "Business Master", slug: "business-master", price: null, sessions: 20, teacherLessons: 10, features: ["Sessões AI ilimitadas", "10 Sessões com professor", "Gestor dedicado", "Dashboard de equipa"], note: "Contacto personalizado" },
 ];
 
 interface RegFormData {
@@ -136,6 +137,21 @@ const AuthPage = () => {
         pack: selectedPack?.name,
         packDetails,
       });
+
+      // For paid packs, redirect to Stripe Checkout
+      if (selectedPack && selectedPack.price !== null && selectedPack.slug !== "business-master") {
+        toast.success("Conta criada! A redirecionar para pagamento...");
+        const { url, error: stripeError } = await createCheckoutSession(selectedPack.slug);
+        if (url) {
+          window.location.href = url;
+          return;
+        }
+        if (stripeError) {
+          console.warn("Stripe não disponível:", stripeError);
+          // Fall through to success screen if Stripe isn't configured yet
+        }
+      }
+
       toast.success("Conta criada com sucesso!");
       setSuccess(true);
     } catch (err: unknown) {
