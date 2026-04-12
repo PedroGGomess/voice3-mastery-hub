@@ -92,6 +92,7 @@ AI CONCLUSIONS: ${eval_data?.ai_conclusions || "Diagnostic not completed"}`
     }
 
     const aiData = await res.json();
+    console.log("AI response structure:", JSON.stringify(aiData).substring(0, 500));
     const msg = aiData.choices?.[0]?.message?.content ?? "Could not generate response.";
 
     return new Response(JSON.stringify({ message: msg }), {
