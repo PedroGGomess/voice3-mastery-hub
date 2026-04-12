@@ -5,14 +5,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft, AlertTriangle, Loader2 } from "lucide-react";
 
 const PACK_DETAILS: Record<string, { name: string; price: string }> = {
-  starter_once: { name: "Starter", price: "€149" },
-  pro_once: { name: "Pro", price: "€349" },
-  advanced_once: { name: "Advanced", price: "€499" },
+  starter: { name: "Starter", price: "€149" },
+  pro: { name: "Pro", price: "€349" },
+  advanced: { name: "Advanced", price: "€499" },
 };
 
 export default function CheckoutPage() {
   const [searchParams] = useSearchParams();
-  const priceId = searchParams.get("price") || "starter_once";
+  const priceId = searchParams.get("price") || "starter";
   const pendingEmail = searchParams.get("email") || undefined;
   const pendingUserId = searchParams.get("userId") || "";
   const { currentUser, isAuthenticated, isLoading } = useAuth();
@@ -31,7 +31,7 @@ export default function CheckoutPage() {
     const loadStripeCheckout = async () => {
       try {
         // IMPORTANT: DO NOT REMOVE THIS FALLBACK — VITE_ env vars may not be available in Lovable preview builds.
-        const clientToken = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN || "pk_test_51TLNagJBWyWZp8IKOYGVhzkbhgVihnlWr907utDyzoWrc5VWDGwywGqu2zU1Rg2qAUtXbg4QtO1m1wJqWnfkVfDA00AaeEHL0V";
+        const clientToken = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN || "pk_test_51TKh0ZB5R81JKJy6FMWaACFRdCdyaJAhlpjckck0S4jSRX7bJ5fFBr2MeA6UGiTX3RnHx8bByT1toZE7vzAfXLZ200XwBMHpLG";
         if (!clientToken) {
           setStripeError("Payment system is not configured. Please contact support.");
           setLoadingCheckout(false);
@@ -61,7 +61,7 @@ export default function CheckoutPage() {
   );
 
   if (!isAuthenticated && !canCheckout) {
-    const packSlug = priceId.replace("_once", "");
+    const packSlug = priceId;
     return <Navigate to={`/auth?mode=register&pack=${packSlug}`} replace />;
   }
 
