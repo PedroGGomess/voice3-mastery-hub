@@ -56,7 +56,21 @@ export default function DiagnosticSession() {
   const [aiResult, setAiResult] = useState<any>(null);
   const [processingStep, setProcessingStep] = useState(0);
 
+  // If diagnostic was already completed, load saved results
+  useEffect(() => {
+    if (!userId) return;
+    const completed = localStorage.getItem(`voice3_diagnostic_completed_${userId}`);
+    if (completed) {
+      try {
+        const saved = localStorage.getItem(`voice3_ai_evaluation_${userId}`);
+        if (saved) setAiResult(JSON.parse(saved));
+        setCurrentStep(6);
+      } catch (_e) {}
+    }
+  }, [userId]);
+
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
 
   const wordCount = writingSample.trim().split(/\s+/).filter(Boolean).length;
   const progressPct = ((currentStep - 1) / 5) * 100;
@@ -131,8 +145,8 @@ export default function DiagnosticSession() {
     try {
       const chapKey = `voice3_chapter_progress_${userId}`;
       const existing = localStorage.getItem(chapKey) ? JSON.parse(localStorage.getItem(chapKey)!) : {};
-      existing['ch1'] = { status: 'completed', completedAt: new Date().toISOString() };
-      existing['ch2'] = { status: 'in_progress', startedAt: new Date().toISOString() };
+      existing['ch0'] = { status: 'completed', completedAt: new Date().toISOString() };
+      existing['ch1'] = { status: 'in_progress', startedAt: new Date().toISOString() };
       localStorage.setItem(chapKey, JSON.stringify(existing));
     } catch (_e) {}
 
@@ -140,7 +154,7 @@ export default function DiagnosticSession() {
     try {
       const sessKey = `voice3_session_progress_${userId}`;
       const sessExisting = localStorage.getItem(sessKey) ? JSON.parse(localStorage.getItem(sessKey)!) : {};
-      sessExisting['ch1-s1'] = { status: 'completed', score: 100, completedAt: new Date().toISOString() };
+      sessExisting['ch0-s1'] = { status: 'completed', score: 100, completedAt: new Date().toISOString() };
       localStorage.setItem(sessKey, JSON.stringify(sessExisting));
     } catch (_e) {}
 
