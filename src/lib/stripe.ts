@@ -3,14 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 
 let stripePromise: ReturnType<typeof loadStripe> | null = null;
 
+const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY || "pk_test_51TLNagJBWyWZp8IKOYGVhzkbhgVihnlWr907utDyzoWrc5VWDGwywGqu2zU1Rg2qAUtXbg4QtO1m1wJqWnfkVfDA00AaeEHL0V";
+
 export const getStripe = () => {
-  const key = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
-  if (!key) {
-    console.warn("VITE_STRIPE_PUBLIC_KEY não definida");
-    return null;
-  }
   if (!stripePromise) {
-    stripePromise = loadStripe(key);
+    stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
   }
   return stripePromise;
 };
