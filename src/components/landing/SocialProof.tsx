@@ -1,139 +1,62 @@
-import { useEffect, useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
-import { Star } from "lucide-react";
+import { motion } from "framer-motion";
 
-const stats = [
-  { value: 94, suffix: "%", label: "Session completion rate" },
-  { value: 200, suffix: "+", label: "Executives trained" },
-  { value: 4.9, suffix: "/5", label: "Average satisfaction" },
-  { value: 87, suffix: "%", label: "Report measurable improvement within 4 weeks" },
-];
-
-const testimonials = [
-  {
-    quote: "VOICE³ transformed how I present in board meetings. My confidence is at a different level.",
-    name: "Ricardo Almeida",
-    position: "CFO",
-    company: "Grupo Horizonte",
-  },
-  {
-    quote: "The structured approach made the difference. I negotiated a €2M deal entirely in English.",
-    name: "Catarina Ferreira",
-    position: "Sales Director",
-    company: "NovaTech Solutions",
-  },
-  {
-    quote: "Worth every euro. My team now leads international calls with authority.",
-    name: "Miguel Santos",
-    position: "CEO",
-    company: "Atlantic Ventures",
-  },
-];
-
-function AnimatedCounter({ value, suffix }: { value: number; suffix: string }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true });
-  const isDecimal = !Number.isInteger(value);
-
-  useEffect(() => {
-    if (!inView) return;
-    const duration = 1800;
-    const steps = 60;
-    const increment = value / steps;
-    let current = 0;
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= value) {
-        setCount(value);
-        clearInterval(timer);
-      } else {
-        setCount(parseFloat(current.toFixed(1)));
-      }
-    }, duration / steps);
-    return () => clearInterval(timer);
-  }, [inView, value]);
-
-  return (
-    <span ref={ref}>
-      {isDecimal ? count.toFixed(1) : Math.round(count)}{suffix}
-    </span>
-  );
-}
+const companies = ["GALP", "NOS", "EDP", "MILLENNIUM BCP", "SONAE", "DELOITTE"];
 
 const SocialProof = () => {
   return (
-    <section className="py-28" style={{ backgroundColor: "#0B1A2A" }}>
+    <section
+      className="py-20"
+      style={{ backgroundColor: "#0A0A0F" }}
+    >
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-20"
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
         >
-          <p className="text-[#B89A5A] tracking-[0.2em] uppercase text-sm mb-4 font-medium">Results</p>
-          <h2 className="font-serif text-4xl md:text-5xl font-semibold text-[#F4F2ED]">Measurable Results</h2>
+          <p
+            className="tracking-[0.2em] uppercase text-sm font-medium"
+            style={{ color: "#D4A853" }}
+          >
+            EMPRESAS QUE CONFIAM NO VOICE³
+          </p>
         </motion.div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
-          {stats.map((stat, i) => (
+        {/* Companies Marquee */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="flex flex-wrap justify-center items-center gap-12 md:gap-16"
+        >
+          {companies.map((company, index) => (
             <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              key={company}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="text-center p-6 bg-[#11263A] rounded-xl border border-[#B89A5A]/10"
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+              className="text-center"
             >
-              <div className="font-serif text-4xl font-bold text-[#B89A5A] mb-2">
-                <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-              </div>
-              <p className="text-[#8E96A3] text-sm leading-tight">{stat.label}</p>
+              <p
+                className="font-semibold text-lg tracking-wide"
+                style={{ color: "#6E7681" }}
+              >
+                {company}
+              </p>
             </motion.div>
           ))}
-        </div>
-
-        {/* Testimonials */}
-        <div className="grid md:grid-cols-3 gap-6">
-          {testimonials.map((t, i) => (
-            <motion.div
-              key={t.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-[#11263A] rounded-xl p-7 border border-[#B89A5A]/10 flex flex-col"
-            >
-              <div className="text-[#B89A5A] font-serif text-6xl leading-none mb-4 opacity-60">"</div>
-              <p className="text-[#F4F2ED]/80 italic leading-relaxed flex-1 mb-6">"{t.quote}"</p>
-              <div>
-                <div className="flex gap-0.5 mb-3">
-                  {[...Array(5)].map((_, j) => (
-                    <Star key={j} className="h-3.5 w-3.5 fill-[#B89A5A] text-[#B89A5A]" />
-                  ))}
-                </div>
-                <p className="font-semibold text-[#F4F2ED] text-sm">{t.name}</p>
-                <p className="text-[#8E96A3] text-xs">{t.position}, {t.company}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Executive image accent */}
-        <div className="mt-16 flex justify-center">
-          <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-[#B89A5A]/40">
-            <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80"
-              alt=""
-              aria-hidden="true"
-              className="w-full h-full object-cover brightness-[0.5] saturate-[0.5]"
-            />
-          </div>
-        </div>
+        </motion.div>
       </div>
+
       {/* Section divider */}
-      <div className="h-px w-full mt-8" style={{ background: 'linear-gradient(90deg, transparent, #B89A5A33, transparent)' }} />
+      <div
+        className="h-px w-full mt-12"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(212, 168, 83, 0.2), transparent)" }}
+      />
     </section>
   );
 };

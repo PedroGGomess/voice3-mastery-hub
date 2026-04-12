@@ -3,21 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Menu, X, LayoutDashboard, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTranslation } from "react-i18next";
-import LanguageSelector from "@/components/LanguageSelector";
 
 const navLinks: [string, string][] = [
-  ["nav.how", "/how-it-works"],
-  ["nav.packs", "/packs"],
-  ["nav.companies", "/for-companies"],
-  ["nav.contact", "/contact"],
+  ["Como Funciona", "/how-it-works"],
+  ["Packs", "/packs"],
+  ["Para Empresas", "/for-companies"],
+  ["Contacto", "/contact"],
 ];
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { isAuthenticated, currentUser } = useAuth();
-  const { t } = useTranslation();
 
   const dashboardLink =
     currentUser?.role === "company_admin" ? "/empresa" :
@@ -32,74 +29,153 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+    <nav
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
       style={{
         height: 64,
-        background: scrolled ? "rgba(4,10,20,0.98)" : "rgba(6,15,29,0.6)",
-        backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)",
-        borderBottom: scrolled ? "1px solid rgba(201,168,76,0.08)" : "1px solid transparent",
-        boxShadow: scrolled ? "0 4px 40px rgba(0,0,0,0.4)" : "none",
-      }}>
-      <div className="container h-16" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}>
+        background: scrolled ? "rgba(10,10,15,0.97)" : "rgba(10,10,15,0.6)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        borderBottom: `1px solid ${scrolled ? "rgba(212,168,83,0.1)" : "transparent"}`,
+      }}
+    >
+      <div
+        className="max-w-7xl mx-auto px-6 md:px-16 h-16"
+        style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center" }}
+      >
+        {/* Logo */}
         <Link to="/" className="flex items-center group">
-          <span className="font-sans font-bold tracking-[0.2em] text-foreground uppercase text-lg transition-colors duration-200 group-hover:text-primary">
-            VOICE<sup className="text-primary text-sm">3</sup>
+          <span
+            className="font-sans font-bold text-lg uppercase transition-colors duration-200"
+            style={{ letterSpacing: "6px", color: "#F5F5F5" }}
+          >
+            VOICE<sup style={{ color: "#D4A853", fontSize: "12px" }}>3</sup>
           </span>
         </Link>
 
+        {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map(([key, href]) => (
-            <Link key={href} to={href} className="voice-nav-link text-sm tracking-wider py-1">{t(key)}</Link>
+          {navLinks.map(([label, href]) => (
+            <Link
+              key={href}
+              to={href}
+              className="text-sm transition-colors duration-300"
+              style={{ color: "#9A9AB0" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "#F5F5F5")}
+              onMouseLeave={e => (e.currentTarget.style.color = "#9A9AB0")}
+            >
+              {label}
+            </Link>
           ))}
         </div>
 
+        {/* Desktop Right */}
         <div className="hidden md:flex items-center gap-3 justify-end">
-          <LanguageSelector />
           {isAuthenticated ? (
             <>
-              <span className="text-sm text-muted-foreground">{currentUser?.name?.split(" ")[0]}</span>
-              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_rgba(201,168,76,0.2)]" asChild>
-                <Link to={dashboardLink}><LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Plataforma</Link>
+              <span className="text-sm" style={{ color: "#9A9AB0" }}>
+                {currentUser?.name?.split(" ")[0]}
+              </span>
+              <Button
+                size="sm"
+                className="font-semibold rounded-md transition-all duration-300"
+                style={{ background: "#D4A853", color: "#000", border: "none" }}
+                asChild
+              >
+                <Link to={dashboardLink}>
+                  <LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Plataforma
+                </Link>
               </Button>
             </>
           ) : (
             <>
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-lg" asChild>
-                <Link to="/auth">{t("nav.login")}</Link>
-              </Button>
-              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold rounded-lg px-5 transition-all duration-300 hover:shadow-[0_0_24px_rgba(201,168,76,0.25)] hover:-translate-y-0.5" asChild>
+              <Link
+                to="/auth"
+                className="text-sm transition-colors duration-300"
+                style={{ color: "#9A9AB0" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "#F5F5F5")}
+                onMouseLeave={e => (e.currentTarget.style.color = "#9A9AB0")}
+              >
+                Entrar
+              </Link>
+              <Button
+                size="sm"
+                className="font-semibold rounded-md px-5 transition-all duration-300 hover:brightness-110"
+                style={{ background: "#D4A853", color: "#000", border: "none" }}
+                asChild
+              >
                 <Link to="/auth?mode=register">
-                  Criar Conta <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                  Candidatar-me <ArrowRight className="ml-1 h-3.5 w-3.5" />
                 </Link>
               </Button>
             </>
           )}
         </div>
 
-        <button className="md:hidden text-foreground justify-self-end" onClick={() => setOpen(!open)}>
+        {/* Mobile Toggle */}
+        <button
+          className="md:hidden justify-self-end"
+          style={{ color: "#F5F5F5" }}
+          onClick={() => setOpen(!open)}
+        >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
+      {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden border-t border-primary/10 backdrop-blur-xl" style={{ background: "rgba(6,15,29,0.98)" }}>
-          <div className="container py-4 space-y-3">
-            {navLinks.map(([key, href]) => (
-              <Link key={href} to={href} className="block text-sm py-2 text-muted-foreground hover:text-foreground transition-colors" onClick={() => setOpen(false)}>{t(key)}</Link>
+        <div
+          className="md:hidden"
+          style={{
+            background: "rgba(10,10,15,0.98)",
+            borderTop: "1px solid rgba(212,168,83,0.1)",
+            backdropFilter: "blur(16px)",
+          }}
+        >
+          <div className="max-w-7xl mx-auto px-6 py-4 space-y-3">
+            {navLinks.map(([label, href]) => (
+              <Link
+                key={href}
+                to={href}
+                className="block text-sm py-2 transition-colors"
+                style={{ color: "#9A9AB0" }}
+                onClick={() => setOpen(false)}
+              >
+                {label}
+              </Link>
             ))}
-            <div className="py-2"><LanguageSelector /></div>
             <div className="pt-2 flex gap-3">
               {isAuthenticated ? (
-                <Button size="sm" className="flex-1 bg-primary text-primary-foreground" asChild>
-                  <Link to={dashboardLink} onClick={() => setOpen(false)}><LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Plataforma</Link>
+                <Button
+                  size="sm"
+                  className="flex-1 font-semibold rounded-md"
+                  style={{ background: "#D4A853", color: "#000" }}
+                  asChild
+                >
+                  <Link to={dashboardLink} onClick={() => setOpen(false)}>
+                    <LayoutDashboard className="mr-1.5 h-3.5 w-3.5" /> Plataforma
+                  </Link>
                 </Button>
               ) : (
                 <>
-                  <Button variant="outline" size="sm" className="flex-1 border-primary/30 text-foreground hover:bg-white/5 rounded-lg" asChild>
-                    <Link to="/auth" onClick={() => setOpen(false)}>{t("nav.login")}</Link>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 rounded-md"
+                    style={{ borderColor: "rgba(212,168,83,0.3)", color: "#F5F5F5" }}
+                    asChild
+                  >
+                    <Link to="/auth" onClick={() => setOpen(false)}>Entrar</Link>
                   </Button>
-                  <Button size="sm" className="flex-1 bg-primary text-primary-foreground font-semibold rounded-lg" asChild>
-                    <Link to="/auth?mode=register" onClick={() => setOpen(false)}>Criar Conta</Link>
+                  <Button
+                    size="sm"
+                    className="flex-1 font-semibold rounded-md"
+                    style={{ background: "#D4A853", color: "#000" }}
+                    asChild
+                  >
+                    <Link to="/auth?mode=register" onClick={() => setOpen(false)}>
+                      Candidatar-me
+                    </Link>
                   </Button>
                 </>
               )}

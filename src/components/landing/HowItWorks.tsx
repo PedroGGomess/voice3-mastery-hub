@@ -1,136 +1,226 @@
 import { motion } from "framer-motion";
-import { Search, Brain, GraduationCap, Award } from "lucide-react";
+import { Zap, Layers, Flame, UserCheck } from "lucide-react";
 
 const steps = [
   {
-    icon: Search,
-    title: "Pre-Session Diagnostic",
-    desc: "Precision assessment of your current performance level",
+    icon: Zap,
     number: "01",
+    title: "Diagnóstico de Precisão",
+    description: "Mapeamos o teu Voice DNA — palavras por minuto, frequência de fillers, vocabulário activo e nível de fluência.",
+    tags: ["VOICE DNA", "ANÁLISE"],
   },
   {
-    icon: Brain,
-    title: "AI-Powered Sessions",
-    desc: "Structured modules with video, audio, and interactive exercises",
+    icon: Layers,
     number: "02",
+    title: "Os 6 Programas",
+    description: "Domina domínios específicos: DEFEND, TRANSLATE, LEAD, OPERATE, DECODE, PREPARE. Cada um ataca um desafio executivo real.",
+    tags: ["DEFEND", "TRANSLATE", "LEAD", "OPERATE", "DECODE", "PREPARE"],
   },
   {
-    icon: GraduationCap,
-    title: "Live Professor Sessions",
-    desc: "1-on-1 with specialist professors for targeted correction",
+    icon: Flame,
     number: "03",
+    title: "Teste de Pressão AI",
+    description: "Enfrenta Q&A hostis, simulações de boardroom e debates AI. Treina sob pressão antes do momento real.",
+    tags: ["Q&A", "BOARDROOM", "PRESSÃO"],
   },
   {
-    icon: Award,
-    title: "Certification",
-    desc: "VOICE³ Executive Communication Certificate",
+    icon: UserCheck,
     number: "04",
+    title: "Calibração com Professor",
+    description: "Sessões 1-on-1 com professores que refinam o teu Tone — Diplomat, Anchor, American Direct ou Collaborator.",
+    tags: ["TONE", "1-ON-1", "COACHING"],
   },
 ];
 
 const HowItWorks = () => {
   return (
-    <section className="py-28 fade-up" style={{ backgroundColor: "#11263A" }} id="como-funciona">
-      <div className="container">
+    <section id="como-funciona" style={{ backgroundColor: "#0A0A0F" }} className="py-28 relative overflow-hidden">
+      {/* Background gradient */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse at 50% 50%, rgba(212,168,83,0.05) 0%, transparent 70%)",
+        }}
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-16">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          <p className="text-[#C9A84C] tracking-[0.2em] uppercase text-sm mb-4 font-medium">Process</p>
-          <h2 className="font-serif text-4xl md:text-5xl font-semibold text-[#F4F2ED]">How It Works</h2>
+          <p className="text-[#D4A853] tracking-[0.15em] uppercase text-xs md:text-sm mb-4 font-semibold">
+            05 — A PLATAFORMA
+          </p>
+          <h2 className="font-serif text-4xl md:text-5xl font-bold text-[#F5F5F5] mb-6 leading-tight">
+            Coaching Humano. Precisão AI. Resultados Executivos.
+          </h2>
+          <p
+            className="max-w-2xl mx-auto text-lg"
+            style={{ color: "#9A9AB0", lineHeight: "1.8" }}
+          >
+            Um motor de quatro etapas que te leva do diagnóstico ao boardroom.
+          </p>
         </motion.div>
 
-        {/* Desktop: horizontal cards */}
-        <div className="hidden md:grid grid-cols-4 gap-6 relative">
+        {/* Steps Grid - Desktop */}
+        <div className="hidden md:grid grid-cols-1 lg:grid-cols-4 gap-6 relative">
+          {/* Connection lines */}
+          <div
+            className="absolute top-24 left-0 right-0 h-px hidden lg:block"
+            style={{
+              background: "linear-gradient(90deg, transparent, rgba(212,168,83,0.2), transparent)",
+            }}
+          />
+
           {steps.map((step, i) => (
             <motion.div
-              key={step.title}
-              initial={{ opacity: 0, y: 20 }}
+              key={step.number}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.12 }}
-              className={"fade-up d" + (i + 1) + " relative group"}
-              style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                borderRadius: 16,
-                padding: "36px 28px",
-                overflow: "hidden",
-                transition: "border-color 0.3s, transform 0.3s, box-shadow 0.3s",
-              }}
-              onMouseEnter={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.borderColor = "rgba(201,168,76,0.25)";
-                el.style.transform = "translateY(-5px)";
-                el.style.boxShadow = "0 16px 48px rgba(0,0,0,0.3)";
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.borderColor = "rgba(255,255,255,0.07)";
-                el.style.transform = "";
-                el.style.boxShadow = "";
-              }}
+              transition={{ duration: 0.6, delay: i * 0.12 }}
+              className="relative group"
             >
-              {/* Large background number */}
-              <span style={{
-                position: "absolute", top: -16, right: 16,
-                fontSize: 96, fontFamily: "serif", fontWeight: 800,
-                color: "rgba(201,168,76,0.05)", lineHeight: 1, userSelect: "none",
-                pointerEvents: "none",
-              }}>{step.number}</span>
+              {/* Card */}
+              <div
+                className="rounded-lg overflow-hidden border transition-all duration-300 h-full flex flex-col hover:shadow-xl"
+                style={{
+                  backgroundColor: "#12121A",
+                  borderLeft: "3px solid #D4A853",
+                  borderTop: "1px solid rgba(212,168,83,0.1)",
+                  borderRight: "1px solid rgba(212,168,83,0.05)",
+                  borderBottom: "1px solid rgba(212,168,83,0.05)",
+                  padding: "32px 24px",
+                }}
+              >
+                {/* Step Number Background */}
+                <div className="absolute -top-2 -right-2 text-[80px] font-serif font-bold opacity-5 select-none pointer-events-none">
+                  {step.number}
+                </div>
 
-              {/* Icon */}
-              <div className="relative z-10 w-12 h-12 rounded-full border border-[#C9A84C]/40 flex items-center justify-center mb-5 group-hover:border-[#C9A84C] transition-colors"
-                style={{ background: "rgba(201,168,76,0.06)" }}>
-                <step.icon className="h-5 w-5 text-[#C9A84C]" />
+                {/* Content */}
+                <div className="relative z-10 flex flex-col h-full">
+                  {/* Icon */}
+                  <div
+                    className="w-12 h-12 rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
+                    style={{ backgroundColor: "rgba(212,168,83,0.1)" }}
+                  >
+                    <step.icon className="h-6 w-6" style={{ color: "#D4A853" }} />
+                  </div>
+
+                  {/* Number + Title */}
+                  <p
+                    className="text-xs tracking-[0.2em] uppercase font-semibold mb-3"
+                    style={{ color: "rgba(212,168,83,0.6)" }}
+                  >
+                    {step.number}
+                  </p>
+                  <h3 className="font-serif text-xl font-bold text-[#F5F5F5] mb-4 leading-tight">
+                    {step.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-sm leading-relaxed mb-6 flex-grow" style={{ color: "#9A9AB0" }}>
+                    {step.description}
+                  </p>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2">
+                    {step.tags.slice(0, 2).map((tag, idx) => (
+                      <span
+                        key={idx}
+                        className="text-xs px-2.5 py-1 rounded-full font-medium"
+                        style={{
+                          backgroundColor: "rgba(212,168,83,0.08)",
+                          color: "#D4A853",
+                          border: "1px solid rgba(212,168,83,0.2)",
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
-
-              <p className="text-[#C9A84C]/50 text-xs font-medium mb-2 relative z-10">{step.number}</p>
-              <h3 className="font-serif text-lg font-semibold text-[#F4F2ED] mb-2 relative z-10">{step.title}</h3>
-              <p className="text-sm text-[#8E96A3] leading-relaxed relative z-10">{step.desc}</p>
-
-              {/* Connector line (except last card) */}
-              {i < steps.length - 1 && (
-                <div style={{
-                  position: "absolute", top: 48, left: "calc(100% + 12px)",
-                  width: 24, height: 1,
-                  background: "rgba(201,168,76,0.2)",
-                  borderTop: "1px dashed rgba(201,168,76,0.3)",
-                }} />
-              )}
             </motion.div>
           ))}
         </div>
 
-        {/* Mobile: vertical */}
+        {/* Steps - Mobile */}
         <div className="md:hidden space-y-6">
           {steps.map((step, i) => (
             <motion.div
-              key={step.title}
+              key={step.number}
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="flex gap-5 items-start rounded-xl p-5"
-              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
+              className="relative"
             >
-              <div className="w-12 h-12 shrink-0 rounded-full border border-[#C9A84C]/40 flex items-center justify-center"
-                style={{ background: "rgba(201,168,76,0.06)" }}>
-                <step.icon className="h-5 w-5 text-[#C9A84C]" />
-              </div>
-              <div>
-                <p className="text-[#C9A84C]/60 text-xs font-medium mb-1">{step.number}</p>
-                <h3 className="font-serif text-base font-semibold text-[#F4F2ED] mb-1">{step.title}</h3>
-                <p className="text-sm text-[#8E96A3]">{step.desc}</p>
+              <div
+                className="rounded-lg overflow-hidden border transition-all duration-300"
+                style={{
+                  backgroundColor: "#12121A",
+                  borderLeft: "3px solid #D4A853",
+                  borderTop: "1px solid rgba(212,168,83,0.1)",
+                  borderRight: "1px solid rgba(212,168,83,0.05)",
+                  borderBottom: "1px solid rgba(212,168,83,0.05)",
+                  padding: "24px",
+                }}
+              >
+                <div className="flex gap-4">
+                  <div
+                    className="w-12 h-12 shrink-0 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: "rgba(212,168,83,0.1)" }}
+                  >
+                    <step.icon className="h-6 w-6" style={{ color: "#D4A853" }} />
+                  </div>
+
+                  <div className="flex-1">
+                    <p
+                      className="text-xs tracking-[0.2em] uppercase font-semibold mb-2"
+                      style={{ color: "rgba(212,168,83,0.6)" }}
+                    >
+                      {step.number}
+                    </p>
+                    <h3 className="font-serif text-lg font-bold text-[#F5F5F5] mb-3">{step.title}</h3>
+                    <p className="text-sm leading-relaxed mb-4" style={{ color: "#9A9AB0" }}>
+                      {step.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {step.tags.slice(0, 2).map((tag, idx) => (
+                        <span
+                          key={idx}
+                          className="text-xs px-2.5 py-1 rounded-full font-medium"
+                          style={{
+                            backgroundColor: "rgba(212,168,83,0.08)",
+                            color: "#D4A853",
+                            border: "1px solid rgba(212,168,83,0.2)",
+                          }}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             </motion.div>
           ))}
         </div>
       </div>
-      <div className="h-px w-full mt-8" style={{ background: "linear-gradient(90deg, transparent, #C9A84C33, transparent)" }} />
+
+      {/* Bottom divider */}
+      <div
+        className="mt-20 h-px max-w-7xl mx-auto"
+        style={{
+          background: "linear-gradient(90deg, transparent, rgba(212,168,83,0.15), transparent)",
+        }}
+      />
     </section>
   );
 };

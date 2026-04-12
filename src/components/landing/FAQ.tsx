@@ -1,123 +1,228 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Plus } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 
 const faqs = [
   {
-    q: "What is VOICE³?",
-    a: "VOICE³ is a premium executive English communication training programme. It is designed for professionals who need to perform — not just communicate — in high-stakes business environments.",
+    q: "O que é o VOICE³?",
+    a: "VOICE³ é uma plataforma de comunicação executiva com inteligência artificial, desenhada para líderes globais que precisam operar sob pressão. Não é um curso de inglês tradicional — é um programa de treino executivo focado em presença vocal, autoridade e impacto em cenários reais como board meetings, negociações e pitch internacional.",
   },
   {
-    q: "How long does each session take?",
-    a: "Each AI session takes approximately 25–30 minutes, structured for busy executive schedules.",
+    q: "Preciso de ter um nível avançado de inglês?",
+    a: "Não. VOICE³ é desenhado para falantes em nível B1/B2 (intermediate). O programa trabalha a partir do teu nível atual e desenvolve não apenas a gramática, mas a confiança, presença vocal e autoridade na comunicação executiva.",
   },
   {
-    q: "Can I access the platform on mobile?",
-    a: "Yes, the platform is fully responsive and optimised for mobile, tablet, and desktop.",
+    q: "Como funcionam as sessões com professor?",
+    a: "As sessões 1-on-1 com professor são personalizadas para a tua jornada. Trabalhas com calibração de tom (escolhendo entre Diplomat, Anchor, American Direct ou Collaborator), análise de performance e feedback prático sobre como soar mais assertivo, persuasivo e impactante em contextos executivos.",
   },
   {
-    q: "What language is the training in?",
-    a: "Sessions are conducted in English. Portuguese support materials are available throughout the programme.",
+    q: "Posso cancelar a qualquer momento?",
+    a: "Sim. VOICE³ oferece plena flexibilidade. Podes cancelar a tua subscrição a qualquer momento, sem penalizações ou contratos de longa duração. Acreditamos que resultados reais falam por si.",
   },
   {
-    q: "How do Live Professor Sessions work?",
-    a: "Live Professor Sessions are 45-minute 1-on-1 video calls with specialist professors, scheduled directly through the platform.",
+    q: "Quanto tempo demora a ver resultados?",
+    a: "87% dos participantes reportam melhoria mensurável em 4 semanas. A maioria nota mudanças significativas em presença vocal e confiança em 2 semanas. Os resultados mais profundos (transformação de como és percebido) emergem com consistência ao longo de 8-12 semanas.",
   },
   {
-    q: "Is there a certificate at the end?",
-    a: "Yes. Upon completion, you receive the VOICE³ Executive Communication Certificate, shareable on LinkedIn and professional profiles.",
-  },
-  {
-    q: "Can companies register multiple employees?",
-    a: "Yes. The Business Master plan includes full team management, centralised billing, and a company dashboard.",
-  },
-  {
-    q: "What happens if I fail a session quiz?",
-    a: "You can retry any session quiz an unlimited number of times. There is no penalty — mastery is the goal.",
-  },
-  {
-    q: "Is there support available?",
-    a: "All plans include priority email support. Business Master plans include a dedicated account manager.",
-  },
-  {
-    q: "How is VOICE³ different from other English courses?",
-    a: "VOICE³ is not a language course. It is an executive performance programme. The focus is on strategic communication, authority, and impact — not grammar exercises.",
+    q: "O que é o Voice DNA?",
+    a: "Voice DNA Analytics é o sistema de métricas do VOICE³. Acompanha em tempo real: palavras por minuto, redução de preenchimentos (fillers), pacing, entoação, vocabulário executivo e muito mais. Recebe um relatório personalizado após cada sessão com dados precisos sobre o teu progresso.",
   },
 ];
 
 const FAQ = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.06,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
   return (
-    <section className="py-28" style={{ backgroundColor: "#0B1A2A" }} id="faq">
-      <div className="container max-w-3xl">
+    <section
+      className="py-28 relative overflow-hidden"
+      style={{ backgroundColor: "#0A0A0F" }}
+      id="faq"
+    >
+      {/* Decorative background */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 40%, rgba(212, 168, 83, 0.07) 0%, transparent 60%)",
+        }}
+      />
+
+      <div className="container max-w-3xl relative z-10 px-4">
+        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16 fade-up"
+          transition={{ duration: 0.6 }}
+          className="text-center mb-20"
         >
-          <p className="text-[#C9A84C] tracking-[0.2em] uppercase text-sm mb-4 font-medium">FAQ</p>
-          <h2 className="font-serif text-4xl md:text-5xl font-semibold text-[#F4F2ED]">Frequently Asked Questions</h2>
+          <p
+            className="tracking-[0.2em] uppercase text-sm mb-6 font-medium"
+            style={{ color: "#D4A853" }}
+          >
+            FAQ
+          </p>
+          <h2
+            className="font-serif text-4xl md:text-5xl font-semibold mb-6"
+            style={{ color: "#F5F5F5" }}
+          >
+            Perguntas Frequentes
+          </h2>
+          <p style={{ color: "#9A9AB0" }}>
+            Tudo o que precisas saber sobre VOICE³.
+          </p>
         </motion.div>
 
-        <div className="space-y-2">
-          {faqs.map((faq, i) => {
-            const isOpen = openIndex === i;
+        {/* Accordion */}
+        <motion.div
+          className="space-y-3"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {faqs.map((faq, idx) => {
+            const isOpen = openIndex === idx;
+
             return (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.04 }}
-                className="fade-up"
-                style={{
-                  border: isOpen ? "1px solid rgba(201,168,76,0.22)" : "1px solid rgba(255,255,255,0.07)",
-                  borderRadius: 12,
-                  background: isOpen ? "rgba(201,168,76,0.03)" : "rgba(255,255,255,0.02)",
-                  overflow: "hidden",
-                  transition: "border-color 0.25s, background 0.25s",
-                  marginBottom: 0,
-                }}
-              >
-                <button
-                  onClick={() => setOpenIndex(isOpen ? null : i)}
+              <motion.div key={idx} variants={itemVariants}>
+                <motion.div
+                  className="transition-all duration-300"
                   style={{
-                    width: "100%",
-                    padding: "20px 24px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    cursor: "pointer",
-                    fontSize: 15,
-                    fontWeight: 500,
-                    color: isOpen ? "#C9A84C" : "rgba(255,255,255,0.85)",
-                    background: "none",
-                    border: "none",
-                    textAlign: "left" as const,
-                    transition: "color 0.25s",
+                    borderRadius: 12,
+                    backgroundColor: isOpen ? "rgba(212, 168, 83, 0.05)" : "rgba(255, 255, 255, 0.02)",
+                    border: isOpen
+                      ? "1px solid rgba(212, 168, 83, 0.25)"
+                      : "1px solid rgba(255, 255, 255, 0.05)",
+                    overflow: "hidden",
                   }}
                 >
-                  <span>{faq.q}</span>
-                  <Plus
-                    className="h-5 w-5 shrink-0 ml-4 text-[#C9A84C]"
-                    style={{ transition: "transform 0.3s", transform: isOpen ? "rotate(45deg)" : "rotate(0deg)" }}
-                  />
-                </button>
-                <div style={{
-                  maxHeight: isOpen ? 300 : 0,
-                  overflow: "hidden",
-                  transition: "max-height 0.3s ease",
-                }}>
-                  <p style={{ padding: "0 24px 20px", color: "rgba(255,255,255,0.6)", lineHeight: 1.75 }}>{faq.a}</p>
-                </div>
+                  {/* Accordion Header */}
+                  <button
+                    onClick={() => setOpenIndex(isOpen ? null : idx)}
+                    className="w-full px-6 py-5 md:px-8 md:py-6 flex items-center justify-between cursor-pointer transition-colors duration-300 hover:bg-opacity-40"
+                    style={{
+                      backgroundColor: isOpen
+                        ? "rgba(212, 168, 83, 0.03)"
+                        : "transparent",
+                      fontSize: 15,
+                      fontWeight: 500,
+                      textAlign: "left",
+                    }}
+                  >
+                    <span
+                      className="font-semibold transition-colors duration-300"
+                      style={{
+                        color: isOpen ? "#D4A853" : "rgba(245, 245, 245, 0.9)",
+                      }}
+                    >
+                      {faq.q}
+                    </span>
+                    <motion.div
+                      animate={{
+                        rotate: isOpen ? 180 : 0,
+                      }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      style={{ marginLeft: 16, flexShrink: 0 }}
+                    >
+                      <ChevronDown
+                        className="h-5 w-5 transition-colors duration-300"
+                        style={{
+                          color: isOpen ? "#D4A853" : "#9A9AB0",
+                        }}
+                      />
+                    </motion.div>
+                  </button>
+
+                  {/* Accordion Content */}
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        style={{
+                          overflow: "hidden",
+                        }}
+                      >
+                        <div
+                          className="px-6 md:px-8 py-5 md:py-6 border-t"
+                          style={{
+                            borderColor: "rgba(212, 168, 83, 0.1)",
+                          }}
+                        >
+                          <p
+                            className="text-sm md:text-base leading-relaxed"
+                            style={{ color: "rgba(245, 245, 245, 0.75)" }}
+                          >
+                            {faq.a}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
+
+        {/* Additional CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-16 p-8 md:p-10 rounded-lg text-center"
+          style={{
+            backgroundColor: "rgba(212, 168, 83, 0.05)",
+            border: "1px solid rgba(212, 168, 83, 0.15)",
+          }}
+        >
+          <p className="mb-4" style={{ color: "#F5F5F5" }}>
+            Não encontras a resposta que procuras?
+          </p>
+          <a
+            href="mailto:support@voice3.com"
+            className="inline-flex items-center justify-center px-8 py-3 rounded-lg font-medium transition-all duration-300 hover:brightness-110"
+            style={{
+              backgroundColor: "#D4A853",
+              color: "#000",
+            }}
+          >
+            Contacta o Suporte
+          </a>
+        </motion.div>
       </div>
-      <div className="h-px w-full mt-8" style={{ background: "linear-gradient(90deg, transparent, #C9A84C33, transparent)" }} />
+
+      {/* Section Divider */}
+      <div
+        className="h-px w-full mt-20"
+        style={{
+          background: "linear-gradient(90deg, transparent, rgba(212, 168, 83, 0.2), transparent)",
+        }}
+      />
     </section>
   );
 };

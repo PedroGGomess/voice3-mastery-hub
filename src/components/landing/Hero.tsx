@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -30,7 +29,12 @@ const Hero = () => {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setProofStarted(true); observer.disconnect(); } },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setProofStarted(true);
+          observer.disconnect();
+        }
+      },
       { threshold: 0.3 }
     );
     if (proofRef.current) observer.observe(proofRef.current);
@@ -43,14 +47,16 @@ const Hero = () => {
       <section
         className="relative min-h-screen flex flex-col justify-center items-center text-center overflow-hidden"
         style={{
+          backgroundColor: "#0A0A0F",
           background: "linear-gradient(180deg, rgba(10,10,15,0.3) 0%, #0A0A0F 100%)",
         }}
       >
-        {/* Subtle gold radial glow */}
+        {/* Radial gold glow background effect */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: "radial-gradient(ellipse at 50% 30%, rgba(212,168,83,0.07) 0%, transparent 70%)",
+            background:
+              "radial-gradient(ellipse at 50% 30%, rgba(212,168,83,0.12) 0%, rgba(212,168,83,0.04) 35%, transparent 70%)",
           }}
         />
 
@@ -63,16 +69,13 @@ const Hero = () => {
             transition={{ duration: 0.6 }}
           >
             <span
-              className="inline-flex items-center gap-2 px-6 py-2 rounded-full text-[11px] tracking-[0.2em] uppercase"
+              className="inline-flex items-center gap-2 px-6 py-2 rounded-full text-[11px] tracking-[0.2em] uppercase font-medium"
               style={{
-                border: "1px solid rgba(212,168,83,0.3)",
+                border: "1px solid rgba(212,168,83,0.4)",
                 color: "#D4A853",
               }}
             >
-              <span
-                className="w-1.5 h-1.5 rounded-full"
-                style={{ background: "#4CAF50" }}
-              />
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#4CAF50" }} />
               Programa de Comunicação Executiva
             </span>
           </motion.div>
@@ -86,10 +89,7 @@ const Hero = () => {
             transition={{ duration: 0.7, delay: 0.15 }}
           >
             Tu não vais melhorar o teu inglês.{" "}
-            <span
-              className="italic"
-              style={{ color: "#D4A853" }}
-            >
+            <span className="italic" style={{ color: "#D4A853" }}>
               Vais performar com precisão.
             </span>
           </motion.h1>
@@ -112,25 +112,24 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.45 }}
           >
-            <Button
-              size="lg"
-              className="h-[52px] px-8 font-semibold rounded-md text-base transition-all duration-300 hover:brightness-110"
-              style={{ background: "#D4A853", color: "#000", border: "none" }}
-              asChild
+            <Link
+              to="/auth?mode=register"
+              className="h-[52px] px-8 font-semibold rounded-md text-base transition-all duration-300 hover:brightness-110 inline-flex items-center justify-center"
+              style={{ background: "#D4A853", color: "#000" }}
             >
-              <Link to="/auth?mode=register">
-                Candidatar-me ao VOICE³ <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="h-[52px] px-8 rounded-md text-base transition-all duration-300"
-              style={{ borderColor: "#D4A853", color: "#D4A853", background: "transparent" }}
-              asChild
+              Candidatar-me ao VOICE³ <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+            <Link
+              to="/for-companies"
+              className="h-[52px] px-8 rounded-md text-base transition-all duration-300 inline-flex items-center justify-center hover:bg-opacity-10"
+              style={{
+                border: "1px solid #D4A853",
+                color: "#D4A853",
+                backgroundColor: "transparent",
+              }}
             >
-              <Link to="/for-companies">Para Empresas</Link>
-            </Button>
+              Para Empresas
+            </Link>
           </motion.div>
         </div>
       </section>
@@ -140,9 +139,9 @@ const Hero = () => {
         ref={proofRef}
         className="flex flex-wrap justify-center gap-16 md:gap-20 py-10 md:py-12 px-6"
         style={{
-          background: "#12121A",
-          borderTop: "1px solid rgba(212,168,83,0.1)",
-          borderBottom: "1px solid rgba(212,168,83,0.1)",
+          backgroundColor: "#12121A",
+          borderTop: "1px solid rgba(212,168,83,0.15)",
+          borderBottom: "1px solid rgba(212,168,83,0.15)",
         }}
       >
         {[
@@ -151,17 +150,21 @@ const Hero = () => {
           { value: `${(rating / 10).toFixed(1)}★`, label: "Avaliação Média" },
           { value: `${countries}+`, label: "Países" },
         ].map((stat) => (
-          <div key={stat.label} className="text-center">
+          <motion.div
+            key={stat.label}
+            className="text-center"
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
             <p className="font-serif text-4xl font-bold" style={{ color: "#D4A853" }}>
               {stat.value}
             </p>
-            <p
-              className="mt-1 text-[13px] uppercase tracking-[0.1em]"
-              style={{ color: "#9A9AB0" }}
-            >
+            <p className="mt-1 text-[13px] uppercase tracking-[0.1em]" style={{ color: "#9A9AB0" }}>
               {stat.label}
             </p>
-          </div>
+          </motion.div>
         ))}
       </div>
     </>

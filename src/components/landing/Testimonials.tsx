@@ -2,129 +2,258 @@ import { motion } from "framer-motion";
 
 const testimonials = [
   {
-    text: "VOICE³ transformed how I communicate in English with international clients. My confidence skyrocketed after just 3 sessions.",
-    name: "Ana Rodrigues",
-    role: "Head of Sales",
-    company: "Lisbon Tech",
-    initials: "AR",
+    text: "Nas apresentações ao board, mudei completamente a minha abordagem. Agora transmito confiança e autoridade. VOICE³ acelerou tudo.",
+    name: "Thomas K.",
+    role: "CFO",
+    company: "Global Tech",
+    location: "Berlin",
+    initials: "TK",
     color: "#1a3a5c",
   },
   {
-    text: "The AI sessions give me exactly what I need, when I need it. The structured approach to executive communication is unlike anything else.",
-    name: "Miguel Santos",
-    role: "CFO",
-    company: "Porto Ventures",
-    initials: "MS",
+    text: "Fechei uma deal de €2M depois de usar VOICE³. O feedback em tempo real sobre o meu tom fez toda a diferença na negociação.",
+    name: "Sofia M.",
+    role: "Sales Director",
+    company: "Enterprise SaaS",
+    location: "Milan",
+    initials: "SM",
     color: "#2a1a4a",
   },
   {
-    text: "Worth every cent. My team now leads meetings with international partners confidently. The ROI is clear.",
-    name: "Carla Mendes",
+    text: "Liderança de equipas internacionais exige presença vocal. VOICE³ transformou como eu sou percebido em calls globais.",
+    name: "Henrik L.",
     role: "CEO",
-    company: "Braga Solutions",
-    initials: "CM",
+    company: "International Ventures",
+    location: "Stockholm",
+    initials: "HL",
     color: "#1a3a2a",
   },
 ];
 
 const Testimonials = () => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
+  };
+
   return (
-    <section style={{ backgroundColor: "#11263A" }} className="py-24 border-t border-[#C9A84C]/10">
-      <div className="container px-4">
-        <div className="text-center mb-16 fade-up">
-          <h2 className="font-serif text-4xl md:text-5xl font-semibold text-[#F4F2ED] mb-4">
-            What Professionals Say
-          </h2>
-          <p className="text-[#8E96A3] text-lg">
-            Trusted by executives across Portugal and beyond.
+    <section
+      className="py-28 relative overflow-hidden"
+      style={{ backgroundColor: "#0A0A0F" }}
+      id="resultados"
+    >
+      {/* Decorative background */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at 40% 60%, rgba(212, 168, 83, 0.06) 0%, transparent 65%)",
+        }}
+      />
+
+      <div className="container relative z-10 px-4">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-20"
+        >
+          <p
+            className="tracking-[0.2em] uppercase text-sm mb-6 font-medium"
+            style={{ color: "#D4A853" }}
+          >
+            08 — RESULTADOS
           </p>
-        </div>
+          <h2
+            className="font-serif text-4xl md:text-5xl font-semibold mb-6"
+            style={{ color: "#F5F5F5" }}
+          >
+            Resultados Mensuráveis.{" "}
+            <span style={{ color: "#D4A853" }}>Transformações Reais.</span>
+          </h2>
+          <p className="text-lg md:text-xl max-w-2xl mx-auto" style={{ color: "#9A9AB0" }}>
+            87% dos participantes reportam melhoria mensurável em 4 semanas.
+          </p>
+        </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {testimonials.map((t, i) => (
+        {/* Testimonials Grid */}
+        <motion.div
+          className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {testimonials.map((testimonial, idx) => (
             <motion.div
-              key={t.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className={"fade-up d" + (i + 1)}
-              style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                borderRadius: 20,
-                padding: "40px 32px",
-                position: "relative",
-                overflow: "hidden",
-                transition: "border-color 0.3s, transform 0.3s",
+              key={testimonial.name}
+              variants={cardVariants}
+              whileHover={{
+                y: -8,
+                transition: { duration: 0.3 },
               }}
-              onMouseEnter={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.borderColor = "rgba(201,168,76,0.25)";
-                el.style.transform = "translateY(-4px)";
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.borderColor = "rgba(255,255,255,0.07)";
-                el.style.transform = "";
-              }}
+              className="group relative"
             >
-              {/* Decorative large quote */}
-              <span style={{
-                position: "absolute", top: 12, left: 20,
-                fontSize: 88, fontFamily: "serif", lineHeight: 1,
-                color: "rgba(201,168,76,0.12)", userSelect: "none", pointerEvents: "none",
-              }}>"</span>
+              <div
+                className="relative h-full rounded-lg p-8 backdrop-blur-sm transition-all duration-300 overflow-hidden"
+                style={{
+                  backgroundColor: "#12121A",
+                  border: "1px solid rgba(255, 255, 255, 0.05)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(212, 168, 83, 0.3)";
+                  e.currentTarget.style.boxShadow =
+                    "0 0 24px rgba(212, 168, 83, 0.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor =
+                    "rgba(255, 255, 255, 0.05)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                {/* Gold left accent bar */}
+                <div
+                  className="absolute left-0 top-0 bottom-0 w-1 transition-all duration-300"
+                  style={{ background: "#D4A853" }}
+                />
 
-              {/* 5 stars */}
-              <div style={{ marginBottom: 16, position: "relative", zIndex: 1 }}>
-                {"★★★★★".split("").map((s, j) => (
-                  <span key={j} style={{ color: "#C9A84C", fontSize: 14 }}>{s}</span>
-                ))}
-              </div>
+                {/* Decorative quote mark */}
+                <svg
+                  className="absolute top-6 right-6 h-12 w-12 opacity-[0.08]"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  style={{ color: "#D4A853" }}
+                >
+                  <path d="M3 21c3 0 7-1 7-8V5c0-1.25-4.716-5-7-5m0 0c-4.287 0-7 4-7 8v10c0 5 2 8 6 8" />
+                </svg>
 
-              <p className="text-[#F4F2ED]/80 leading-relaxed text-sm flex-1 relative z-10" style={{ marginBottom: 24 }}>{t.text}</p>
-
-              <div className="flex items-center gap-3 pt-4 border-t border-[#C9A84C]/10">
-                <div style={{
-                  width: 40, height: 40, borderRadius: "50%",
-                  background: t.color,
-                  border: "2px solid rgba(201,168,76,0.3)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  color: "#C9A84C", fontWeight: 600, fontSize: 13, flexShrink: 0,
-                }}>
-                  {t.initials}
+                {/* Star rating */}
+                <div className="relative z-10 mb-6 flex gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i} style={{ color: "#D4A853", fontSize: 14 }}>
+                      ★
+                    </span>
+                  ))}
                 </div>
-                <div>
-                  <p className="text-[#F4F2ED] font-semibold text-sm">{t.name}</p>
-                  <p className="text-[#8E96A3] text-xs">{t.role}, {t.company}</p>
+
+                {/* Testimonial text */}
+                <p
+                  className="text-sm leading-relaxed relative z-10 mb-8"
+                  style={{ color: "rgba(245, 245, 245, 0.85)" }}
+                >
+                  "{testimonial.text}"
+                </p>
+
+                {/* Author info */}
+                <div
+                  className="relative z-10 pt-6 border-t"
+                  style={{ borderColor: "rgba(212, 168, 83, 0.1)" }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div
+                      className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-semibold text-sm"
+                      style={{
+                        backgroundColor: testimonial.color,
+                        border: "2px solid rgba(212, 168, 83, 0.3)",
+                        color: "#D4A853",
+                      }}
+                    >
+                      {testimonial.initials}
+                    </div>
+                    <div>
+                      <p
+                        className="font-serif font-semibold"
+                        style={{ color: "#F5F5F5" }}
+                      >
+                        {testimonial.name}
+                      </p>
+                      <p className="text-xs" style={{ color: "#9A9AB0" }}>
+                        {testimonial.role}, {testimonial.company}
+                      </p>
+                      <p className="text-xs" style={{ color: "#9A9AB0" }}>
+                        {testimonial.location}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Video testimonial placeholder */}
-        <div className="mt-12 max-w-2xl mx-auto">
-          <div className="relative rounded-xl overflow-hidden border border-[#C9A84C]/15 bg-[#0B1A2A] aspect-video flex items-center justify-center shadow-[0_4px_24px_rgba(0,0,0,0.3)]">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="max-w-3xl mx-auto"
+        >
+          <div
+            className="relative rounded-lg overflow-hidden aspect-video flex items-center justify-center group cursor-pointer"
+            style={{
+              backgroundColor: "#12121A",
+              border: "1px solid rgba(212, 168, 83, 0.15)",
+            }}
+          >
             <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=800&q=80"
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 w-full h-full object-cover brightness-[0.3] saturate-[0.5]"
+              src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80"
+              alt="Video testimonial"
+              className="absolute inset-0 w-full h-full object-cover brightness-[0.25] saturate-[0.4] group-hover:brightness-[0.35] transition-all duration-300"
             />
-            <div className="relative z-10 flex flex-col items-center gap-3">
-              <div className="w-14 h-14 rounded-full border-2 border-[#C9A84C]/60 bg-[#C9A84C]/10 flex items-center justify-center">
-                <svg className="w-5 h-5 text-[#C9A84C] ml-1" fill="currentColor" viewBox="0 0 24 24">
+            <div className="relative z-10 flex flex-col items-center gap-4">
+              <motion.div
+                className="w-16 h-16 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+                style={{
+                  border: "2px solid #D4A853",
+                  backgroundColor: "rgba(212, 168, 83, 0.08)",
+                }}
+                whileHover={{ scale: 1.1 }}
+              >
+                <svg
+                  className="w-7 h-7 ml-1"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  style={{ color: "#D4A853" }}
+                >
                   <path d="M8 5v14l11-7z" />
                 </svg>
-              </div>
-              <p className="text-[#8E96A3] text-xs tracking-widest uppercase">Watch Executive Testimonial</p>
+              </motion.div>
+              <p
+                className="text-xs tracking-widest uppercase font-medium"
+                style={{ color: "#9A9AB0" }}
+              >
+                Ver Testemunho Executivo
+              </p>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
-      <div className="h-px w-full mt-8" style={{ background: "linear-gradient(90deg, transparent, #C9A84C33, transparent)" }} />
+
+      {/* Section Divider */}
+      <div
+        className="h-px w-full mt-20"
+        style={{
+          background: "linear-gradient(90deg, transparent, rgba(212, 168, 83, 0.2), transparent)",
+        }}
+      />
     </section>
   );
 };

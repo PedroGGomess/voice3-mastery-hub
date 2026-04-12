@@ -1,70 +1,140 @@
 import { motion } from "framer-motion";
-import { Target, Shield, Zap } from "lucide-react";
-
-const pillars = [
-  {
-    number: "01",
-    name: "CLARITY",
-    icon: Target,
-    desc: "Position your message with absolute precision. Eliminate ambiguity. Speak so that every word carries weight.",
-  },
-  {
-    number: "02",
-    name: "CONTROL",
-    icon: Shield,
-    desc: "Justify your argument with structured authority. Command the room with composure and strategic language.",
-  },
-  {
-    number: "03",
-    name: "COMMAND",
-    icon: Zap,
-    desc: "Close with impact and executive presence. Drive outcomes through confident, decisive communication.",
-  },
-];
+import { Lightbulb, Lock, Zap } from "lucide-react";
 
 const WhatYouLearn = () => {
+  const pillars = [
+    {
+      title: "CLARITY",
+      icon: Lightbulb,
+      description: "Posiciona a tua mensagem com precisão absoluta.",
+    },
+    {
+      title: "CONTROL",
+      icon: Lock,
+      description: "Justifica o teu argumento com autoridade estruturada.",
+    },
+    {
+      title: "COMMAND",
+      icon: Zap,
+      description: "Fecha com impacto e presença executiva.",
+    },
+  ];
+
   return (
-    <section className="py-28" style={{ backgroundColor: "#11263A" }} id="metodo">
-      <div className="container">
+    <section style={{ backgroundColor: "#0A0A0F" }} className="py-28 relative overflow-hidden">
+      {/* Background gradient */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse at 50% 50%, rgba(212,168,83,0.05) 0%, transparent 70%)",
+        }}
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-16">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-20"
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
         >
-          <p className="text-[#B89A5A] tracking-[0.2em] uppercase text-sm mb-4 font-medium">Methodology</p>
-          <h2 className="font-serif text-4xl md:text-5xl font-semibold text-[#F4F2ED]">The VOICE³ Method</h2>
+          <p className="text-[#D4A853] tracking-[0.15em] uppercase text-xs md:text-sm mb-4 font-semibold">
+            03 — O DESAFIO
+          </p>
+          <h2 className="font-serif text-4xl md:text-5xl font-bold text-[#F5F5F5] mb-6 leading-tight">
+            Pára de perder a sala por causa da língua.
+          </h2>
+          <p
+            className="max-w-2xl mx-auto text-lg"
+            style={{ color: "#9A9AB0", lineHeight: "1.8" }}
+          >
+            Para executivos não-nativos, a barreira não é a gramática. É a autoridade. O teu sotaque não é o problema. É a capacidade de manter a sala quando a pressão sobe.
+          </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        {/* Promise Box */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="max-w-3xl mx-auto mb-16 rounded-lg p-8 md:p-10"
+          style={{
+            backgroundColor: "rgba(212,168,83,0.05)",
+            border: "2px solid #D4A853",
+          }}
+        >
+          <p
+            className="font-serif text-xl md:text-2xl font-bold text-[#F5F5F5] leading-relaxed"
+            style={{ lineHeight: "1.8" }}
+          >
+            VOICE³ faz a ponte entre o teu B2 e o teu intelecto executivo.{" "}
+            <span style={{ color: "#D4A853" }}>Isto não é aprender inglês. É engenharia de performance.</span>
+          </p>
+        </motion.div>
+
+        {/* Method Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {pillars.map((pillar, i) => (
             <motion.div
-              key={pillar.name}
+              key={pillar.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.15 }}
-              className="relative overflow-hidden rounded-xl p-8 bg-[#0B1A2A] border-t-2 border-[#B89A5A] border-x border-b border-x-[#B89A5A]/10 border-b-[#B89A5A]/10 group hover:border-t-[#B89A5A] transition-all duration-300"
+              transition={{ duration: 0.6, delay: 0.3 + i * 0.1 }}
+              className="group"
             >
-              {/* Large bg number */}
-              <div className="absolute -bottom-4 -right-2 font-serif text-[8rem] font-bold leading-none text-[#B89A5A]/5 select-none pointer-events-none">
-                {pillar.number}
-              </div>
+              <div
+                className="rounded-lg overflow-hidden border transition-all duration-300 h-full flex flex-col hover:shadow-xl"
+                style={{
+                  backgroundColor: "#12121A",
+                  borderTop: "3px solid #D4A853",
+                  borderLeft: "1px solid rgba(212,168,83,0.1)",
+                  borderRight: "1px solid rgba(212,168,83,0.1)",
+                  borderBottom: "1px solid rgba(212,168,83,0.05)",
+                  padding: "32px 28px",
+                }}
+              >
+                {/* Content */}
+                <div className="relative z-10 flex flex-col h-full">
+                  {/* Icon */}
+                  <div
+                    className="w-14 h-14 rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
+                    style={{ backgroundColor: "rgba(212,168,83,0.1)" }}
+                  >
+                    <pillar.icon className="h-7 w-7" style={{ color: "#D4A853" }} />
+                  </div>
 
-              <div className="relative z-10">
-                <div className="w-12 h-12 rounded-lg bg-[#B89A5A]/10 flex items-center justify-center mb-6 group-hover:bg-[#B89A5A]/20 transition-colors">
-                  <pillar.icon className="h-6 w-6 text-[#B89A5A]" />
+                  {/* Title */}
+                  <h3 className="font-serif text-2xl font-bold text-[#F5F5F5] mb-4 tracking-wide">
+                    {pillar.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-base leading-relaxed" style={{ color: "#9A9AB0" }}>
+                    {pillar.description}
+                  </p>
+
+                  {/* Accent line */}
+                  <div
+                    className="mt-6 h-1 w-12 rounded-full"
+                    style={{ backgroundColor: "#D4A853" }}
+                  />
                 </div>
-                <p className="text-[#B89A5A]/50 text-xs tracking-[0.2em] uppercase font-medium mb-2">{pillar.number}</p>
-                <h3 className="font-serif text-3xl font-semibold text-[#F4F2ED] mb-4 tracking-wide">{pillar.name}</h3>
-                <p className="text-[#8E96A3] leading-relaxed">{pillar.desc}</p>
               </div>
             </motion.div>
           ))}
         </div>
       </div>
-      {/* Section divider */}
-      <div className="h-px w-full mt-8" style={{ background: 'linear-gradient(90deg, transparent, #B89A5A33, transparent)' }} />
+
+      {/* Bottom divider */}
+      <div
+        className="mt-20 h-px max-w-7xl mx-auto"
+        style={{
+          background: "linear-gradient(90deg, transparent, rgba(212,168,83,0.15), transparent)",
+        }}
+      />
     </section>
   );
 };
