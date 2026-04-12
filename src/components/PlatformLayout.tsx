@@ -20,17 +20,17 @@ type NavItem =
 
 const navItems: NavItem[] = [
   { type: "link", to: "/app", icon: LayoutDashboard, label: "dash.dashboard", tourKey: "dashboard", end: true },
-  { type: "separator", label: "LEARN" },
+  { type: "separator", label: "APRENDER" },
   { type: "link", to: "/capitulos", icon: BookOpen, label: "dash.programme", tourKey: "programme" },
   { type: "link", to: "/app/catalogue", icon: Library, label: "dash.catalogue" },
-  { type: "separator", label: "TOOLS & PRACTICE" },
+  { type: "separator", label: "FERRAMENTAS & PRÁTICA" },
   { type: "link", to: "/app/toolkit", icon: Wrench, label: "dash.toolkit", tourKey: "toolkit" },
   { type: "link", to: "/app/practice", icon: Swords, label: "dash.practice" },
   { type: "link", to: "/app/chat", icon: MessageCircle, label: "dash.coach", tourKey: "ai-coach" },
-  { type: "separator", label: "PROGRESS" },
+  { type: "separator", label: "PROGRESSO" },
   { type: "link", to: "/app/desempenho", icon: BarChart2, label: "dash.progress", tourKey: "progress" },
   { type: "link", to: "/app/leaderboard", icon: Trophy, label: "dash.leaderboard" },
-  { type: "separator", label: "SUPPORT" },
+  { type: "separator", label: "SUPORTE" },
   { type: "link", to: "/app/call-professor", icon: Phone, label: "dash.live", tourKey: "live" },
   { type: "link", to: "/app/aulas", icon: GraduationCap, label: "dash.classes" },
   { type: "link", to: "/app/materiais", icon: FileText, label: "dash.materials" },
@@ -136,7 +136,7 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
             {initials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-primary font-medium tracking-wide uppercase">Welcome</p>
+            <p className="text-xs text-primary font-medium tracking-wide uppercase">Bem-vindo</p>
             <p className="text-sm text-foreground font-semibold truncate">{currentUser?.name?.split(" ")[0] || "Utilizador"}</p>
           </div>
         </div>

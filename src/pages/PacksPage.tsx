@@ -1,23 +1,24 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import ChatWidget from "@/components/ChatWidget";
-import { supabase } from "@/integrations/supabase/client";
+import BusinessMasterModal from "@/components/landing/BusinessMasterModal";
 
 type Pack = {
   id: string;
   name: string;
   slug: string | null;
-  price: number;
+  price: number | string;
   sessionsIncluded: number;
   badge: string | null;
   tagline: string;
   promise: string;
   features: string[];
+  business?: boolean;
 };
 
 const staticPacks: Pack[] = [
@@ -28,13 +29,13 @@ const staticPacks: Pack[] = [
     price: 149,
     sessionsIncluded: 1,
     badge: null,
-    tagline: "Begin your executive journey",
-    promise: "You will command meetings with greater structure and confidence",
+    tagline: "Para começar a tua jornada executiva",
+    promise: "Vais comandar reuniões com mais estrutura e confiança",
     features: [
-      "All 10 chapters & AI tools",
-      "Personalised learning path",
-      "1 live professor session",
-      "Progress tracking & certificate",
+      "Todos os 10 capítulos e ferramentas AI",
+      "Percurso de aprendizagem personalizado",
+      "1 sessão ao vivo com professor",
+      "Acompanhamento e certificado",
     ],
   },
   {
@@ -43,15 +44,15 @@ const staticPacks: Pack[] = [
     slug: "pro",
     price: 349,
     sessionsIncluded: 3,
-    badge: "Most Popular",
-    tagline: "For high-stakes English performance",
-    promise: "You will negotiate, present and lead with authority in English",
+    badge: "Mais Popular",
+    tagline: "Para performance de alto nível",
+    promise: "Vais negociar, apresentar e liderar com autoridade em inglês",
     features: [
-      "All 10 chapters & AI tools",
-      "Personalised learning path",
-      "3 live professor sessions",
-      "Progress tracking & certificate",
-      "Priority booking",
+      "Todos os 10 capítulos e ferramentas AI",
+      "Percurso de aprendizagem personalizado",
+      "3 sessões ao vivo com professor",
+      "Acompanhamento e certificado",
+      "Reserva prioritária",
     ],
   },
   {
@@ -61,47 +62,48 @@ const staticPacks: Pack[] = [
     price: 499,
     sessionsIncluded: 5,
     badge: null,
-    tagline: "Senior leaders, global exposure",
-    promise: "You will lead global teams and close deals entirely in English",
+    tagline: "Para líderes seniores",
+    promise: "Vais liderar equipas globais e fechar negócios em inglês",
     features: [
-      "All 10 chapters & AI tools",
-      "Personalised learning path",
-      "5 live professor sessions",
-      "Progress tracking & certificate",
-      "Priority booking",
-      "Session recordings",
+      "Todos os 10 capítulos e ferramentas AI",
+      "Percurso de aprendizagem personalizado",
+      "5 sessões ao vivo com professor",
+      "Acompanhamento e certificado",
+      "Reserva prioritária",
+      "Gravações das sessões",
     ],
   },
   {
     id: "business-master",
     name: "Business Master",
     slug: "business-master",
-    price: 799,
+    price: "Sob Consulta",
     sessionsIncluded: 10,
     badge: null,
-    tagline: "C-suite & business owners",
-    promise: "You will command any room, any boardroom, in any country",
+    tagline: "C-suite & equipas",
+    promise: "Vais dominar qualquer sala, qualquer boardroom, em qualquer país",
+    business: true,
     features: [
-      "All 10 chapters & AI tools",
-      "Personalised learning path",
-      "10 live professor sessions",
-      "Progress tracking & certificate",
-      "Priority booking",
-      "Session recordings",
-      "Team dashboard + custom scenarios",
+      "Todos os 10 capítulos e ferramentas AI",
+      "Percurso de aprendizagem personalizado",
+      "10+ sessões ao vivo com professor",
+      "Acompanhamento e certificado",
+      "Reserva prioritária",
+      "Gravações das sessões",
+      "Dashboard de equipa e cenários personalizados",
     ],
   },
 ];
 
 const comparison = [
-  { label: "All Chapters & AI Tools",    values: [true,  true,  true,  true]  },
-  { label: "Personalised Learning Path", values: [true,  true,  true,  true]  },
-  { label: "Professor Sessions",         values: ["1×",  "3×",  "5×",  "10×"] },
-  { label: "Progress Tracking",          values: [true,  true,  true,  true]  },
-  { label: "Priority Booking",           values: [false, true,  true,  true]  },
-  { label: "Session Recordings",         values: [false, false, true,  true]  },
-  { label: "Team Dashboard",             values: [false, false, false, true]  },
-  { label: "Custom Scenarios",           values: [false, false, false, true]  },
+  { label: "Todos os Capítulos e Ferramentas AI", values: [true, true, true, true] },
+  { label: "Percurso Personalizado", values: [true, true, true, true] },
+  { label: "Sessões com Professor", values: ["1×", "3×", "5×", "10+"] },
+  { label: "Acompanhamento de Progresso", values: [true, true, true, true] },
+  { label: "Reserva Prioritária", values: [false, true, true, true] },
+  { label: "Gravações das Sessões", values: [false, false, true, true] },
+  { label: "Dashboard de Equipa", values: [false, false, false, true] },
+  { label: "Cenários Personalizados", values: [false, false, false, true] },
 ];
 
 const fadeUp = {
@@ -129,32 +131,8 @@ function CellValue({ v, colIdx }: { v: boolean | string; colIdx: number }) {
 }
 
 export default function PacksPage() {
-  const [packs, setPacks] = useState<Pack[]>(staticPacks);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const extractFeatures = (
-      rawFeatures: unknown,
-      fallback: string[]
-    ): string[] => {
-      if (Array.isArray(rawFeatures)) {
-        const filtered = (rawFeatures as unknown[]).filter(
-          (f): f is string => typeof f === "string"
-        );
-        if (filtered.length > 0) return filtered;
-      }
-      return fallback;
-    };
-
-    const loadPacks = async () => {
-      // Use static packs - no DB table exists yet
-    };
-
-
-    loadPacks();
-    return () => controller.abort();
-  }, []);
+  const [packs] = useState<Pack[]>(staticPacks);
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#0B1A2A]">
@@ -163,13 +141,13 @@ export default function PacksPage() {
       {/* ── Hero ── */}
       <section className="pt-32 pb-16 px-6 text-center">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
-          <p className="text-xs tracking-[0.2em] text-[#C9A84C] uppercase mb-4">Investment</p>
+          <p className="text-xs tracking-[0.2em] text-[#C9A84C] uppercase mb-4 font-semibold">Investimento</p>
           <h1 className="font-serif text-[clamp(36px,5vw,52px)] font-bold text-[#F4F2ED] leading-tight mb-4">
-            Choose Your Track
+            Escolhe o Teu Nível
           </h1>
           <div className="w-[60px] h-[2px] bg-[#C9A84C] mx-auto mb-5" />
           <p className="text-[18px] text-[#8E96A3] max-w-lg mx-auto leading-relaxed">
-            Every pack includes live professor sessions, AI coaching, and a certificate of mastery.
+            Todos os packs incluem sessões ao vivo com professor, coaching AI e certificado de domínio.
           </p>
         </motion.div>
       </section>
@@ -179,51 +157,54 @@ export default function PacksPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-start">
           {packs.map((pack, i) => {
             const isPro = pack.slug === "pro";
+            const isBusiness = pack.slug === "business-master";
             return (
               <motion.div
                 key={pack.id}
                 className="relative rounded-2xl p-7 flex flex-col"
                 style={{
-                  background: "#1C1F26",
+                  background: isPro ? "linear-gradient(180deg, rgba(201,168,76,0.04), #11263A)" : "#11263A",
                   border: isPro
-                    ? "1px solid rgba(184,154,90,0.5)"
-                    : "1px solid rgba(184,154,90,0.1)",
+                    ? "2px solid rgba(201,168,76,0.5)"
+                    : "1px solid rgba(255,255,255,0.06)",
                   transform: isPro ? "scale(1.04)" : undefined,
-                  boxShadow: isPro ? "0 0 40px rgba(184,154,90,0.15)" : undefined,
+                  boxShadow: isPro ? "0 0 40px rgba(201,168,76,0.12)" : undefined,
                 }}
                 initial={{ opacity: 0, y: 32 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
-                whileHover={!isPro ? { borderColor: "rgba(184,154,90,0.3)" } : undefined}
+                whileHover={!isPro ? { borderColor: "rgba(201,168,76,0.3)" } : undefined}
               >
                 {/* Badge */}
                 {pack.badge && (
                   <div
-                    className="absolute -top-px left-1/2 -translate-x-1/2 px-5 py-1.5 rounded-b-xl font-black text-[11px]"
+                    className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 whitespace-nowrap tracking-wider"
                     style={{
                       background: "linear-gradient(135deg, #C9A84C, #E8C87A)",
-                      color: "#060f1d",
-                      letterSpacing: "0.08em",
+                      color: "#0B1A2A",
                     }}
                   >
-                    {pack.badge.toUpperCase()}
+                    <Sparkles className="h-3 w-3" /> {pack.badge.toUpperCase()}
                   </div>
                 )}
 
                 <div className={pack.badge ? "pt-4" : ""}>
-                  <h3 className="text-xl font-bold text-[#F4F2ED] mb-1">{pack.name}</h3>
+                  <h3 className="font-serif text-xl font-semibold text-[#F4F2ED] mb-1">{pack.name}</h3>
                   <p className="text-[13px] italic text-[#8E96A3] mb-5">{pack.tagline}</p>
 
                   {/* Price */}
                   <div className="flex items-end gap-1 mb-4">
-                    <span
-                      className="font-serif font-bold leading-none"
-                      style={{ fontSize: 64, color: "#C9A84C" }}
-                    >
-                      €{pack.price}
-                    </span>
-                    <span className="text-[#8E96A3] text-sm mb-3">/pack</span>
+                    {typeof pack.price === "string" ? (
+                      <span className="text-2xl font-serif italic text-[#C9A84C]">{pack.price}</span>
+                    ) : (
+                      <>
+                        <span className="font-serif font-bold leading-none" style={{ fontSize: 56, color: "#C9A84C" }}>
+                          €{pack.price}
+                        </span>
+                        <span className="text-[#8E96A3] text-sm mb-3">/pack</span>
+                      </>
+                    )}
                   </div>
 
                   {/* Promise */}
@@ -231,8 +212,7 @@ export default function PacksPage() {
                     "{pack.promise}"
                   </p>
 
-                  {/* Divider */}
-                  <div className="w-full h-px bg-[#B89A5A]/15 mb-4" />
+                  <div className="w-full h-px bg-[#C9A84C]/10 mb-4" />
 
                   {/* Sessions pill */}
                   <div className="mb-5">
@@ -244,48 +224,48 @@ export default function PacksPage() {
                         color: "#C9A84C",
                       }}
                     >
-                      Includes {pack.sessionsIncluded} × 45-min Professor Sessions
+                      Inclui {isBusiness ? "10+" : pack.sessionsIncluded} × Sessão de 45 min com Professor
                     </span>
                   </div>
 
                   {/* Features */}
-                  <ul className="space-y-2 mb-8 flex-1">
+                  <ul className="space-y-2.5 mb-8 flex-1">
                     {pack.features.map((f) => (
-                      <li key={f} className="text-sm text-[#F4F2ED] flex items-start gap-2">
-                        <span style={{ color: "#C9A84C", flexShrink: 0 }}>✦</span>
+                      <li key={f} className="text-sm text-[#8E96A3] flex items-start gap-2.5">
+                        <Check className="h-4 w-4 text-[#C9A84C] mt-0.5 shrink-0" />
                         {f}
                       </li>
                     ))}
                   </ul>
 
                   {/* CTA */}
-                  <Link to={`/auth?pack=${pack.slug}`}>
-                    {pack.slug === "starter" && (
-                      <Button
-                        variant="outline"
-                        className="w-full h-11 text-sm font-bold rounded-xl border-white/30 text-white hover:bg-white/5"
-                      >
-                        Get Started <ArrowRight className="ml-1 w-4 h-4" />
-                      </Button>
-                    )}
-                    {isPro && (
-                      <Button
-                        className="w-full h-11 text-sm font-bold rounded-xl"
-                        style={{ background: "#C9A84C", color: "#060f1d" }}
-                      >
-                        Get Started <ArrowRight className="ml-1 w-4 h-4" />
-                      </Button>
-                    )}
-                    {(pack.slug === "advanced" || pack.slug === "business-master") && (
-                      <Button
-                        variant="outline"
-                        className="w-full h-11 text-sm font-bold rounded-xl text-[#F4F2ED] hover:border-[#C9A84C]"
-                        style={{ borderColor: "rgba(201,168,76,0.5)" }}
-                      >
-                        Get Started <ArrowRight className="ml-1 w-4 h-4" />
-                      </Button>
-                    )}
-                  </Link>
+                  {isBusiness ? (
+                    <Button
+                      onClick={() => setModalOpen(true)}
+                      className="w-full h-12 rounded-xl font-semibold bg-[#C9A84C] text-[#0B1A2A] hover:bg-[#d4b56a] hover:shadow-[0_0_24px_rgba(201,168,76,0.3)] hover:-translate-y-0.5 transition-all duration-300"
+                    >
+                      Falar com Comercial <ArrowRight className="ml-1.5 h-4 w-4" />
+                    </Button>
+                  ) : isPro ? (
+                    <Button
+                      className="w-full h-12 rounded-xl font-semibold bg-[#C9A84C] text-[#0B1A2A] hover:bg-[#d4b56a] hover:shadow-[0_0_32px_rgba(201,168,76,0.3)] hover:-translate-y-0.5 transition-all duration-300"
+                      asChild
+                    >
+                      <Link to={`/auth?mode=register&pack=${pack.slug}`}>
+                        Escolher Pro <ArrowRight className="ml-1.5 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      className="w-full h-12 rounded-xl font-medium border border-[#C9A84C]/30 text-[#C9A84C] bg-transparent hover:border-[#C9A84C]/60 hover:bg-[#C9A84C]/5 hover:-translate-y-0.5 transition-all duration-300"
+                      asChild
+                    >
+                      <Link to={`/auth?mode=register&pack=${pack.slug}`}>
+                        {pack.slug === "starter" ? "Começar Agora" : "Escolher " + pack.name} <ArrowRight className="ml-1.5 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  )}
                 </div>
               </motion.div>
             );
@@ -302,11 +282,11 @@ export default function PacksPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          Compare All Tracks
+          Comparar Todos os Planos
         </motion.h2>
 
         <motion.div
-          className="overflow-x-auto rounded-2xl border border-[#B89A5A]/10"
+          className="overflow-x-auto rounded-2xl border border-[#C9A84C]/10"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -315,7 +295,7 @@ export default function PacksPage() {
           <table className="w-full text-sm">
             <thead>
               <tr style={{ background: "rgba(201,168,76,0.06)" }}>
-                <th className="text-left py-4 px-5 text-[#C9A84C] font-bold tracking-wide">Feature</th>
+                <th className="text-left py-4 px-5 text-[#C9A84C] font-bold tracking-wide">Funcionalidade</th>
                 {packs.map((p) => (
                   <th key={p.id} className="py-4 px-4 text-center text-[#C9A84C] font-bold">
                     {p.name}
@@ -327,7 +307,7 @@ export default function PacksPage() {
               {comparison.map((row, ri) => (
                 <tr
                   key={row.label}
-                  style={{ background: ri % 2 === 0 ? "#1C1F26" : "#0B1A2A" }}
+                  style={{ background: ri % 2 === 0 ? "#11263A" : "#0B1A2A" }}
                 >
                   <td className="py-3.5 px-5 text-[#8E96A3]">{row.label}</td>
                   {row.values.map((v, ci) => (
@@ -360,23 +340,23 @@ export default function PacksPage() {
           transition={{ duration: 0.5 }}
         >
           <h3 className="font-serif text-2xl font-bold text-[#F4F2ED] mb-3">
-            Not sure which track is right for you?
+            Não tens a certeza de qual é o plano ideal?
           </h3>
-          <p className="text-[#8E96A3] mb-7">Book a free 15-minute discovery call.</p>
-          <Link to="/contact">
-            <Button
-              variant="outline"
-              className="h-12 px-8 font-bold text-[#C9A84C] rounded-xl"
-              style={{ borderColor: "rgba(201,168,76,0.5)" }}
-            >
-              Book Discovery Call <ArrowRight className="ml-2 w-4 h-4" />
-            </Button>
-          </Link>
+          <p className="text-[#8E96A3] mb-7">Agenda uma chamada de diagnóstico gratuita de 15 minutos.</p>
+          <Button
+            onClick={() => setModalOpen(true)}
+            variant="outline"
+            className="h-12 px-8 font-bold text-[#C9A84C] rounded-xl"
+            style={{ borderColor: "rgba(201,168,76,0.5)" }}
+          >
+            Agendar Chamada <ArrowRight className="ml-2 w-4 h-4" />
+          </Button>
         </motion.div>
       </section>
 
       <Footer />
       <ChatWidget />
+      <BusinessMasterModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 }
