@@ -25,18 +25,22 @@ serve(async (req) => {
     if (prices?.data?.length) {
       stripePrice = prices.data[0];
     } else {
-      // Fallback: find product by name matching the priceId, then get its price
-      const products = await stripe.products.list({ active: true, limit: 100 });
-      console.log("Products found:", products?.data?.map((p: any) => ({ id: p.id, name: p.name })));
-      const product = products?.data?.find((p: any) => 
-        p.name === priceId || p.name.toLowerCase() === priceId.toLowerCase()
-      );
-      if (product) {
-        console.log("Matched product:", product.id, product.name);
-        const productPrices = await stripe.prices.list({ product: product.id, active: true });
-        if (productPrices?.data?.length) {
-          stripePrice = productPrices.data[0];
-        }
+      // Fallback: list all active prices and match by product name or metadata
+      const allPrices = await stripe.prices.list({ active: true, limit: 100, expand: ['data.product'] });
+      console.log("All prices:", JSON.stringify(allPrices?.data?.map((p: any) => ({ 
+        id: p.id, 
+        amount: p.unit_amount,
+        product_name: typeof p.product === 'object' ? p.product?.name : p.product,
+        lookup_key: p.lookup_key,
+        metadata: p.metadata
+      }))));
+      if (allPrices?.data) {
+        stripePrice = allPrices.data.find((p: any) => {
+          const prodName = typeof p.product === 'object' ? p.product?.name : '';
+          return prodName === priceId || prodName.toLowerCase() === priceId.toLowerCase()
+            || p.lookup_key === priceId
+            || p.metadata?.lovable_external_id === priceId;
+        });
       }
     }
 
