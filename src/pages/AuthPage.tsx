@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate, Navigate, Link, useSearchParams } from "react-router-dom";
-import { ArrowRight, Eye, EyeOff, Check, CheckCircle2, Shield, Users, Sparkles, Award, CreditCard, Loader2 } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Check, CheckCircle2, Shield, Users, Sparkles, Award } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";

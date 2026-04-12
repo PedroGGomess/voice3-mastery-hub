@@ -1,15 +1,13 @@
-import { useEffect } from "react";
 import PlatformLayout from "@/components/PlatformLayout";
 import { motion } from "framer-motion";
 import ChatWidget from "@/components/ChatWidget";
 import { CheckCircle2, Play, Lock, Clock, ArrowRight, FolderOpen, Mic, ChevronRight, Library, Wrench, Swords, BookOpen, Flame, Timer, BarChart2, Trophy, User, Zap, Target, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { sessionsData } from "@/lib/sessionsData";
 import { chaptersData } from "@/lib/chaptersData";
 import { Card, ProgressBar, Badge } from "@/components/ui/VoiceUI";
-import { toast } from "sonner";
 
 const TOTAL_SESSIONS = 10;
 
@@ -28,17 +26,7 @@ const glassCard: React.CSSProperties = {
 
 const MeuCurso = () => {
   const { currentUser } = useAuth();
-  const [searchParams, setSearchParams] = useSearchParams();
   const userId = currentUser?.id || "";
-
-  // Show payment success toast
-  useEffect(() => {
-    if (searchParams.get("payment") === "success") {
-      toast.success("Pagamento concluído com sucesso! Bem-vindo ao VOICE³.");
-      searchParams.delete("payment");
-      setSearchParams(searchParams, { replace: true });
-    }
-  }, []);
   const firstName = currentUser?.name?.split(" ")[0] || "Utilizador";
 
   let progress: Record<number, { completed: boolean; score: number; completedAt: string }> = {};
