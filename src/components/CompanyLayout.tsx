@@ -5,12 +5,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const navItems = [
-  { to: "/empresa", icon: LayoutDashboard, label: "Visão Geral", end: true },
-  { to: "/empresa/alunos", icon: Users, label: "Alunos" },
-  { to: "/empresa/packs", icon: CreditCard, label: "Packs & Pagamentos" },
-  { to: "/empresa/progresso", icon: BarChart3, label: "Progresso" },
-  { to: "/empresa/suporte", icon: HelpCircle, label: "Suporte" },
-  { to: "/empresa/definicoes", icon: Settings, label: "Definições" },
+  { to: "/empresa", icon: LayoutDashboard, label: "Overview", end: true },
+  { to: "/empresa/alunos", icon: Users, label: "Students" },
+  { to: "/empresa/packs", icon: CreditCard, label: "Packs & Payments" },
+  { to: "/empresa/progresso", icon: BarChart3, label: "Progress" },
+  { to: "/empresa/suporte", icon: HelpCircle, label: "Support" },
+  { to: "/empresa/definicoes", icon: Settings, label: "Settings" },
 ];
 
 const CompanyLayout = ({ children }: { children: ReactNode }) => {

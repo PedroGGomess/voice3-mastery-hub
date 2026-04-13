@@ -21,17 +21,17 @@ type NavItem =
 
 const navItems: NavItem[] = [
   { type: "link", to: "/app", icon: LayoutDashboard, label: "dash.dashboard", tourKey: "dashboard", end: true },
-  { type: "separator", label: "APRENDER" },
+  { type: "separator", label: "LEARN" },
   { type: "link", to: "/capitulos", icon: BookOpen, label: "dash.programme", tourKey: "programme" },
   { type: "link", to: "/app/catalogue", icon: Library, label: "dash.catalogue" },
-  { type: "separator", label: "FERRAMENTAS & PRÁTICA" },
+  { type: "separator", label: "TOOLS & PRACTICE" },
   { type: "link", to: "/app/toolkit", icon: Wrench, label: "dash.toolkit", tourKey: "toolkit" },
   { type: "link", to: "/app/practice", icon: Swords, label: "dash.practice" },
   { type: "link", to: "/app/chat", icon: MessageCircle, label: "dash.coach", tourKey: "ai-coach" },
-  { type: "separator", label: "PROGRESSO" },
+  { type: "separator", label: "PROGRESS" },
   { type: "link", to: "/app/desempenho", icon: BarChart2, label: "dash.progress", tourKey: "progress" },
   { type: "link", to: "/app/leaderboard", icon: Trophy, label: "dash.leaderboard" },
-  { type: "separator", label: "SUPORTE" },
+  { type: "separator", label: "SUPPORT" },
   { type: "link", to: "/app/call-professor", icon: Phone, label: "dash.live", tourKey: "live" },
   { type: "link", to: "/app/aulas", icon: GraduationCap, label: "dash.classes" },
   { type: "link", to: "/app/materiais", icon: FileText, label: "dash.materials" },
@@ -41,9 +41,9 @@ const navItems: NavItem[] = [
 
 const professorNavItems: NavItem[] = [
   { type: "link", to: "/professor/dashboard", icon: LayoutDashboard, label: "dash.dashboard", end: true },
-  { type: "separator", label: "GESTÃO" },
-  { type: "link", to: "/professor/dashboard", icon: GraduationCap, label: "Os Meus Alunos" },
-  { type: "separator", label: "CONTA" },
+  { type: "separator", label: "MANAGEMENT" },
+  { type: "link", to: "/professor/dashboard", icon: GraduationCap, label: "My Students" },
+  { type: "separator", label: "ACCOUNT" },
   { type: "link", to: "/app/perfil", icon: User, label: "dash.profile" },
   { type: "link", to: "/app/suporte", icon: HelpCircle, label: "dash.support" },
 ];
@@ -58,8 +58,8 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
   const { unreadCount } = useNotifications(currentUser?.id || "");
   useScrollReset();
 
-  const isProfessor = currentUser?.role === "professor" || currentUser?.role === "admin";
-  const activeNavItems = isProfessor ? professorNavItems : navItems;
+  const isCoach = currentUser?.role === "professor" || currentUser?.role === "admin";
+  const activeNavItems = isCoach ? professorNavItems : navItems;
 
   const initials = (currentUser?.name || "U")
     .split(" ")

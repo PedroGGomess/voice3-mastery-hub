@@ -296,7 +296,7 @@ const MeuCurso = () => {
               >
                 <Link to={`/capitulos/${currentChapter.id}`}>
                   <Play className="mr-2 h-3.5 w-3.5" />
-                  {currentChapter.pct > 0 ? "Continuar" : "Iniciar Sessão"}
+                  {currentChapter.pct > 0 ? "Continue" : "Start Session"}
                 </Link>
               </Button>
               <Button
@@ -747,7 +747,7 @@ const MeuCurso = () => {
                             asChild
                           >
                             <Link to={`/capitulos/${ch.id}`}>
-                              Iniciar <ArrowRight className="ml-1 h-3 w-3" />
+                              Start <ArrowRight className="ml-1 h-3 w-3" />
                             </Link>
                           </Button>
                         )}

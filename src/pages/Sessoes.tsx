@@ -257,7 +257,7 @@ const Sessoes = () => {
                                   {isDiagnosticSess ? (
                                     <Button size="sm" className="h-6 text-[10px] px-2.5 bg-purple-400/10 text-purple-400 hover:bg-purple-400/20 border-0" asChild>
                                       <Link to="/sessoes/diagnostico">
-                                        {sessStatus === 'completed' ? 'Rever' : 'Iniciar'} <ArrowRight className="ml-1 h-3 w-3" />
+                                        {sessStatus === 'completed' ? 'Review' : 'Start'} <ArrowRight className="ml-1 h-3 w-3" />
                                       </Link>
                                     </Button>
                                   ) : sessStatus === 'completed' ? (

@@ -311,7 +311,7 @@ const CallProfessor = () => {
                     onClick={() => setStep(2)}
                     className="flex items-center gap-2 bg-[#B89A5A] hover:bg-[#B89A5A]/90 text-black font-semibold px-6 py-2.5 rounded-xl transition-colors"
                   >
-                    Próximo <ChevronRight className="h-4 w-4" />
+                    Next <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
               )}
@@ -350,7 +350,7 @@ const CallProfessor = () => {
                     onClick={() => setStep(3)}
                     className="flex items-center gap-2 bg-[#B89A5A] hover:bg-[#B89A5A]/90 text-black font-semibold px-6 py-2.5 rounded-xl transition-colors"
                   >
-                    Próximo <ChevronRight className="h-4 w-4" />
+                    Next <ChevronRight className="h-4 w-4" />
                   </button>
                 )}
               </div>
@@ -397,7 +397,7 @@ const CallProfessor = () => {
                     onClick={() => setStep(4)}
                     className="flex items-center gap-2 bg-[#B89A5A] hover:bg-[#B89A5A]/90 text-black font-semibold px-6 py-2.5 rounded-xl transition-colors"
                   >
-                    Próximo <ChevronRight className="h-4 w-4" />
+                    Next <ChevronRight className="h-4 w-4" />
                   </button>
                 )}
               </div>
@@ -548,7 +548,7 @@ const CallProfessor = () => {
                             onClick={() => handleCancel(c.id)}
                             className="text-xs text-red-400 hover:text-red-300 transition-colors"
                           >
-                            Cancelar
+                            Cancel
                           </button>
                         </td>
                       </tr>
@@ -561,7 +561,7 @@ const CallProfessor = () => {
 
           {/* Past */}
           <div>
-            <h3 className="text-white/70 text-sm font-medium mb-3">Calls Anteriores</h3>
+            <h3 className="text-white/70 text-sm font-medium mb-3">Previous Calls</h3>
             {pastCalls.length === 0 ? (
               <div className="bg-[#0B1A2A] border border-white/10 rounded-xl p-6 text-center text-white/30 text-sm">
                 Sem calls anteriores

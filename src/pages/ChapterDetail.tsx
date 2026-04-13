@@ -34,8 +34,8 @@ export default function ChapterDetail() {
     return (
       <PlatformLayout>
         <div className="flex flex-col items-center justify-center py-24 text-[#8E96A3]">
-          <p className="text-sm">Capítulo não encontrado.</p>
-          <Link to="/capitulos" className="mt-3 text-xs text-[#B89A5A] hover:underline">← Voltar aos capítulos</Link>
+          <p className="text-sm">Chapter not found.</p>
+          <Link to="/capitulos" className="mt-3 text-xs text-[#B89A5A] hover:underline">← Back to chapters</Link>
         </div>
       </PlatformLayout>
     );
@@ -51,7 +51,7 @@ export default function ChapterDetail() {
     <PlatformLayout>
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
         <Link to="/capitulos" className="inline-flex items-center gap-2 text-xs text-[#8E96A3] hover:text-[#F4F2ED] mb-4 transition-colors">
-          <ArrowLeft className="h-3.5 w-3.5" />Voltar aos capítulos
+          <ArrowLeft className="h-3.5 w-3.5" />Back to chapters
         </Link>
         <div className="flex items-start gap-4">
           <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${chapter.isDiagnostic ? 'bg-purple-400/10' : 'bg-[#B89A5A]/10'}`}>
@@ -61,7 +61,7 @@ export default function ChapterDetail() {
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="font-serif text-2xl font-semibold text-[#F4F2ED]">Cap. {chapter.number} — {chapter.title}</h1>
               {chapter.isDiagnostic && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-400/10 border border-purple-400/20 text-purple-400 font-medium">Diagnóstico</span>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-400/10 border border-purple-400/20 text-purple-400 font-medium">Diagnostic</span>
               )}
             </div>
             <p className="text-sm text-[#8E96A3] mt-1">{chapter.description}</p>
@@ -73,8 +73,8 @@ export default function ChapterDetail() {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
         className="rounded-xl bg-[#1C1F26] border border-white/5 p-4 mb-6">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium">Progresso</span>
-          <span className="text-xs font-semibold text-[#B89A5A]">{completedSessions}/{chapter.totalSessions} sessões · {sessionPct}%</span>
+          <span className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium">Progress</span>
+          <span className="text-xs font-semibold text-[#B89A5A]">{completedSessions}/{chapter.totalSessions} sessions · {sessionPct}%</span>
         </div>
         <Progress value={sessionPct} className="h-1.5 bg-white/10" />
       </motion.div>
@@ -82,7 +82,7 @@ export default function ChapterDetail() {
       {/* Sessions list */}
       <div className="rounded-xl bg-[#1C1F26] border border-white/5 overflow-hidden">
         <div className="px-5 py-3 border-b border-white/5">
-          <h2 className="text-xs font-semibold text-[#8E96A3] uppercase tracking-wider">Sessões</h2>
+          <h2 className="text-xs font-semibold text-[#8E96A3] uppercase tracking-wider">Sessions</h2>
         </div>
         <div className="divide-y divide-white/[0.04]">
           {chapter.sessions.map((session, i) => {
@@ -118,12 +118,12 @@ export default function ChapterDetail() {
                     </span>
                     {isDiag ? (
                       <Button size="sm" className="h-7 text-xs px-3 bg-purple-400/10 text-purple-400 hover:bg-purple-400/20 border-0" asChild>
-                        <Link to="/sessoes/diagnostico">{sessStatus === 'completed' ? 'Rever' : 'Iniciar'}</Link>
+                        <Link to="/sessoes/diagnostico">{sessStatus === 'completed' ? 'Review' : 'Start'}</Link>
                       </Button>
                     ) : (
                       <Button size="sm" className={`h-7 text-xs px-3 border-0 ${sessStatus === 'completed' ? 'bg-[#B89A5A]/10 text-[#B89A5A] hover:bg-[#B89A5A]/20' : 'bg-white/5 text-[#F4F2ED] hover:bg-white/10'}`} asChild>
                         <Link to={`/capitulos/${chapter.id}/sessoes/${session.id}`}>
-                          {sessStatus === 'completed' ? '✓ Rever' : 'Iniciar'}
+                          {sessStatus === 'completed' ? '✓ Review' : 'Start'}
                         </Link>
                       </Button>
                     )}

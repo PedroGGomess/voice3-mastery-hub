@@ -32,7 +32,7 @@ const packInfoMap: Record<string, { label: string; color: string; sessions: stri
   starter: { label: "Starter", color: "#10b981", sessions: "4 AI + 1 Live" },
   pro: { label: "Pro", color: "#C9A84C", sessions: "8 AI + 3 Live" },
   advanced: { label: "Advanced", color: "#8b5cf6", sessions: "12 AI + 5 Live" },
-  "business-master": { label: "Business Master", color: "#f59e0b", sessions: "Ilimitado" },
+  "business-master": { label: "Business Master", color: "#f59e0b", sessions: "Unlimited" },
 };
 
 function PackAndPayments({ userId, pack }: { userId: string; pack?: string }) {
@@ -59,10 +59,10 @@ function PackAndPayments({ userId, pack }: { userId: string; pack?: string }) {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-6">
       <Card hover>
         <h3 className="font-semibold mb-5 flex items-center gap-2">
-          <Package className="h-4 w-4 text-primary" /> Pack & Pagamentos
+          <Package className="h-4 w-4 text-primary" /> Pack & Payments
         </h3>
         <div className="mb-5">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Pack Ativo</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Active Pack</p>
           {info ? (
             <div className="flex items-center gap-3 p-4 rounded-xl border border-primary/20 bg-primary/5">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${info.color}20`, color: info.color }}>
@@ -76,21 +76,21 @@ function PackAndPayments({ userId, pack }: { userId: string; pack?: string }) {
             </div>
           ) : (
             <div className="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-white/[0.02]">
-              <p className="text-sm text-muted-foreground">Nenhum pack ativo</p>
+              <p className="text-sm text-muted-foreground">No active pack</p>
               <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg">
-                <Link to="/packs">Escolher Pack <ArrowRight className="ml-1 h-3 w-3" /></Link>
+                <Link to="/packs">Choose Pack <ArrowRight className="ml-1 h-3 w-3" /></Link>
               </Button>
             </div>
           )}
         </div>
         <div>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Histórico de Pagamentos</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Payment History</p>
           {loading ? (
             <div className="flex justify-center py-4">
               <span className="inline-block w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
           ) : payments.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-3">Sem pagamentos registados.</p>
+            <p className="text-sm text-muted-foreground py-3">No payments recorded.</p>
           ) : (
             <div className="space-y-2">
               {payments.map((p) => (
@@ -102,7 +102,7 @@ function PackAndPayments({ userId, pack }: { userId: string; pack?: string }) {
                     <div>
                       <p className="font-medium">{p.pack ? (packInfoMap[p.pack]?.label || p.pack) : "Pagamento"}</p>
                       <p className="text-xs text-muted-foreground">
-                        {p.created_at ? new Date(p.created_at).toLocaleDateString("pt-PT", { day: "numeric", month: "short", year: "numeric" }) : "—"}
+                        {p.created_at ? new Date(p.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "—"}
                       </p>
                     </div>
                   </div>
@@ -111,7 +111,7 @@ function PackAndPayments({ userId, pack }: { userId: string; pack?: string }) {
                       {p.amount != null ? `€${(p.amount / 100).toFixed(2)}` : "—"}
                     </p>
                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${p.status === "completed" ? "bg-green-500/10 text-green-400" : "bg-yellow-500/10 text-yellow-400"}`}>
-                      {p.status === "completed" ? "Pago" : p.status || "Pendente"}
+                      {p.status === "completed" ? "Paid" : p.status || "Pending"}
                     </span>
                   </div>
                 </div>
@@ -146,12 +146,12 @@ const Perfil = () => {
   const totalMinutes = completedSessions * 25; // avg 25 min per session
 
   const achievements: Achievement[] = [
-    { id: "first", label: "Primeira Sessão", description: "Completaste a tua primeira sessão", icon: <BookOpen className="h-5 w-5" />, unlocked: completedSessions >= 1 },
-    { id: "half", label: "Meio Caminho", description: "Completaste 4 sessões", icon: <Target className="h-5 w-5" />, unlocked: completedSessions >= 4 },
-    { id: "all", label: "Mestre do Inglês", description: "Completaste todas as 8 sessões", icon: <Trophy className="h-5 w-5" />, unlocked: completedSessions >= 8 },
-    { id: "perfect", label: "Pontuação Perfeita", description: "Obtiveste 100% numa sessão", icon: <Star className="h-5 w-5" />, unlocked: scores.some(s => s === 100) },
-    { id: "fast", label: "Aluno Dedicado", description: "Mais de 60 minutos de estudo", icon: <Zap className="h-5 w-5" />, unlocked: totalMinutes >= 60 },
-    { id: "streak", label: "Série de Vitórias", description: "3+ sessões com score ≥ 80%", icon: <Flame className="h-5 w-5" />, unlocked: scores.filter(s => s >= 80).length >= 3 },
+    { id: "first", label: "First Session", description: "You completed your first session", icon: <BookOpen className="h-5 w-5" />, unlocked: completedSessions >= 1 },
+    { id: "half", label: "Halfway There", description: "You completed 4 sessions", icon: <Target className="h-5 w-5" />, unlocked: completedSessions >= 4 },
+    { id: "all", label: "English Master", description: "You completed all 8 sessions", icon: <Trophy className="h-5 w-5" />, unlocked: completedSessions >= 8 },
+    { id: "perfect", label: "Perfect Score", description: "You scored 100% on a session", icon: <Star className="h-5 w-5" />, unlocked: scores.some(s => s === 100) },
+    { id: "fast", label: "Dedicated Student", description: "More than 60 minutes of study", icon: <Zap className="h-5 w-5" />, unlocked: totalMinutes >= 60 },
+    { id: "streak", label: "Winning Streak", description: "3+ sessions with score ≥ 80%", icon: <Flame className="h-5 w-5" />, unlocked: scores.filter(s => s >= 80).length >= 3 },
   ];
 
   const handleSaveProfile = async (e: React.FormEvent) => {
@@ -159,9 +159,9 @@ const Perfil = () => {
     setSaving(true);
     try {
       updateProfile({ name, company });
-      toast.success("Perfil atualizado com sucesso!");
+      toast.success("Profile updated successfully!");
     } catch {
-      toast.error("Erro ao guardar o perfil.");
+      toast.error("Error saving profile.");
     } finally {
       setSaving(false);
     }
@@ -169,7 +169,7 @@ const Perfil = () => {
 
   const handleChangePassword = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Password alterada com sucesso! (demonstração)");
+    toast.success("Password changed successfully! (demo)");
     (e.target as HTMLFormElement).reset();
   };
 
@@ -187,8 +187,8 @@ const Perfil = () => {
   return (
     <PlatformLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="font-serif text-2xl font-bold mb-2">Perfil</h1>
-        <p className="text-muted-foreground mb-8">Gere as tuas informações e acompanha o teu progresso.</p>
+        <h1 className="font-serif text-2xl font-bold mb-2">Profile</h1>
+        <p className="text-muted-foreground mb-8">Manage your information and track your progress.</p>
 
         {/* Avatar + stats */}
         <div className="rounded-lg border bg-card text-card-foreground shadow-sm flex-col sm:flex-row items-start sm:items-center" style={{ marginBottom: 24, display: "flex", flexDirection: "column", gap: 24, padding: 24 }}>
@@ -197,20 +197,20 @@ const Perfil = () => {
             <h2 className="text-xl font-bold">{currentUser?.name}</h2>
             <p className="text-muted-foreground text-sm">{currentUser?.email}</p>
             {currentUser?.company && <p className="text-xs text-primary mt-1">{currentUser.company}</p>}
-            <p className="text-xs text-white/30 mt-1">Membro desde {currentUser?.createdAt}</p>
+            <p className="text-xs text-white/30 mt-1">Member since {currentUser?.createdAt}</p>
           </div>
           <div className="sm:ml-auto grid grid-cols-3 gap-4">
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">{completedSessions}</p>
-              <p className="text-xs text-muted-foreground">Sessões</p>
+              <p className="text-xs text-muted-foreground">Sessions</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-success">{avgScore}%</p>
-              <p className="text-xs text-muted-foreground">Média</p>
+              <p className="text-xs text-muted-foreground">Average</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-warning">{totalMinutes}m</p>
-              <p className="text-xs text-muted-foreground">Tempo</p>
+              <p className="text-xs text-muted-foreground">Time</p>
             </div>
           </div>
         </div>
@@ -251,23 +251,23 @@ const Perfil = () => {
           {/* Edit profile */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
             <Card hover>
-            <h3 className="font-semibold mb-4 flex items-center gap-2"><User className="h-4 w-4 text-primary" /> Informações Pessoais</h3>
+            <h3 className="font-semibold mb-4 flex items-center gap-2"><User className="h-4 w-4 text-primary" /> Personal Information</h3>
             <form onSubmit={handleSaveProfile} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nome completo</Label>
+                <Label htmlFor="name">Full name</Label>
                 <Input id="name" value={name} onChange={e => setName(e.target.value)} className="h-11 rounded-xl" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" value={currentUser?.email || ""} disabled className="h-11 rounded-xl opacity-50" />
-                <p className="text-xs text-muted-foreground">O email não pode ser alterado.</p>
+                <p className="text-xs text-muted-foreground">Email cannot be changed.</p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="company">Empresa</Label>
-                <Input id="company" value={company} onChange={e => setCompany(e.target.value)} placeholder="Nome da empresa" className="h-11 rounded-xl" />
+                <Label htmlFor="company">Company</Label>
+                <Input id="company" value={company} onChange={e => setCompany(e.target.value)} placeholder="Company name" className="h-11 rounded-xl" />
               </div>
               <Button type="submit" disabled={saving} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl h-11">
-                {saving ? "A guardar..." : "Guardar Alterações"}
+                {saving ? "Saving..." : "Save Changes"}
               </Button>
             </form>
             </Card>
@@ -276,21 +276,21 @@ const Perfil = () => {
           {/* Change password */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <Card hover>
-            <h3 className="font-semibold mb-4 flex items-center gap-2"><Lock className="h-4 w-4 text-primary" /> Alterar Password</h3>
+            <h3 className="font-semibold mb-4 flex items-center gap-2"><Lock className="h-4 w-4 text-primary" /> Change Password</h3>
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="currentPwd">Password atual</Label>
+                <Label htmlFor="currentPwd">Current password</Label>
                 <Input id="currentPwd" name="currentPwd" type="password" placeholder="••••••••" required className="h-11 rounded-xl" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="newPwd">Nova password</Label>
+                <Label htmlFor="newPwd">New password</Label>
                 <Input id="newPwd" name="newPwd" type="password" placeholder="••••••••" required className="h-11 rounded-xl" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirmPwd">Confirmar nova password</Label>
+                <Label htmlFor="confirmPwd">Confirm new password</Label>
                 <Input id="confirmPwd" name="confirmPwd" type="password" placeholder="••••••••" required className="h-11 rounded-xl" />
               </div>
-              <Button type="submit" variant="outline" className="w-full rounded-xl h-11">Alterar Password</Button>
+              <Button type="submit" variant="outline" className="w-full rounded-xl h-11">Change Password</Button>
             </form>
             </Card>
           </motion.div>

@@ -62,7 +62,7 @@ const SessionCard = ({ title, subtitle, time, status, highlighted, index }: Sess
                 : "bg-primary/20 text-primary hover:bg-primary/30"
             }`}
           >
-            {status === "done" ? "Rever" : status === "progress" ? "Continuar" : "Iniciar"}
+            {status === "done" ? "Review" : status === "progress" ? "Continue" : "Start"}
             <ArrowRight className="ml-1 h-3 w-3" />
           </Button>
           <ExternalLink className={`h-3.5 w-3.5 ${highlighted ? "text-white/60" : "text-white/30"}`} />

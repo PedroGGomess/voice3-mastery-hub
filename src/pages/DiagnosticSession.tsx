@@ -556,7 +556,7 @@ export default function DiagnosticSession() {
                 <ArrowLeft className="mr-2 h-4 w-4" />Voltar
               </Button>
               <Button onClick={handleNext} disabled={!canProceed()} className="flex-[2] bg-[#B89A5A] text-[#0B1A2A] hover:bg-[#d4ba6a] font-semibold h-11">
-                Iniciar Avaliação IA <Brain className="ml-2 h-4 w-4" />
+                Start AI Evaluation <Brain className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </motion.div>

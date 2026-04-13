@@ -23,10 +23,10 @@ interface PackOption {
 }
 
 const PACK_OPTIONS: PackOption[] = [
-  { name: "Starter", slug: "starter", price: 149, sessions: 4, teacherLessons: 1, features: ["4 Sessões AI", "1 Sessão ao vivo com professor", "Acompanhamento de progresso", "Certificado"], popular: false },
-  { name: "Pro", slug: "pro", price: 349, sessions: 8, teacherLessons: 3, features: ["8 Sessões AI", "3 Sessões ao vivo com professor", "Analytics completo", "Reserva prioritária", "Gravações das sessões"], popular: true },
-  { name: "Advanced", slug: "advanced", price: 499, sessions: 12, teacherLessons: 5, features: ["12 Sessões AI", "5 Sessões ao vivo com professor", "Percurso personalizado", "Tudo do Pro incluído"], popular: false },
-  { name: "Business Master", slug: "business-master", price: null, sessions: 20, teacherLessons: 10, features: ["Sessões AI ilimitadas", "10 Sessões com professor", "Gestor dedicado", "Dashboard de equipa"], note: "Contacto personalizado" },
+  { name: "Starter", slug: "starter", price: 149, sessions: 4, teacherLessons: 1, features: ["4 AI Sessions", "1 Live Session with Coach", "Progress Tracking", "Certificate"], popular: false },
+  { name: "Pro", slug: "pro", price: 349, sessions: 8, teacherLessons: 3, features: ["8 AI Sessions", "3 Live Sessions with Coach", "Complete Analytics", "Priority Booking", "Session Recordings"], popular: true },
+  { name: "Advanced", slug: "advanced", price: 499, sessions: 12, teacherLessons: 5, features: ["12 AI Sessions", "5 Live Sessions with Coach", "Personalised Learning Path", "Everything in Pro included"], popular: false },
+  { name: "Business Master", slug: "business-master", price: null, sessions: 20, teacherLessons: 10, features: ["Unlimited AI Sessions", "10 Sessions with Coach", "Dedicated Account Manager", "Team Dashboard"], note: "Custom Quote" },
 ];
 
 interface RegFormData {
@@ -45,10 +45,10 @@ function getPasswordStrength(pw: string): { level: "weak" | "medium" | "strong";
 }
 
 const demoUsers = [
-  { icon: "🎓", role: "Student",   email: "demo@voice3.pt",      pass: "demo123"    },
-  { icon: "👨‍🏫", role: "Coach",     email: "professor@voice3.pt", pass: "prof123"    },
-  { icon: "🏢", role: "Company",   email: "empresa@voice3.pt",   pass: "empresa123" },
-  { icon: "🔧", role: "Admin",     email: "admin@voice3.pt",     pass: "admin123"   },
+  { icon: "🎓", role: "Demo Student",   email: "demo@voice3.pt",      pass: "demo123"    },
+  { icon: "👨‍🏫", role: "Demo Coach",     email: "professor@voice3.pt", pass: "prof123"    },
+  { icon: "🏢", role: "Demo Company",   email: "empresa@voice3.pt",   pass: "empresa123" },
+  { icon: "🔧", role: "Demo Admin",     email: "admin@voice3.pt",     pass: "admin123"   },
 ];
 
 const inputClass = "w-full h-[52px] px-4 rounded-xl text-[15px] outline-none transition-all duration-200 placeholder:text-opacity-25 placeholder:text-current";
@@ -114,7 +114,7 @@ const AuthPage = () => {
         return;
       }
       if (result.redirected) return;
-      toast.success("Bem-vindo!");
+      toast.success("Welcome!");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "An error occurred.");
       setLoading(false);
@@ -134,7 +134,7 @@ const AuthPage = () => {
         return;
       }
       if (result.redirected) return;
-      toast.success("Bem-vindo!");
+      toast.success("Welcome!");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "An error occurred.");
       setLoading(false);
@@ -147,7 +147,7 @@ const AuthPage = () => {
     setLoading(true);
     try {
       await login(loginEmail, loginPassword);
-      toast.success("Bem-vindo de volta!");
+      toast.success("Welcome back!");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "An error occurred.");
     } finally {
@@ -158,13 +158,13 @@ const AuthPage = () => {
   const handleRegStep1 = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    if (regData.password !== regData.confirmPassword) { setError("As passwords não coincidem."); return; }
-    if (regData.password.length < 6) { setError("A password deve ter pelo menos 6 caracteres."); return; }
+    if (regData.password !== regData.confirmPassword) { setError("Passwords do not match."); return; }
+    if (regData.password.length < 6) { setError("Password must be at least 6 characters."); return; }
     setRegStep(regData.role === "student" ? 2 : 3);
   };
 
   const handleRegStep2 = () => {
-    if (!selectedPack) { toast.error("Seleciona um pack para continuar."); return; }
+    if (!selectedPack) { toast.error("Please select a pack to continue."); return; }
     setRegStep(3);
   };
 
@@ -196,7 +196,7 @@ const AuthPage = () => {
 
       const signupData = await signupRes.json();
       if (!signupRes.ok || !(signupData.id || signupData.user?.id)) {
-        throw new Error(signupData.msg || signupData.error_description || signupData.message || 'Erro ao criar conta');
+        throw new Error(signupData.msg || signupData.error_description || signupData.message || 'Error creating account');
       }
 
       const userId = signupData.user?.id || signupData.id;
@@ -206,7 +206,7 @@ const AuthPage = () => {
       // (supabase client will eventually process it via onAuthStateChange)
 
       if (selectedPack && selectedPack.price !== null && selectedPack.slug !== "business-master") {
-        toast.success("Conta criada! A redirecionar para pagamento...");
+        toast.success("Account created! Redirecting to checkout...");
         const priceMap: Record<string, string> = { starter: "starter", pro: "pro", advanced: "advanced" };
         const priceId = priceMap[selectedPack.slug];
         if (priceId) {
@@ -220,7 +220,7 @@ const AuthPage = () => {
         }
       }
 
-      toast.success("Conta criada com sucesso!");
+      toast.success("Account created successfully!");
       setSuccess(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "An error occurred.");
@@ -240,7 +240,7 @@ const AuthPage = () => {
   const totalSteps = regData.role === "student" ? 3 : 2;
   const currentStepDisplay = regData.role === "student" ? regStep : regStep === 1 ? 1 : 2;
   const pwStrength = getPasswordStrength(regData.password);
-  const stepLabels = regData.role === "student" ? ["Details", "Pack", "Confirm"] : ["Details", "Confirm"];
+  const stepLabels = regData.role === "student" ? ["Account Details", "Select Package", "Confirm Registration"] : ["Account Details", "Confirm Registration"];
 
   /* ── Success Screen ─────────────────────────────────── */
   if (success) {
@@ -261,7 +261,7 @@ const AuthPage = () => {
             VOICE<sup style={{ color: "var(--gold)" }}>3</sup>
           </h1>
           <p className="text-2xl font-semibold mt-6 mb-3" style={{ color: "var(--text-primary)" }}>Welcome to VOICE3</p>
-          <p className="text-sm mb-10" style={{ color: "var(--text-muted)" }}>Your account has been created successfully. Start your journey.</p>
+          <p className="text-sm mb-10" style={{ color: "var(--text-muted)" }}>Your account has been created successfully. Begin your transformation.</p>
           <button onClick={() => navigate("/app")} className="w-full py-4 rounded-xl font-semibold text-base transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
             style={{ background: "linear-gradient(135deg, var(--gold), var(--gold-dark, #8B6914))", color: "var(--bg-base)" }}>
             Access Platform <ArrowRight className="inline h-4 w-4 ml-2" />
@@ -316,9 +316,9 @@ const AuthPage = () => {
                 <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>Fill in your details to get started</p>
                 <form onSubmit={handleRegStep1} className="space-y-4">
                   {[
-                    { label: "Full name", key: "name", type: "text", placeholder: "John Smith", required: true },
-                    { label: "Company (optional)", key: "company", type: "text", placeholder: "Tech Corp", required: false },
-                    { label: "Email", key: "email", type: "email", placeholder: "john@company.com", required: true },
+                    { label: "Full Name", key: "name", type: "text", placeholder: "John Smith", required: true },
+                    { label: "Company (Optional)", key: "company", type: "text", placeholder: "Tech Corp", required: false },
+                    { label: "Email Address", key: "email", type: "email", placeholder: "john@company.com", required: true },
                   ].map(({ label, key, type, placeholder, required }) => (
                     <div key={key} className="space-y-1.5">
                       <Label className="text-[11px] uppercase tracking-[0.08em]" style={{ color: "var(--text-muted)" }}>{label}</Label>
@@ -333,8 +333,8 @@ const AuthPage = () => {
                     <Label className="text-[11px] uppercase tracking-[0.08em]" style={{ color: "var(--text-muted)" }}>{t('auth.account_type')}</Label>
                     <div className="grid grid-cols-2 gap-3">
                       {[
-                        { id: "student" as const, icon: <Users className="h-5 w-5" />, title: t('auth.student'), desc: "Individual training" },
-                        { id: "company_admin" as const, icon: <Shield className="h-5 w-5" />, title: t('auth.company'), desc: "Corporate team" },
+                        { id: "student" as const, icon: <Users className="h-5 w-5" />, title: "Individual", desc: "Personal training" },
+                        { id: "company_admin" as const, icon: <Shield className="h-5 w-5" />, title: "Company", desc: "Corporate team" },
                       ].map(type => (
                         <button
                           key={type.id}
@@ -377,7 +377,7 @@ const AuthPage = () => {
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-[11px] uppercase tracking-[0.08em]" style={{ color: "var(--text-muted)" }}>Confirm Password</Label>
-                    <input type="password" placeholder="Repeat password" required
+                    <input type="password" placeholder="Confirm password" required
                       value={regData.confirmPassword}
                       onChange={e => setRegData(d => ({ ...d, confirmPassword: e.target.value }))}
                       className={inputClass}
@@ -399,8 +399,8 @@ const AuthPage = () => {
 
             {regStep === 2 && regData.role === "student" && (
               <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <h2 className="font-serif text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>Choose your Pack</h2>
-                <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>Select the pack that best fits your needs.</p>
+                <h2 className="font-serif text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>Choose Your Package</h2>
+                <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>Select the package that best suits your needs.</p>
                 <div className="space-y-3 mb-6">
                   {PACK_OPTIONS.map(pack => (
                     <button key={pack.name} onClick={() => setSelectedPack(pack)}
@@ -460,7 +460,7 @@ const AuthPage = () => {
                     ["Name", regData.name],
                     ["Email", regData.email],
                     ...(regData.company ? [["Company", regData.company]] : []),
-                    ["Type", regData.role === "student" ? "Student" : "Company Admin"],
+                    ["Account Type", regData.role === "student" ? "Individual" : "Company"],
                     ...(selectedPack ? [["Pack", selectedPack.name], ["Price", selectedPack.price !== null ? `EUR${selectedPack.price}` : "Custom Quote"]] : []),
                   ].map(([k, v]) => (
                     <div key={k} className="flex justify-between text-sm">
@@ -473,7 +473,7 @@ const AuthPage = () => {
                   <div className="rounded-xl p-4 mb-6 flex items-center gap-3" style={{ background: "var(--gold-10)", border: "1px solid var(--border-gold)" }}>
                     <Sparkles className="h-5 w-5 shrink-0" style={{ color: "var(--gold)" }} />
                     <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
-                      Payment will be processed after account creation. You will receive an email with instructions.
+                      Payment will be processed after your account is created. You will receive an email with further instructions.
                     </p>
                   </div>
                 )}
@@ -529,20 +529,22 @@ const AuthPage = () => {
         <div className="slide-in-left" style={{ position: "relative", zIndex: 10, textAlign: "center", maxWidth: 420, padding: "0 40px" }}>
           <Link to="/"><h1 style={{ fontFamily: "var(--font-serif)", fontSize: 56, fontWeight: 700, color: "var(--gold)", letterSpacing: "0.15em", margin: 0, cursor: "pointer" }}>VOICE<sup style={{ fontSize: 24 }}>3</sup></h1></Link>
           <div style={{ width: 60, height: 2, background: "linear-gradient(90deg, transparent, var(--gold), transparent)", margin: "32px auto" }} />
-          <p style={{ fontFamily: "var(--font-serif)", fontSize: 22, fontStyle: "italic", color: "var(--text-secondary)", maxWidth: 380, lineHeight: 1.8, textAlign: "center", margin: 0 }}>
-            "You will not improve your English.<br />You will perform with precision."
+          <h2 style={{ fontFamily: "var(--font-serif)", fontSize: 28, fontWeight: 700, color: "var(--text-primary)", margin: "0 0 16px 0" }}>Master the Language of Leadership</h2>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)", maxWidth: 380, lineHeight: 1.6, textAlign: "center", margin: 0 }}>
+            Premium executive English communication training powered by AI
           </p>
           <p style={{ color: "var(--text-muted)", fontSize: 18, margin: "32px 0" }}>---</p>
 
           {/* Features list */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, textAlign: "left", maxWidth: 280, margin: "0 auto" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, textAlign: "left", maxWidth: 320, margin: "0 auto" }}>
             {[
-              { icon: <Award className="h-4 w-4" />, text: "Executive Communication" },
-              { icon: <Sparkles className="h-4 w-4" />, text: "AI Coaching" },
-              { icon: <Users className="h-4 w-4" />, text: "Live Coach Sessions" },
+              { icon: <Sparkles className="h-4 w-4" />, text: "Personalised AI Learning" },
+              { icon: <Users className="h-4 w-4" />, text: "AI Shadow Coach Feedback" },
+              { icon: <Award className="h-4 w-4" />, text: "Voice DNA Analytics" },
+              { icon: <Shield className="h-4 w-4" />, text: "Industry-Specific Content" },
             ].map((item, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div style={{ color: "var(--text-muted)" }}>{item.icon}</div>
+                <div style={{ color: "var(--gold)" }}>{item.icon}</div>
                 <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>{item.text}</span>
               </div>
             ))}
@@ -563,8 +565,8 @@ const AuthPage = () => {
         <div style={{ position: "absolute", bottom: 32, left: 32, display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{ width: 44, height: 44, borderRadius: "50%", background: "linear-gradient(135deg, var(--gold), var(--gold-dark, #8B6914))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "var(--bg-base)" }}>SS</div>
           <div>
-            <p style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)", margin: 0 }}>Your Executive Coach</p>
-            <p style={{ fontSize: 11, color: "var(--text-muted)", margin: 0 }}>Sandra Stuttaford</p>
+            <p style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)", margin: 0 }}>Your AI Shadow Coach</p>
+            <p style={{ fontSize: 11, color: "var(--text-muted)", margin: 0 }}>Available 24/7</p>
           </div>
         </div>
       </div>
@@ -689,35 +691,37 @@ const AuthPage = () => {
             </button>
           </div>
 
-          <div style={{ marginTop: 16 }} />
+          {/* Demo Section Divider */}
+          <div style={{ display: "flex", alignItems: "center", margin: "32px 0 24px" }}>
+            <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+            <span style={{ fontSize: 11, color: "var(--text-muted)", padding: "0 16px", textTransform: "uppercase", letterSpacing: "0.1em" }}>or try a demo account</span>
+            <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+          </div>
 
-          <button onClick={() => setIsShowingDemo(d => !d)} style={{
-            width: "100%", height: 46, background: "transparent",
-            border: "1px solid var(--border-gold)",
-            color: "var(--text-muted)", fontSize: 13,
-            borderRadius: 12, cursor: "pointer", transition: "all 0.2s",
-            letterSpacing: "0.03em",
-          }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--gold)"; e.currentTarget.style.color = "var(--gold)"; e.currentTarget.style.background = "var(--gold-10)"; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border-gold)"; e.currentTarget.style.color = "var(--text-muted)"; e.currentTarget.style.background = "transparent"; }}>
-            Explore with Demo Credentials
-          </button>
-
-          <div style={{ overflow: "hidden", maxHeight: isShowingDemo ? 300 : 0, transition: "max-height 0.4s ease" }}>
-            <div style={{ background: "var(--gold-10)", border: "1px solid var(--border-gold)", borderRadius: 12, padding: 16, marginTop: 12 }}>
-              <p style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase" as const, marginBottom: 10 }}>Demo Accounts</p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-                {demoUsers.map(user => (
-                  <button key={user.role} onClick={() => { setLoginEmail(user.email); setLoginPassword(user.pass); }}
-                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", borderRadius: 8, cursor: "pointer", background: "var(--bg-surface)", border: "1px solid var(--border)", transition: "all 0.15s" }}
-                    onMouseEnter={e => { e.currentTarget.style.background = "var(--gold-10)"; e.currentTarget.style.borderColor = "var(--border-gold)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = "var(--bg-surface)"; e.currentTarget.style.borderColor = "var(--border)"; }}>
-                    <span style={{ fontSize: 13, color: "var(--text-primary)" }}>{user.icon} {user.role}</span>
-                    <span style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "monospace" }}>Use →</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+          {/* Demo Accounts Grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 32 }}>
+            {demoUsers.map(user => (
+              <button key={user.role} onClick={() => { setLoginEmail(user.email); setLoginPassword(user.pass); }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "20px 16px",
+                  borderRadius: 12,
+                  cursor: "pointer",
+                  background: "var(--bg-surface)",
+                  border: "2px solid var(--border-gold)",
+                  transition: "all 0.2s",
+                  gap: 8
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = "var(--gold-10)"; e.currentTarget.style.borderColor = "var(--gold)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "var(--bg-surface)"; e.currentTarget.style.borderColor = "var(--border-gold)"; }}>
+                <span style={{ fontSize: 24 }}>{user.icon}</span>
+                <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary)", textAlign: "center" }}>{user.role}</span>
+                <span style={{ fontSize: 9, color: "var(--text-muted)", fontFamily: "monospace", textAlign: "center" }}>{user.email}</span>
+              </button>
+            ))}
           </div>
 
           <div style={{ marginTop: 32, textAlign: "center" }}>

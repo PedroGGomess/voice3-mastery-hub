@@ -30,10 +30,10 @@ const PACK_OPTIONS: { name: PackName; price: string; sessions: string; live: str
   { name: "Starter", price: "€149", sessions: "4 AI Sessions", live: "1 Live Professor Session", totalSessions: 4 },
   { name: "Pro", price: "€349", sessions: "8 AI Sessions", live: "2 Live Professor Sessions", totalSessions: 10, popular: true },
   { name: "Advanced", price: "€499", sessions: "12 AI Sessions", live: "3 Live Professor Sessions", totalSessions: 15 },
-  { name: "Business Master", price: "Personalizado", sessions: "Unlimited Sessions", live: "Dedicated manager", totalSessions: 20 },
+  { name: "Business Master", price: "Custom", sessions: "Unlimited Sessions", live: "Dedicated manager", totalSessions: 20 },
 ];
 
-const STATUS_OPTIONS = ["All", "Novo", "Ativo", "Ativa", "Concluído"];
+const STATUS_OPTIONS = ["All", "New", "Active", "Active", "Completed"];
 
 const defaultAddForm = () => ({
   name: "",
@@ -153,7 +153,7 @@ const Alunos = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="font-serif text-2xl font-bold">Alunos</h1>
+            <h1 className="font-serif text-2xl font-bold">Students</h1>
             <p className="text-muted-foreground">Gere os alunos da tua empresa.</p>
           </div>
           <Button onClick={openAdd} className="bg-[#B89A5A] text-black hover:bg-[#B89A5A]/90 rounded-xl font-semibold">
@@ -167,7 +167,7 @@ const Alunos = () => {
             <Search className="h-4 w-4 text-white/40 shrink-0" />
             <input
               type="text"
-              placeholder="Pesquisar alunos..."
+              placeholder="Search students..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="flex-1 bg-transparent text-sm text-white placeholder:text-white/30 outline-none"
@@ -203,7 +203,7 @@ const Alunos = () => {
                   <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Pack</th>
                   <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Progresso</th>
                   <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Estado</th>
-                  <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Aula Prof.</th>
+                  <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Coach Session</th>
                   <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider"></th>
                 </tr>
               </thead>
@@ -356,7 +356,7 @@ const Alunos = () => {
                       disabled={!addForm.name.trim() || !addForm.email.trim()}
                       className="bg-[#B89A5A] text-black hover:bg-[#B89A5A]/90 rounded-xl font-semibold disabled:opacity-40"
                     >
-                      Próximo <ChevronRight className="ml-1 h-4 w-4" />
+                      Next <ChevronRight className="ml-1 h-4 w-4" />
                     </Button>
                   </div>
                 </motion.div>
@@ -399,7 +399,7 @@ const Alunos = () => {
                       ← Voltar
                     </Button>
                     <Button onClick={() => setAddStep(3)} className="bg-[#B89A5A] text-black hover:bg-[#B89A5A]/90 rounded-xl font-semibold">
-                      Próximo <ChevronRight className="ml-1 h-4 w-4" />
+                      Next <ChevronRight className="ml-1 h-4 w-4" />
                     </Button>
                   </div>
                 </motion.div>
@@ -596,8 +596,8 @@ const Alunos = () => {
                   </select>
                 </div>
                 <div className="flex gap-3 pt-2">
-                  <Button type="button" variant="outline" className="flex-1 rounded-xl" onClick={() => setEditStudent(null)}>Cancelar</Button>
-                  <Button type="submit" className="flex-1 bg-primary text-primary-foreground rounded-xl">Guardar</Button>
+                  <Button type="button" variant="outline" className="flex-1 rounded-xl" onClick={() => setEditStudent(null)}>Cancel</Button>
+                  <Button type="submit" className="flex-1 bg-primary text-primary-foreground rounded-xl">Save</Button>
                 </div>
               </form>
             )}
@@ -612,7 +612,7 @@ const Alunos = () => {
               <AlertDialogDescription>Esta ação não pode ser desfeita. O aluno será permanentemente removido.</AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Remover</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

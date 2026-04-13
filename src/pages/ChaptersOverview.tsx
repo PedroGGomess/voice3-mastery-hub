@@ -216,7 +216,7 @@ export default function ChaptersOverview() {
                                 {isDiagnosticSess ? (
                                   <Button size="sm" className="h-6 text-[10px] px-2.5 bg-purple-400/10 text-purple-400 hover:bg-purple-400/20 border-0" asChild>
                                     <Link to="/sessoes/diagnostico">
-                                      {sessStatus === 'completed' ? 'Rever' : 'Iniciar'}
+                                      {sessStatus === 'completed' ? 'Review' : 'Start'}
                                     </Link>
                                   </Button>
                                 ) : (
@@ -225,7 +225,7 @@ export default function ChaptersOverview() {
                                     'bg-white/5 text-[#F4F2ED] hover:bg-white/10'
                                   }`} asChild>
                                     <Link to={`/capitulos/${chapter.id}/sessoes/${session.id}`}>
-                                      {sessStatus === 'completed' ? 'Rever' : 'Iniciar'}
+                                      {sessStatus === 'completed' ? 'Review' : 'Start'}
                                     </Link>
                                   </Button>
                                 )}

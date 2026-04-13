@@ -29,13 +29,13 @@ const staticPacks: Pack[] = [
     price: 149,
     sessionsIncluded: 1,
     badge: null,
-    tagline: "Para começar a tua jornada executiva",
-    promise: "Vais comandar reuniões com mais estrutura e confiança",
+    tagline: "Start your executive journey",
+    promise: "You will lead meetings with more structure and confidence",
     features: [
-      "Todos os 10 capítulos e ferramentas AI",
-      "Percurso de aprendizagem personalizado",
-      "1 sessão ao vivo com professor",
-      "Acompanhamento e certificado",
+      "All 10 chapters and AI tools",
+      "Personalized learning path",
+      "1 live coaching session",
+      "Progress tracking and certificate",
     ],
   },
   {
@@ -44,15 +44,15 @@ const staticPacks: Pack[] = [
     slug: "pro",
     price: 349,
     sessionsIncluded: 3,
-    badge: "Mais Popular",
-    tagline: "Para performance de alto nível",
-    promise: "Vais negociar, apresentar e liderar com autoridade em inglês",
+    badge: "Most Popular",
+    tagline: "For high-level performance",
+    promise: "You will negotiate, present, and lead with authority in English",
     features: [
-      "Todos os 10 capítulos e ferramentas AI",
-      "Percurso de aprendizagem personalizado",
-      "3 sessões ao vivo com professor",
-      "Acompanhamento e certificado",
-      "Reserva prioritária",
+      "All 10 chapters and AI tools",
+      "Personalized learning path",
+      "3 live coaching sessions",
+      "Progress tracking and certificate",
+      "Priority booking",
     ],
   },
   {
@@ -62,48 +62,48 @@ const staticPacks: Pack[] = [
     price: 499,
     sessionsIncluded: 5,
     badge: null,
-    tagline: "Para líderes seniores",
-    promise: "Vais liderar equipas globais e fechar negócios em inglês",
+    tagline: "For senior leaders",
+    promise: "You will lead global teams and close deals in English",
     features: [
-      "Todos os 10 capítulos e ferramentas AI",
-      "Percurso de aprendizagem personalizado",
-      "5 sessões ao vivo com professor",
-      "Acompanhamento e certificado",
-      "Reserva prioritária",
-      "Gravações das sessões",
+      "All 10 chapters and AI tools",
+      "Personalized learning path",
+      "5 live coaching sessions",
+      "Progress tracking and certificate",
+      "Priority booking",
+      "Session recordings",
     ],
   },
   {
     id: "business-master",
     name: "Business Master",
     slug: "business-master",
-    price: "Sob Consulta",
+    price: "Custom",
     sessionsIncluded: 10,
     badge: null,
-    tagline: "C-suite & equipas",
-    promise: "Vais dominar qualquer sala, qualquer boardroom, em qualquer país",
+    tagline: "C-suite & teams",
+    promise: "You will master any room, any boardroom, in any country",
     business: true,
     features: [
-      "Todos os 10 capítulos e ferramentas AI",
-      "Percurso de aprendizagem personalizado",
-      "10+ sessões ao vivo com professor",
-      "Acompanhamento e certificado",
-      "Reserva prioritária",
-      "Gravações das sessões",
-      "Dashboard de equipa e cenários personalizados",
+      "All 10 chapters and AI tools",
+      "Personalized learning path",
+      "10+ live coaching sessions",
+      "Progress tracking and certificate",
+      "Priority booking",
+      "Session recordings",
+      "Team dashboard and custom scenarios",
     ],
   },
 ];
 
 const comparison = [
-  { label: "Todos os Capítulos e Ferramentas AI", values: [true, true, true, true] },
-  { label: "Percurso Personalizado", values: [true, true, true, true] },
-  { label: "Sessões com Professor", values: ["1×", "3×", "5×", "10+"] },
-  { label: "Acompanhamento de Progresso", values: [true, true, true, true] },
-  { label: "Reserva Prioritária", values: [false, true, true, true] },
-  { label: "Gravações das Sessões", values: [false, false, true, true] },
-  { label: "Dashboard de Equipa", values: [false, false, false, true] },
-  { label: "Cenários Personalizados", values: [false, false, false, true] },
+  { label: "All Chapters and AI Tools", values: [true, true, true, true] },
+  { label: "Personalized Learning Path", values: [true, true, true, true] },
+  { label: "Coach Sessions", values: ["1×", "3×", "5×", "10+"] },
+  { label: "Progress Tracking", values: [true, true, true, true] },
+  { label: "Priority Booking", values: [false, true, true, true] },
+  { label: "Session Recordings", values: [false, false, true, true] },
+  { label: "Team Dashboard", values: [false, false, false, true] },
+  { label: "Custom Scenarios", values: [false, false, false, true] },
 ];
 
 const fadeUp = {
@@ -165,7 +165,7 @@ export default function PacksPage() {
             className="text-[18px] max-w-lg mx-auto leading-relaxed"
             style={{ color: "var(--text-secondary)" }}
           >
-            Todos os packs incluem sessões ao vivo com professor, coaching AI e certificado de domínio.
+            All packs include live coaching sessions, AI coaching and mastery certificate.
           </p>
         </motion.div>
       </section>

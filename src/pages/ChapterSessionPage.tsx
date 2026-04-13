@@ -51,8 +51,8 @@ export default function ChapterSessionPage() {
     return (
       <PlatformLayout>
         <div className="flex flex-col items-center justify-center py-24" style={{ color: C.textMuted }}>
-          <p className="text-sm">Sessão não encontrada.</p>
-          <Link to="/capitulos" className="mt-3 text-xs hover:underline" style={{ color: C.gold }}>← Voltar aos capítulos</Link>
+          <p className="text-sm">Session not found.</p>
+          <Link to="/capitulos" className="mt-3 text-xs hover:underline" style={{ color: C.gold }}>← Back to chapters</Link>
         </div>
       </PlatformLayout>
     );
@@ -83,12 +83,12 @@ export default function ChapterSessionPage() {
           }
         }
         localStorage.setItem(chapKey, JSON.stringify(chapExisting));
-        toast.success("Capítulo concluído! 🎉");
+        toast.success("Chapter completed! 🎉");
       }
     } catch (_e) {}
 
     setPhase("complete");
-    toast.success(`Sessão concluída com ${finalScore}%!`);
+    toast.success(`Session completed with ${finalScore}%!`);
   };
 
   const sessionTypeIcon = {
@@ -188,7 +188,7 @@ export default function ChapterSessionPage() {
                 style={{ background: C.gold, color: C.bg }}
               >
                 <Play className="h-4 w-4 mr-2" />
-                Iniciar Sessão
+                Start Session
               </Button>
             </div>
           </div>
@@ -215,22 +215,22 @@ export default function ChapterSessionPage() {
             <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: `${C.gold}15` }}>
               <CheckCircle2 className="h-8 w-8" style={{ color: C.gold }} />
             </div>
-            <h2 className="font-serif text-xl font-semibold mb-2" style={{ color: C.text }}>Sessão Concluída!</h2>
+            <h2 className="font-serif text-xl font-semibold mb-2" style={{ color: C.text }}>Session Completed!</h2>
             <p className="text-sm mb-6" style={{ color: C.textSec }}>
-              {isCompleted ? "Já completaste esta sessão." : "Excelente trabalho! O teu progresso foi guardado."}
+              {isCompleted ? "You have already completed this session." : "Excellent work! Your progress has been saved."}
             </p>
 
             <div className="flex items-center justify-center gap-3 flex-wrap">
               {nextSession && (
                 <Button asChild className="h-9 px-5 text-sm font-medium rounded-lg" style={{ background: C.gold, color: C.bg }}>
                   <Link to={`/capitulos/${chapter.id}/sessoes/${nextSession.id}`}>
-                    Próxima Sessão →
+                    Next Session →
                   </Link>
                 </Button>
               )}
               <Button asChild variant="outline" className="h-9 px-5 text-sm rounded-lg border-white/10">
                 <Link to={`/capitulos/${chapter.id}`}>
-                  Voltar ao Capítulo
+                  Back to Chapter
                 </Link>
               </Button>
             </div>

@@ -40,8 +40,8 @@ const Progresso = () => {
     <CompanyLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="mb-8">
-          <h1 className="font-serif text-2xl font-bold">Progresso da Equipa</h1>
-          <p className="text-muted-foreground">Acompanha o desempenho dos teus alunos.</p>
+          <h1 className="font-serif text-2xl font-bold">Team Progress</h1>
+          <p className="text-muted-foreground">Track your students' performance.</p>
         </div>
 
         {/* Stats */}
@@ -49,27 +49,27 @@ const Progresso = () => {
           <div className="premium-card">
             <TrendingUp className="h-5 w-5 text-primary mb-3" />
             <p className="text-2xl font-bold">{avgProgress}%</p>
-            <p className="text-sm text-muted-foreground">Progresso médio</p>
+            <p className="text-sm text-muted-foreground">Average progress</p>
           </div>
           <div className="premium-card">
             <BarChart3 className="h-5 w-5 text-success mb-3" />
             <p className="text-2xl font-bold">{totalCompleted}</p>
-            <p className="text-sm text-muted-foreground">Sessões concluídas</p>
+            <p className="text-sm text-muted-foreground">Sessions completed</p>
           </div>
           <div className="premium-card">
             <Users className="h-5 w-5 text-warning mb-3" />
             <p className="text-2xl font-bold">{activeStudents}/{students.length}</p>
-            <p className="text-sm text-muted-foreground">Alunos ativos</p>
+            <p className="text-sm text-muted-foreground">Active students</p>
           </div>
         </div>
 
         {/* Progress bars */}
         <div className="premium-card mb-6">
-          <h2 className="font-semibold mb-4 flex items-center gap-2"><BarChart3 className="h-4 w-4 text-primary" /> Progresso por Aluno</h2>
+          <h2 className="font-semibold mb-4 flex items-center gap-2"><BarChart3 className="h-4 w-4 text-primary" /> Progress by Student</h2>
           {students.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground text-sm">
               <Users className="h-8 w-8 mx-auto mb-3 opacity-30" />
-              Ainda não há alunos registados.
+              No students registered yet.
             </div>
           ) : (
             <div className="space-y-4">
@@ -91,7 +91,7 @@ const Progresso = () => {
                       <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.8, delay: i * 0.05 }}
                         className={`h-full rounded-full ${pct >= 75 ? "bg-success" : pct >= 40 ? "bg-primary" : "bg-warning"}`} />
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">{s.completedSessions}/{s.totalSessions} sessões</p>
+                    <p className="text-xs text-muted-foreground mt-1">{s.completedSessions}/{s.totalSessions} sessions</p>
                   </motion.div>
                 );
               })}

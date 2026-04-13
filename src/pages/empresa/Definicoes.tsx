@@ -49,9 +49,9 @@ const Definicoes = () => {
     try {
       localStorage.setItem(storageKey, JSON.stringify(settings));
       updateProfile({ company: settings.companyName });
-      toast.success("Definições guardadas com sucesso!");
+      toast.success("Settings saved successfully!");
     } catch {
-      toast.error("Erro ao guardar. Tenta novamente.");
+      toast.error("Error saving. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -65,35 +65,35 @@ const Definicoes = () => {
     <CompanyLayout>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="mb-8">
-          <h1 className="font-serif text-2xl font-bold">Definições</h1>
-          <p className="text-muted-foreground">Configura a tua conta e preferências de empresa.</p>
+          <h1 className="font-serif text-2xl font-bold">Settings</h1>
+          <p className="text-muted-foreground">Configure your account and company preferences.</p>
         </div>
 
         <form onSubmit={handleSave} className="space-y-6">
           {/* Company profile */}
           <div className="premium-card">
-            <h2 className="font-semibold mb-4 flex items-center gap-2"><Building className="h-4 w-4 text-primary" /> Perfil da Empresa</h2>
+            <h2 className="font-semibold mb-4 flex items-center gap-2"><Building className="h-4 w-4 text-primary" /> Company Profile</h2>
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Nome da empresa</Label>
+                <Label>Company name</Label>
                 <Input value={settings.companyName} onChange={e => setSettings(s => ({ ...s, companyName: e.target.value }))} className="h-11 rounded-xl" />
               </div>
               <div className="space-y-2">
                 <Label>Website</Label>
-                <Input value={settings.website} onChange={e => setSettings(s => ({ ...s, website: e.target.value }))} placeholder="https://empresa.pt" className="h-11 rounded-xl" />
+                <Input value={settings.website} onChange={e => setSettings(s => ({ ...s, website: e.target.value }))} placeholder="https://company.com" className="h-11 rounded-xl" />
               </div>
               <div className="space-y-2">
-                <Label>Setor</Label>
-                <Input value={settings.sector} onChange={e => setSettings(s => ({ ...s, sector: e.target.value }))} placeholder="ex: Tecnologia, Serviços..." className="h-11 rounded-xl" />
+                <Label>Sector</Label>
+                <Input value={settings.sector} onChange={e => setSettings(s => ({ ...s, sector: e.target.value }))} placeholder="e.g. Technology, Services..." className="h-11 rounded-xl" />
               </div>
               <div className="space-y-2">
                 <Label>Telefone</Label>
-                <Input value={settings.phone} onChange={e => setSettings(s => ({ ...s, phone: e.target.value }))} placeholder="+351 210 000 000" className="h-11 rounded-xl" />
+                <Input value={settings.phone} onChange={e => setSettings(s => ({ ...s, phone: e.target.value }))} placeholder="+44 20 7946 0958" className="h-11 rounded-xl" />
               </div>
               <div className="space-y-2 sm:col-span-2">
-                <Label>Email de contacto</Label>
+                <Label>Contact email</Label>
                 <Input value={currentUser?.email || ""} disabled className="h-11 rounded-xl opacity-60" />
-                <p className="text-xs text-muted-foreground">O email não pode ser alterado aqui.</p>
+                <p className="text-xs text-muted-foreground">Email cannot be changed here.</p>
               </div>
             </div>
           </div>
@@ -128,13 +128,13 @@ const Definicoes = () => {
           <div className="premium-card">
             <h2 className="font-semibold mb-4 flex items-center gap-2"><Shield className="h-4 w-4 text-primary" /> Segurança</h2>
             <div className="space-y-3 text-sm text-muted-foreground">
-              <p>Para alterar a password da tua conta, contacta o suporte ou usa a opção de recuperação de password na página de login.</p>
-              <p>Os dados da tua empresa são armazenados de forma segura e nunca são partilhados com terceiros.</p>
+              <p>To change your password, contact support or use the password recovery option on the login page.</p>
+              <p>Your company data is stored securely and is never shared with third parties.</p>
             </div>
           </div>
 
           <Button type="submit" disabled={saving} className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl h-11 px-8">
-            {saving ? "A guardar..." : "Guardar Definições"}
+            {saving ? "Saving..." : "Save Settings"}
           </Button>
         </form>
       </motion.div>
