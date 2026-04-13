@@ -1,7 +1,6 @@
 import { ReactNode, useState } from "react";
 import { NavLink, useNavigate, Link } from "react-router-dom";
 import { useScrollReset } from "@/hooks/useScrollReset";
-import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard, BookOpen, FileText, BarChart2, Phone, MessageCircle,
   GraduationCap, User, HelpCircle, LogOut, Bell, Menu, Trophy,
@@ -12,7 +11,6 @@ import SidebarRight from "./SidebarRight";
 import { useAuth } from "@/contexts/AuthContext";
 import NotificationPanel from "./NotificationPanel";
 import { useNotifications } from "@/hooks/use-notifications";
-import LanguageSelector from "./LanguageSelector";
 import { useTheme } from "@/contexts/ThemeContext";
 
 type NavItem =
@@ -47,7 +45,6 @@ const professorNavItems: NavItem[] = [
 const PlatformLayout = ({ children }: { children: ReactNode }) => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation();
   const { theme, toggleTheme } = useTheme();
   const [notifOpen, setNotifOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -118,7 +115,7 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
                     <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r" style={{ background: "var(--gold)" }} />
                   )}
                   <item.icon className={`h-4 w-4 shrink-0 ${isActive ? "" : "text-muted-foreground group-hover:text-foreground"}`} style={{ color: isActive ? "var(--gold)" : undefined }} />
-                  <span className="font-medium flex-1">{t(item.label)}</span>
+                  <span className="font-medium flex-1">{item.label}</span>
                 </>
               )}
             </NavLink>
@@ -127,30 +124,29 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
       </nav>
 
       {/* User section */}
-      <div className="border-t p-4 space-y-3" style={{ borderColor: "var(--border)" }}>
-        {/* Language selector */}
-        <div className="px-2">
-          <LanguageSelector compact />
-        </div>
-
-        <div className="flex items-center gap-3 px-2">
+      <div className="border-t p-4 space-y-2" style={{ borderColor: "var(--border)" }}>
+        {/* User info — clickable to profile */}
+        <NavLink
+          to="/app/perfil"
+          onClick={() => setMobileSidebarOpen(false)}
+          className="flex items-center gap-3 px-2 py-2 rounded-lg transition-all"
+          style={{ backgroundColor: "transparent" }}
+        >
           <div className="w-9 h-9 rounded-full border-2 flex items-center justify-center text-sm font-bold shrink-0" style={{ borderColor: "var(--gold)", backgroundColor: "rgba(201, 168, 76, 0.1)", color: "var(--gold)" }}>
             {initials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium tracking-wide uppercase" style={{ color: "var(--gold)" }}>Welcome</p>
-            <p className="text-sm font-semibold truncate" style={{ color: "var(--text-primary)" }}>{currentUser?.name?.split(" ")[0] || "User"}</p>
+            <p className="text-sm font-semibold truncate" style={{ color: "var(--text-primary)" }}>{currentUser?.name || "User"}</p>
+            <p className="text-[10px]" style={{ color: "var(--text-muted)" }}>View Profile</p>
           </div>
-        </div>
+        </NavLink>
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all"
           style={{ color: "var(--text-secondary)", backgroundColor: "transparent" }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--bg-surface)"}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
         >
           <LogOut className="h-4 w-4" />
-          <span>{t("dash.signout")}</span>
+          <span>Sign Out</span>
         </button>
       </div>
     </>

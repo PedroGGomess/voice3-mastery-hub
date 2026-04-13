@@ -66,7 +66,7 @@ const SessionAIChat = ({ sessionTitle, scenario, onComplete }: SessionAIChatProp
   const SpeechRecognitionConstructor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
   const supportsSpeech = !!SpeechRecognitionConstructor;
 
-  const welcomeMsg = `Welcome to your practice session: **${sessionTitle}**.\n\n${scenario}\n\nYou can type or use the microphone 🎙️ to speak. I'll coach you through ${MAX_EXCHANGES} exchanges. Let's begin!`;
+  const welcomeMsg = `**${sessionTitle}**\n\nType or use the microphone to respond. I'll guide you through ${MAX_EXCHANGES} exchanges. Ready when you are.`;
 
   useEffect(() => {
     setMessages([{ role: "ai", text: welcomeMsg }]);

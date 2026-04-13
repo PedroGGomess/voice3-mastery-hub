@@ -26,15 +26,12 @@ export interface Chapter {
 
 // ═══════════════════════════════════════════════════════════
 // VOICE³ Programme Architecture — 6 Core Programmes
-// Based on the VOICE³ VAULT (March 2026)
 //
 // Each micro-chapter = 4 sessions:
 //   1. Briefing (Input) — Scenario + Arsenal phrases
 //   2. Drill (Accuracy) — Controlled practice with AI correction
 //   3. Simulation (Fluency) — Pressure roleplay with Shadow Coach
 //   4. Error Bank (Correction) — Review + Vault Save
-//
-// Programme → 10 Chapters → 4 Sessions each = 40 sessions per programme
 // ═══════════════════════════════════════════════════════════
 
 function buildMicroChapter(
@@ -63,28 +60,28 @@ function buildMicroChapter(
       {
         id: `${chId}-s1`, chapterId: chId, number: 1,
         title: `Briefing: ${title}`,
-        description: `Cenário executivo + Arsenal de frases para ${title.toLowerCase()}.`,
+        description: `Executive scenario + Key phrases for ${title.toLowerCase()}.`,
         sessionType: 'briefing', durationMinutes: 15,
         arsenalPhrases: arsenal, aiPersona, leadershipCompetency: competency,
       },
       {
         id: `${chId}-s2`, chapterId: chId, number: 2,
         title: `Drill: ${title}`,
-        description: `Prática controlada com correção imediata da IA.`,
+        description: `Controlled practice with immediate AI correction.`,
         sessionType: 'drill', durationMinutes: 15,
         aiPersona, leadershipCompetency: competency,
       },
       {
         id: `${chId}-s3`, chapterId: chId, number: 3,
-        title: `Simulação: ${title}`,
-        description: `Roleplay de pressão com cenário real. Shadow Coach activo.`,
+        title: `Simulation: ${title}`,
+        description: `Pressure roleplay with a realistic scenario. Shadow Coach active.`,
         sessionType: 'simulation', durationMinutes: 20,
         aiPersona, leadershipCompetency: competency,
       },
       {
         id: `${chId}-s4`, chapterId: chId, number: 4,
         title: `Error Bank & Vault`,
-        description: `Revisão de erros, correções e gravação no teu Language Vault.`,
+        description: `Review errors, corrections and save key phrases to your Language Vault.`,
         sessionType: 'error_bank', durationMinutes: 10,
         leadershipCompetency: competency,
       },
@@ -93,12 +90,12 @@ function buildMicroChapter(
 }
 
 export const chaptersData: Chapter[] = [
-  // ═══ CAPÍTULO 0: DIAGNÓSTICO ═══
+  // ═══ CHAPTER 0: DIAGNOSTIC ═══
   {
     id: 'ch0',
     number: 0,
-    title: 'Diagnóstico Executivo',
-    description: 'Avaliação inicial: Intake Form adaptativo + Spoken Authority Baseline para personalizar o teu percurso.',
+    title: 'Executive Diagnostic',
+    description: 'Initial assessment: Adaptive Intake Form + Spoken Authority Baseline to personalise your learning path.',
     programme: 'DIAGNOSTIC',
     pillar: 'Assessment',
     targetLevel: 'All',
@@ -108,7 +105,7 @@ export const chaptersData: Chapter[] = [
       {
         id: 'ch0-s1', chapterId: 'ch0', number: 1,
         title: 'Spoken Authority Baseline',
-        description: 'Cenário de 60 segundos sob pressão. A IA analisa fluência, vocabulário, gramática e presença executiva.',
+        description: '60-second pressure scenario. AI analyses fluency, vocabulary, grammar and executive presence.',
         sessionType: 'diagnostic', durationMinutes: 30,
       },
     ],
@@ -116,8 +113,8 @@ export const chaptersData: Chapter[] = [
 
   // ═══ DEFEND — Anchor Tone (Courage & Firmness) ═══
   buildMicroChapter('ch1', 1, 'DEFEND', 'Anchor', 'B2/C1',
-    'A Recusa Diplomática',
-    'Dizer "não" com autoridade sem destruir a relação. Modelo "Positive No" de William Ury.',
+    'The Diplomatic Refusal',
+    'Say "no" with authority without damaging the relationship. William Ury\'s "Positive No" framework.',
     [
       '"I understand the urgency, and I need to be transparent about our capacity."',
       '"I appreciate you thinking of us for this. Right now, our priority is [X]."',
@@ -126,8 +123,8 @@ export const chaptersData: Chapter[] = [
     'The Challenger', 'Courage & Firmness',
   ),
   buildMicroChapter('ch2', 2, 'DEFEND', 'Anchor', 'B2/C1',
-    'Defender Scope em Reuniões',
-    'Manter limites claros quando pressionado para aceitar mais trabalho ou prazos irrealistas.',
+    'Defending Scope in Meetings',
+    'Hold clear boundaries when pressured to accept more work or unrealistic deadlines.',
     [
       '"That falls outside the agreed scope. Let me walk you through what we committed to."',
       '"I want to deliver quality, and adding this would compromise our timeline."',
@@ -136,8 +133,8 @@ export const chaptersData: Chapter[] = [
     'The Challenger', 'Accountability',
   ),
   buildMicroChapter('ch3', 3, 'DEFEND', 'Anchor', 'C1',
-    'Q&A Hostil',
-    'Responder a perguntas difíceis e provocativas com compostura e clareza.',
+    'Hostile Q&A',
+    'Respond to difficult and provocative questions with composure and clarity.',
     [
       '"That\'s a fair challenge. Let me address it directly."',
       '"I hear the concern behind your question. The data shows..."',
@@ -148,8 +145,8 @@ export const chaptersData: Chapter[] = [
 
   // ═══ TRANSLATE — Analyst Tone (Clear Articulation) ═══
   buildMicroChapter('ch4', 4, 'TRANSLATE', 'Analyst', 'B1/B2',
-    'Explicar Complexidade Técnica',
-    'Traduzir conceitos técnicos para stakeholders não-técnicos sem jargão.',
+    'Explaining Technical Complexity',
+    'Translate technical concepts for non-technical stakeholders without jargon.',
     [
       '"Before we had [old way]. Now, [new way]. What this means for your team is..."',
       '"Think of it like [analogy]. The impact on your timeline is..."',
@@ -158,8 +155,8 @@ export const chaptersData: Chapter[] = [
     'The Analyst', 'Articulation',
   ),
   buildMicroChapter('ch5', 5, 'TRANSLATE', 'Analyst', 'B2',
-    'Apresentação de Dados a Executivos',
-    'Comunicar resultados e métricas de forma clara e accionável.',
+    'Presenting Data to Executives',
+    'Communicate results and metrics clearly and actionably.',
     [
       '"The key takeaway is [insight]. This matters because [business impact]."',
       '"Looking at the trend, we\'re seeing [pattern]. My recommendation is..."',
@@ -168,8 +165,8 @@ export const chaptersData: Chapter[] = [
     'The Analyst', 'Vision',
   ),
   buildMicroChapter('ch6', 6, 'TRANSLATE', 'Analyst', 'B2/C1',
-    'Reportar Problemas ao Board',
-    'Comunicar más notícias de forma estruturada sem criar pânico.',
+    'Reporting Problems to the Board',
+    'Communicate bad news in a structured way without creating panic.',
     [
       '"I want to flag something early so we can address it proactively."',
       '"The situation is [X]. The risk is [Y]. Our mitigation plan is [Z]."',
@@ -180,8 +177,8 @@ export const chaptersData: Chapter[] = [
 
   // ═══ LEAD — Collaborator Tone (Empathy & Trust) ═══
   buildMicroChapter('ch7', 7, 'LEAD', 'Collaborator', 'C1/C2',
-    'Feedback Construtivo',
-    'Dar feedback crítico preservando a relação e motivando melhoria.',
+    'Constructive Feedback',
+    'Give critical feedback while preserving the relationship and motivating improvement.',
     [
       '"I\'ve noticed a tendency to [behavior]. The impact might be [effect]."',
       '"This might be coming across as [perception]. How can we calibrate?"',
@@ -190,8 +187,8 @@ export const chaptersData: Chapter[] = [
     'The Collaborator', 'Empathy',
   ),
   buildMicroChapter('ch8', 8, 'LEAD', 'Collaborator', 'C1',
-    'Liderar Reuniões de Equipa',
-    'Conduzir reuniões produtivas, gerir participação e chegar a decisões.',
+    'Leading Team Meetings',
+    'Run productive meetings, manage participation and reach decisions.',
     [
       '"Before we move on, I want to make sure everyone\'s been heard."',
       '"Let\'s capture this as an action item. [Name], can you own this by [date]?"',
@@ -200,8 +197,8 @@ export const chaptersData: Chapter[] = [
     'The Collaborator', 'Collaboration',
   ),
   buildMicroChapter('ch9', 9, 'LEAD', 'Collaborator', 'C1/C2',
-    'Conversas Difíceis',
-    'Navegar conflitos interpessoais com diplomacia e assertividade equilibrada.',
+    'Difficult Conversations',
+    'Navigate interpersonal conflicts with diplomacy and balanced assertiveness.',
     [
       '"I want to address something directly because I value this relationship."',
       '"From my perspective, the breakdown happened at [point]. What\'s your read?"',
@@ -210,12 +207,12 @@ export const chaptersData: Chapter[] = [
     'The Collaborator', 'Trust-Building',
   ),
 
-  // ═══ CAPSTONE: Sessão com Professora ═══
+  // ═══ CAPSTONE: Final Assessment ═══
   {
     id: 'ch10',
     number: 10,
-    title: 'Capstone & Certificação',
-    description: 'Simulação final sem guião + feedback do professor + certificação VOICE³.',
+    title: 'Capstone & Certification',
+    description: 'Unscripted final simulation + coach feedback + VOICE³ certification.',
     programme: 'CAPSTONE',
     pillar: 'All',
     targetLevel: 'C1/C2',
@@ -224,15 +221,15 @@ export const chaptersData: Chapter[] = [
     sessions: [
       {
         id: 'ch10-s1', chapterId: 'ch10', number: 1,
-        title: 'Simulação Capstone',
-        description: 'Cenário de alta pressão sem guião. Demonstra todas as competências adquiridas.',
+        title: 'Capstone Simulation',
+        description: 'High-pressure unscripted scenario. Demonstrate all acquired competencies.',
         sessionType: 'simulation', durationMinutes: 30,
         leadershipCompetency: 'Executive Presence',
       },
       {
         id: 'ch10-s2', chapterId: 'ch10', number: 2,
-        title: 'Sessão de Certificação',
-        description: 'Sessão final com a professora — revisão do percurso e entrega da certificação VOICE³.',
+        title: 'Certification Session',
+        description: 'Final session with your coach — review your journey and receive your VOICE³ certificate.',
         sessionType: 'professor_session', durationMinutes: 60,
         leadershipCompetency: 'Executive Presence',
       },
@@ -250,12 +247,12 @@ export const getSessionById = (id: string) => {
 };
 
 export const sessionTypeLabels: Record<Session['sessionType'], string> = {
-  diagnostic: '🎯 Diagnóstico',
-  briefing: '📖 Briefing',
-  drill: '🎯 Drill',
-  simulation: '🎭 Simulação',
-  error_bank: '📝 Error Bank',
-  professor_session: '👩‍🏫 Aula com Professora',
+  diagnostic: 'Diagnostic',
+  briefing: 'Briefing',
+  drill: 'Drill',
+  simulation: 'Simulation',
+  error_bank: 'Error Bank',
+  professor_session: 'Live Coach Session',
 };
 
 export const sessionTypeColors: Record<Session['sessionType'], string> = {
@@ -269,18 +266,18 @@ export const sessionTypeColors: Record<Session['sessionType'], string> = {
 
 // Programme metadata
 export const programmes = [
-  { id: 'DEFEND', name: 'DEFEND', tone: 'Anchor', color: '#ef4444', description: 'Autoridade sob pressão, Q&A hostil, limites claros', competency: 'Courage & Firmness' },
-  { id: 'TRANSLATE', name: 'TRANSLATE', tone: 'Analyst', color: '#3b82f6', description: 'Clareza técnica, dados para executivos, explicação simplificada', competency: 'Clear Articulation' },
-  { id: 'LEAD', name: 'LEAD', tone: 'Collaborator', color: '#10b981', description: 'Feedback, liderança de equipa, conversas difíceis', competency: 'Empathy & Trust' },
-  { id: 'OPERATE', name: 'OPERATE', tone: 'Commander', color: '#f59e0b', description: 'Reuniões diárias, negociação com fornecedores, updates de projecto', competency: 'Accountability' },
-  { id: 'DECODE', name: 'DECODE', tone: 'Listener', color: '#8b5cf6', description: 'Compreensão de sotaques, idioms, linguagem rápida', competency: 'Stakeholder Awareness' },
-  { id: 'PREPARE', name: 'PREPARE', tone: 'All', color: '#ec4899', description: 'Sprint de 3-5 capítulos para eventos urgentes (entrevistas, keynotes, pitches)', competency: 'Adaptability' },
+  { id: 'DEFEND', name: 'DEFEND', tone: 'Anchor', color: '#ef4444', description: 'Authority under pressure, hostile Q&A, setting boundaries', competency: 'Courage & Firmness' },
+  { id: 'TRANSLATE', name: 'TRANSLATE', tone: 'Analyst', color: '#3b82f6', description: 'Technical clarity, data for executives, simplified explanation', competency: 'Clear Articulation' },
+  { id: 'LEAD', name: 'LEAD', tone: 'Collaborator', color: '#10b981', description: 'Feedback, team leadership, difficult conversations', competency: 'Empathy & Trust' },
+  { id: 'OPERATE', name: 'OPERATE', tone: 'Commander', color: '#f59e0b', description: 'Daily standups, supplier negotiation, project updates', competency: 'Accountability' },
+  { id: 'DECODE', name: 'DECODE', tone: 'Listener', color: '#8b5cf6', description: 'Accent comprehension, idioms, fast speech processing', competency: 'Stakeholder Awareness' },
+  { id: 'PREPARE', name: 'PREPARE', tone: 'All', color: '#ec4899', description: '3-5 chapter sprint for urgent events (interviews, keynotes, pitches)', competency: 'Adaptability' },
 ];
 
 // AI Tone profiles
 export const toneProfiles = [
-  { id: 'diplomat', name: 'Diplomat', description: 'Alta-contexto, suavizado. Para clientes VIP e negociações delicadas.', style: 'Hedging, condicionais, linguagem indirecta' },
-  { id: 'anchor', name: 'Anchor', description: 'Firme, assertivo. Para defesa de limites e scope creep.', style: 'Limites claros, sem hedging, directo' },
-  { id: 'american_direct', name: 'American Direct', description: 'Baixa-contexto, orientado à acção. Para boards americanos e bad news.', style: 'Bottom-line first, zero preâmbulo' },
-  { id: 'collaborator', name: 'Collaborator', description: 'Inclusivo, orientado à equipa. Para liderar equipas e cross-functional.', style: 'Pronomes "we", perguntas abertas' },
+  { id: 'diplomat', name: 'Diplomat', description: 'High-context, softened. For VIP clients and delicate negotiations.', style: 'Hedging, conditionals, indirect language' },
+  { id: 'anchor', name: 'Anchor', description: 'Firm, assertive. For defending boundaries and scope creep.', style: 'Clear limits, no hedging, direct' },
+  { id: 'american_direct', name: 'American Direct', description: 'Low-context, action-oriented. For American boards and bad news.', style: 'Bottom-line first, zero preamble' },
+  { id: 'collaborator', name: 'Collaborator', description: 'Inclusive, team-oriented. For leading teams and cross-functional work.', style: '"We" pronouns, open questions' },
 ];
