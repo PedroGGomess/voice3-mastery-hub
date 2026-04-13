@@ -1,21 +1,19 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { chaptersData, sessionTypeLabels, sessionTypeColors } from "@/lib/chaptersData";
 import {
   Lock, CheckCircle2, ChevronDown, ChevronRight,
-  Play, ArrowRight, Target, Sparkles
+  Play, ArrowRight, Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import PlatformLayout from "@/components/PlatformLayout";
 
 type ChapterStatus = 'locked' | 'in_progress' | 'completed' | 'available';
 
 export default function ChaptersOverview() {
   const { currentUser } = useAuth();
-  const navigate = useNavigate();
   const userId = currentUser?.id || '';
 
   const [chapterProgress, setChapterProgress] = useState<Record<string, { status: string; completedAt?: string }>>({});
@@ -27,10 +25,7 @@ export default function ChaptersOverview() {
     try {
       const stored = localStorage.getItem(`voice3_chapter_progress_${userId}`);
       if (stored) setChapterProgress(JSON.parse(stored));
-      else {
-        // Chapter 1 always available (diagnostic)
-        setChapterProgress({ ch1: { status: 'available' } });
-      }
+      else setChapterProgress({ ch1: { status: 'available' } });
     } catch (_e) {}
 
     try {
@@ -49,7 +44,6 @@ export default function ChaptersOverview() {
     if (cp?.status === 'completed') return 'completed';
     if (cp?.status === 'in_progress' || cp?.status === 'available') return index === 0 ? 'available' : 'in_progress';
     if (index === 0) return 'available';
-    // Check if previous chapter is completed
     const prevChapter = chaptersData[index - 1];
     const prevStatus = chapterProgress[prevChapter.id];
     if (prevStatus?.status === 'completed') return 'available';
@@ -59,7 +53,6 @@ export default function ChaptersOverview() {
   const getCompletedSessions = (chapterId: string) => {
     const chapter = chaptersData.find(c => c.id === chapterId);
     if (!chapter) return 0;
-    // If the chapter is marked completed, all sessions are completed
     if (chapterProgress[chapterId]?.status === 'completed') return chapter.totalSessions;
     return chapter.sessions.filter(s => sessionProgress[s.id]?.status === 'completed').length;
   };
@@ -70,177 +63,216 @@ export default function ChaptersOverview() {
 
   return (
     <PlatformLayout>
-      {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-        <p className="text-xs text-[#B89A5A] tracking-[0.2em] uppercase font-medium mb-1">Programa VOICE³</p>
-        <h1 className="font-serif text-2xl font-semibold text-[#F4F2ED] tracking-tight mb-1">Os Teus Capítulos</h1>
-        <p className="text-sm text-[#8E96A3]">{totalCompleted} de {chaptersData.length} capítulos concluídos</p>
-      </motion.div>
-
-      {/* AI personalisation banner */}
-      {hasAiEval && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-          className="flex items-center gap-3 p-3 rounded-xl bg-[#B89A5A]/5 border border-[#B89A5A]/20 mb-5">
-          <Sparkles className="h-4 w-4 text-[#B89A5A] shrink-0" />
-          <p className="text-xs text-[#F4F2ED]">
-            <span className="font-semibold text-[#B89A5A]">O teu percurso foi personalizado</span> com base nos resultados do diagnóstico.
+      <div className="max-w-3xl mx-auto pb-12">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+          <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>
+            My Programme
+          </h1>
+          <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
+            {totalCompleted} of {chaptersData.length} chapters completed
           </p>
         </motion.div>
-      )}
 
-      {/* Overall progress */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-        className="rounded-xl bg-[#1C1F26] border border-white/5 p-4 mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs text-[#8E96A3] uppercase tracking-wider font-medium">Progresso Geral</span>
-          <span className="text-xs font-semibold text-[#B89A5A]">{totalCompleted}/{chaptersData.length} cap. · {Math.round((totalCompleted / chaptersData.length) * 100)}%</span>
-        </div>
-        <Progress value={(totalCompleted / chaptersData.length) * 100} className="h-1.5 bg-white/10" />
-      </motion.div>
+        {/* AI personalisation banner */}
+        {hasAiEval && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+            className="flex items-center gap-3 p-3 rounded-xl mb-5"
+            style={{ background: "var(--gold-10)", border: "1px solid rgba(201,168,76,0.2)" }}
+          >
+            <Sparkles className="h-4 w-4 shrink-0" style={{ color: "var(--gold)" }} />
+            <p className="text-xs" style={{ color: "var(--text-primary)" }}>
+              <span className="font-semibold" style={{ color: "var(--gold)" }}>Your path has been personalised</span> based on your diagnostic results.
+            </p>
+          </motion.div>
+        )}
 
-      {/* Chapters list */}
-      <div className="space-y-3">
-        {chaptersData.map((chapter, index) => {
-          const status = getChapterStatus(chapter.id, index);
-          const completedSessions = getCompletedSessions(chapter.id);
-          const isExpanded = expandedChapter === chapter.id;
-          const isLocked = status === 'locked';
-          const sessionPct = chapter.totalSessions > 0 ? Math.round((completedSessions / chapter.totalSessions) * 100) : 0;
+        {/* Overall progress */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="rounded-xl p-4 mb-6"
+          style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>Overall Progress</span>
+            <span className="text-xs font-semibold" style={{ color: "var(--gold)" }}>
+              {totalCompleted}/{chaptersData.length} chapters · {Math.round((totalCompleted / chaptersData.length) * 100)}%
+            </span>
+          </div>
+          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: `${(totalCompleted / chaptersData.length) * 100}%`,
+                background: "linear-gradient(90deg, var(--gold), var(--gold-light))",
+              }}
+            />
+          </div>
+        </motion.div>
 
-          return (
-            <motion.div
-              key={chapter.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.04 }}
-            >
-              <div className={`rounded-xl border overflow-hidden transition-all ${isLocked ? 'border-white/5 bg-[#1C1F26]/60' : status === 'completed' ? 'border-[#B89A5A]/20 bg-[#1C1F26]' : 'border-[#B89A5A]/30 bg-[#1C1F26]'}`}>
-                {/* Chapter header */}
-                <button
-                  onClick={() => !isLocked && setExpandedChapter(isExpanded ? null : chapter.id)}
-                  className={`w-full flex items-center gap-4 p-4 text-left transition-colors ${isLocked ? 'cursor-not-allowed' : 'hover:bg-white/[0.02]'}`}
-                  disabled={isLocked}
+        {/* Chapters list */}
+        <div className="space-y-3">
+          {chaptersData.map((chapter, index) => {
+            const status = getChapterStatus(chapter.id, index);
+            const completedSessions = getCompletedSessions(chapter.id);
+            const isExpanded = expandedChapter === chapter.id;
+            const isLocked = status === 'locked';
+            const sessionPct = chapter.totalSessions > 0 ? Math.round((completedSessions / chapter.totalSessions) * 100) : 0;
+
+            return (
+              <motion.div
+                key={chapter.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.04 }}
+              >
+                <div
+                  className="rounded-xl border overflow-hidden transition-all"
+                  style={{
+                    borderColor: isLocked ? "var(--border)" : status === 'completed' ? "rgba(201,168,76,0.2)" : "rgba(201,168,76,0.3)",
+                    background: "var(--bg-elevated)",
+                    opacity: isLocked ? 0.5 : 1,
+                  }}
                 >
-                  {/* Number / status icon */}
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
-                    status === 'completed' ? 'bg-[#B89A5A]/10' :
-                    status === 'locked' ? 'bg-white/5' :
-                    chapter.isDiagnostic ? 'bg-purple-400/10' : 'bg-[#B89A5A]/10'
-                  }`}>
-                    {status === 'completed' ? (
-                      <CheckCircle2 className="h-5 w-5 text-[#B89A5A]" />
-                    ) : status === 'locked' ? (
-                      <Lock className="h-4 w-4 text-white/20" />
-                    ) : (
-                      <span className={`font-bold text-sm ${chapter.isDiagnostic ? 'text-purple-400' : 'text-[#B89A5A]'}`}>
-                        {chapter.number}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className={`font-semibold text-sm ${isLocked ? 'text-white/30' : 'text-[#F4F2ED]'}`}>
-                        Cap. {chapter.number} — {chapter.title}
-                      </h3>
-                      {chapter.isDiagnostic && (
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-400/10 border border-purple-400/20 text-purple-400 font-medium">Diagnóstico</span>
-                      )}
-                      {status === 'completed' && (
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#B89A5A]/10 border border-[#B89A5A]/20 text-[#B89A5A] font-medium">✓ Concluído</span>
-                      )}
-                    </div>
-                    {!isLocked && (
-                      <p className={`text-xs mt-0.5 ${isLocked ? 'text-white/20' : 'text-[#8E96A3]'}`}>
-                        {completedSessions}/{chapter.totalSessions} sessões
-                        {status === 'in_progress' || status === 'completed' ? <> · {sessionPct}%</> : null}
-                      </p>
-                    )}
-                    {isLocked && (
-                      <p className="text-xs text-white/20 mt-0.5">Completa o capítulo anterior para desbloquear</p>
-                    )}
-                    {!isLocked && (
-                      <div className="mt-1.5 h-1 bg-white/10 rounded-full overflow-hidden max-w-xs">
-                        <div className="h-full rounded-full bg-[#B89A5A] transition-all" style={{ width: `${sessionPct}%` }} />
-                      </div>
-                    )}
-                  </div>
-
-                  {!isLocked && (
-                    <div className="shrink-0">
-                      {isExpanded ? (
-                        <ChevronDown className="h-4 w-4 text-[#8E96A3]" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4 text-[#8E96A3]" />
-                      )}
-                    </div>
-                  )}
-                </button>
-
-                {/* Sessions list */}
-                <AnimatePresence>
-                  {isExpanded && !isLocked && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden"
+                  {/* Chapter header */}
+                  <button
+                    onClick={() => !isLocked && setExpandedChapter(isExpanded ? null : chapter.id)}
+                    className="w-full flex items-center gap-4 p-4 text-left transition-colors hover:bg-white/[0.02]"
+                    disabled={isLocked}
+                    style={{ cursor: isLocked ? 'not-allowed' : 'pointer' }}
+                  >
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                      style={{
+                        background: status === 'completed' ? 'rgba(63,185,80,0.1)' :
+                          status === 'locked' ? 'rgba(255,255,255,0.04)' :
+                          chapter.isDiagnostic ? 'rgba(188,140,255,0.1)' : 'var(--gold-10)',
+                      }}
                     >
-                      <div className="border-t border-white/5 divide-y divide-white/[0.04]">
-                        {chapter.sessions.map((session, si) => {
-                          const sessStatus = sessionProgress[session.id]?.status;
-                          const sessScore = sessionProgress[session.id]?.score;
-                          const isDiagnosticSess = session.sessionType === 'diagnostic';
+                      {status === 'completed' ? (
+                        <CheckCircle2 className="h-5 w-5" style={{ color: "#3fb950" }} />
+                      ) : status === 'locked' ? (
+                        <Lock className="h-4 w-4" style={{ color: "var(--text-muted)" }} />
+                      ) : (
+                        <span className="font-bold text-sm" style={{ color: chapter.isDiagnostic ? '#bc8cff' : 'var(--gold)' }}>
+                          {chapter.number}
+                        </span>
+                      )}
+                    </div>
 
-                          return (
-                            <div key={session.id} className="flex items-center gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors">
-                              <div className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 text-[10px] font-bold ${
-                                sessStatus === 'completed' ? 'bg-[#B89A5A]/10 text-[#B89A5A]' :
-                                'bg-white/5 text-[#8E96A3]'
-                              }`}>
-                                {sessStatus === 'completed' ? '✓' : `${si + 1}`}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <p className={`text-xs font-medium ${sessStatus === 'completed' ? 'text-white/60' : 'text-[#F4F2ED]'}`}>
-                                    {session.title}
-                                  </p>
-                                  <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium ${sessionTypeColors[session.sessionType]}`}>
-                                    {sessionTypeLabels[session.sessionType]}
-                                  </span>
-                                </div>
-                                {sessScore && <p className="text-[10px] text-[#B89A5A] mt-0.5">{sessScore}%</p>}
-                              </div>
-                              <div className="shrink-0">
-                                {isDiagnosticSess ? (
-                                  <Button size="sm" className="h-6 text-[10px] px-2.5 bg-purple-400/10 text-purple-400 hover:bg-purple-400/20 border-0" asChild>
-                                    <Link to="/sessoes/diagnostico">
-                                      {sessStatus === 'completed' ? 'Review' : 'Start'}
-                                    </Link>
-                                  </Button>
-                                ) : (
-                                  <Button size="sm" className={`h-6 text-[10px] px-2.5 border-0 ${
-                                    sessStatus === 'completed' ? 'bg-[#B89A5A]/10 text-[#B89A5A] hover:bg-[#B89A5A]/20' :
-                                    'bg-white/5 text-[#F4F2ED] hover:bg-white/10'
-                                  }`} asChild>
-                                    <Link to={`/capitulos/${chapter.id}/sessoes/${session.id}`}>
-                                      {sessStatus === 'completed' ? 'Review' : 'Start'}
-                                    </Link>
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>
+                          Chapter {chapter.number} — {chapter.title}
+                        </h3>
+                        {chapter.isDiagnostic && (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ background: "rgba(188,140,255,0.1)", border: "1px solid rgba(188,140,255,0.2)", color: "#bc8cff" }}>
+                            Diagnostic
+                          </span>
+                        )}
+                        {status === 'completed' && (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ background: "rgba(63,185,80,0.1)", color: "#3fb950" }}>
+                            Completed
+                          </span>
+                        )}
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </motion.div>
-          );
-        })}
+                      {!isLocked && (
+                        <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>
+                          {completedSessions}/{chapter.totalSessions} sessions · {sessionPct}%
+                        </p>
+                      )}
+                      {isLocked && (
+                        <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>Complete previous chapter to unlock</p>
+                      )}
+                      {!isLocked && (
+                        <div className="mt-1.5 h-1 rounded-full overflow-hidden max-w-xs" style={{ background: "var(--border)" }}>
+                          <div className="h-full rounded-full transition-all" style={{ width: `${sessionPct}%`, background: "var(--gold)" }} />
+                        </div>
+                      )}
+                    </div>
+
+                    {!isLocked && (
+                      <div className="shrink-0">
+                        {isExpanded ? (
+                          <ChevronDown className="h-4 w-4" style={{ color: "var(--text-muted)" }} />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" style={{ color: "var(--text-muted)" }} />
+                        )}
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Sessions list */}
+                  <AnimatePresence>
+                    {isExpanded && !isLocked && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div style={{ borderTop: "1px solid var(--border)" }}>
+                          {chapter.sessions.map((session, si) => {
+                            const sessStatus = sessionProgress[session.id]?.status;
+                            const sessScore = sessionProgress[session.id]?.score;
+                            const isDiagnosticSess = session.sessionType === 'diagnostic';
+
+                            return (
+                              <div
+                                key={session.id}
+                                className="flex items-center gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors"
+                                style={{ borderBottom: si < chapter.sessions.length - 1 ? "1px solid var(--border)" : undefined }}
+                              >
+                                <div
+                                  className="w-7 h-7 rounded-md flex items-center justify-center shrink-0 text-[10px] font-bold"
+                                  style={{
+                                    background: sessStatus === 'completed' ? 'var(--gold-10)' : 'rgba(255,255,255,0.04)',
+                                    color: sessStatus === 'completed' ? 'var(--gold)' : 'var(--text-muted)',
+                                  }}
+                                >
+                                  {sessStatus === 'completed' ? '✓' : `${si + 1}`}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <p className="text-xs font-medium" style={{ color: sessStatus === 'completed' ? 'var(--text-muted)' : 'var(--text-primary)' }}>
+                                      {session.title}
+                                    </p>
+                                    <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium ${sessionTypeColors[session.sessionType]}`}>
+                                      {sessionTypeLabels[session.sessionType]}
+                                    </span>
+                                  </div>
+                                  {sessScore != null && <p className="text-[10px] mt-0.5" style={{ color: "var(--gold)" }}>{sessScore}%</p>}
+                                </div>
+                                <div className="shrink-0">
+                                  {isDiagnosticSess ? (
+                                    <Button size="sm" className="h-6 text-[10px] px-2.5 border-0" style={{ background: "rgba(188,140,255,0.1)", color: "#bc8cff" }} asChild>
+                                      <Link to="/sessoes/diagnostico">
+                                        {sessStatus === 'completed' ? 'Review' : 'Start'}
+                                      </Link>
+                                    </Button>
+                                  ) : (
+                                    <Button size="sm" className="h-6 text-[10px] px-2.5 border-0" style={{
+                                      background: sessStatus === 'completed' ? 'var(--gold-10)' : 'rgba(255,255,255,0.04)',
+                                      color: sessStatus === 'completed' ? 'var(--gold)' : 'var(--text-primary)',
+                                    }} asChild>
+                                      <Link to={`/capitulos/${chapter.id}/sessoes/${session.id}`}>
+                                        {sessStatus === 'completed' ? 'Review' : 'Start'}
+                                      </Link>
+                                    </Button>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </PlatformLayout>
   );

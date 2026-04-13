@@ -4,6 +4,7 @@ import { Send, Bot, User, RefreshCw, Mic, MicOff, Volume2, VolumeX, Video } from
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAICoach } from "@/hooks/useAICoach";
+import { useElevenLabsTTS } from "@/hooks/useElevenLabsTTS";
 import AIAvatar from "@/components/AIAvatar";
 
 interface ChatMessage {
@@ -53,24 +54,24 @@ const SessionAIChat = ({ sessionTitle, scenario, onComplete }: SessionAIChatProp
   const [exchangeCount, setExchangeCount] = useState(0);
   const [finished, setFinished] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const [ttsEnabled, setTtsEnabled] = useState(true);
   const [videoMode, setVideoMode] = useState(false);
   const [aiState, setAiState] = useState<"idle" | "listening" | "thinking" | "speaking">("idle");
   const bottomRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
-  const synthRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  // ElevenLabs TTS hook — uses preferred voice from localStorage
+  const { speak: elevenLabsSpeak, stop: elevenLabsStop, isSpeaking, isLoading: ttsLoading } = useElevenLabsTTS();
 
   const SpeechRecognitionConstructor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
   const supportsSpeech = !!SpeechRecognitionConstructor;
-  const supportsTTS = typeof window !== "undefined" && "speechSynthesis" in window;
 
   const welcomeMsg = `Welcome to your practice session: **${sessionTitle}**.\n\n${scenario}\n\nYou can type or use the microphone 🎙️ to speak. I'll coach you through ${MAX_EXCHANGES} exchanges. Let's begin!`;
 
   useEffect(() => {
     setMessages([{ role: "ai", text: welcomeMsg }]);
-    if (ttsEnabled && supportsTTS) {
-      speakText(welcomeMsg.replace(/\*\*/g, "").replace(/\n/g, " "));
+    if (ttsEnabled) {
+      speakText(welcomeMsg);
     }
   }, []);
 
@@ -79,31 +80,23 @@ const SessionAIChat = ({ sessionTitle, scenario, onComplete }: SessionAIChatProp
   }, [messages, isTyping]);
 
   const speakText = useCallback((text: string) => {
-    if (!supportsTTS || !ttsEnabled) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text.replace(/[#*_`]/g, ""));
-    utterance.lang = "en-GB";
-    utterance.rate = 0.95;
-    utterance.pitch = 1.0;
-    
-    // Try to find a good English voice
-    const voices = window.speechSynthesis.getVoices();
-    const preferred = voices.find(v => v.lang.startsWith("en") && v.name.includes("Female")) 
-      || voices.find(v => v.lang.startsWith("en-GB"))
-      || voices.find(v => v.lang.startsWith("en"));
-    if (preferred) utterance.voice = preferred;
+    if (!ttsEnabled) return;
+    const cleanText = text.replace(/[#*_`]/g, "").replace(/\n+/g, " ");
+    setAiState("speaking");
+    elevenLabsSpeak(cleanText);
+  }, [ttsEnabled, elevenLabsSpeak]);
 
-    utterance.onstart = () => { setIsSpeaking(true); setAiState("speaking"); };
-    utterance.onend = () => { setIsSpeaking(false); setAiState("idle"); };
-    synthRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
-  }, [supportsTTS, ttsEnabled]);
+  // Sync aiState with ElevenLabs speaking state
+  useEffect(() => {
+    if (!isSpeaking && aiState === "speaking") {
+      setAiState("idle");
+    }
+  }, [isSpeaking, aiState]);
 
   const stopSpeaking = useCallback(() => {
-    window.speechSynthesis.cancel();
-    setIsSpeaking(false);
+    elevenLabsStop();
     setAiState("idle");
-  }, []);
+  }, [elevenLabsStop]);
 
   const toggleRecording = useCallback(() => {
     if (!supportsSpeech) return;
@@ -169,7 +162,7 @@ const SessionAIChat = ({ sessionTitle, scenario, onComplete }: SessionAIChatProp
       setMessages(withAI);
       setExchangeCount(nextExchange);
 
-      if (ttsEnabled && supportsTTS) {
+      if (ttsEnabled) {
         speakText(reply);
       } else {
         setAiState("idle");
@@ -250,7 +243,7 @@ const SessionAIChat = ({ sessionTitle, scenario, onComplete }: SessionAIChatProp
             <Bot className="h-4 w-4 text-[#B89A5A]" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-[#F4F2ED]">VOICE³ AI Professor</p>
+            <p className="text-sm font-semibold text-[#F4F2ED]">Shadow Coach</p>
             <p className="text-xs text-[#8E96A3]">
               {finished ? "Session complete" : `Exchange ${exchangeCount + 1} of ${MAX_EXCHANGES}`}
             </p>
