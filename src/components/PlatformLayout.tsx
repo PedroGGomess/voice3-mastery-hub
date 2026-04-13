@@ -61,8 +61,8 @@ const PlatformLayout = ({ children }: { children: ReactNode }) => {
     .slice(0, 2)
     .toUpperCase();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/");
   };
 

@@ -120,7 +120,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       hasSession: !!authData.session,
     };
   };
-  const logout = async () => { await supabase.auth.signOut(); setCurrentUser(null); };
+  const logout = async () => {
+    setCurrentUser(null);
+    try {
+      await supabase.auth.signOut();
+    } catch (_e) {
+      // signOut can fail if session is already expired — that's fine
+    }
+  };
   const updateProfile = async (data: Partial<User>) => {
     if (!currentUser) return;
     setCurrentUser({ ...currentUser, ...data });
