@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-route
 import { AuthProvider } from "@/contexts/AuthContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { ShadowCoachProvider } from "@/contexts/ShadowCoachContext";
 import { awardPoints } from "@/lib/persistence";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useEffect } from "react";
@@ -36,6 +37,7 @@ import HowItWorksPage from "./pages/HowItWorksPage";
 import ForCompaniesPage from "./pages/ForCompaniesPage";
 import ContactPage from "./pages/ContactPage";
 import Catalogue from "./pages/Catalogue";
+import ProgrammeCatalogue from "./pages/ProgrammeCatalogue";
 import Toolkit from "./pages/Toolkit";
 import Practice from "./pages/Practice";
 import RescueMode from "./pages/tools/RescueMode";
@@ -59,6 +61,12 @@ import ChapterDetail from "./pages/ChapterDetail";
 import ChapterSessionPage from "./pages/ChapterSessionPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import CheckoutReturn from "./pages/CheckoutReturn";
+import VoiceDNA from "./pages/VoiceDNA";
+import ErrorBank from "./pages/ErrorBank";
+import ArticulationVault from "./pages/ArticulationVault";
+import DynamicIntake from "./pages/DynamicIntake";
+import MicroChapterDemo from "./pages/MicroChapterDemo";
+import ShadowCoachFloat from "@/components/ShadowCoachFloat";
 
 const queryClient = new QueryClient();
 
@@ -108,12 +116,14 @@ function AppContent() {
   return (
     <>
       <StreakTracker />
+      <ShadowCoachProvider>
       <ThemeProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
+            <ShadowCoachFloat />
             <Routes>
             {/* Public */}
             <Route path="/" element={<Index />} />
@@ -142,6 +152,7 @@ function AppContent() {
             <Route path="/app/desempenho" element={<ProtectedRoute requiredRole="student"><Desempenho /></ProtectedRoute>} />
             <Route path="/app/leaderboard" element={<ProtectedRoute requiredRole="student"><Leaderboard /></ProtectedRoute>} />
             <Route path="/app/catalogue" element={<ProtectedRoute requiredRole="student"><Catalogue /></ProtectedRoute>} />
+            <Route path="/app/programmes" element={<ProtectedRoute requiredRole="student"><ProgrammeCatalogue /></ProtectedRoute>} />
             <Route path="/app/catalogue/:programmeId" element={<ProtectedRoute requiredRole="student"><ProgrammeDetail /></ProtectedRoute>} />
             <Route path="/app/toolkit" element={<ProtectedRoute requiredRole="student"><Toolkit /></ProtectedRoute>} />
             <Route path="/app/toolkit/rescue-mode" element={<ProtectedRoute requiredRole="student"><RescueMode /></ProtectedRoute>} />
@@ -156,6 +167,13 @@ function AppContent() {
             <Route path="/app/practice/hostile-qa" element={<ProtectedRoute requiredRole="student"><HostileQA /></ProtectedRoute>} />
             <Route path="/app/practice/debate" element={<ProtectedRoute requiredRole="student"><AIDebateClub /></ProtectedRoute>} />
             <Route path="/app/practice/peer-debate" element={<ProtectedRoute requiredRole="student"><PeerDebate /></ProtectedRoute>} />
+
+            {/* V2 New Student Pages */}
+            <Route path="/app/voice-dna" element={<ProtectedRoute requiredRole="student"><VoiceDNA /></ProtectedRoute>} />
+            <Route path="/app/error-bank" element={<ProtectedRoute requiredRole="student"><ErrorBank /></ProtectedRoute>} />
+            <Route path="/app/vault" element={<ProtectedRoute requiredRole="student"><ArticulationVault /></ProtectedRoute>} />
+            <Route path="/app/learning-demo" element={<ProtectedRoute requiredRole="student"><MicroChapterDemo /></ProtectedRoute>} />
+            <Route path="/intake" element={<DynamicIntake />} />
 
             {/* Company routes */}
             <Route path="/empresa" element={<ProtectedRoute requiredRole="company_admin"><CompanyDashboard /></ProtectedRoute>} />
@@ -185,6 +203,7 @@ function AppContent() {
           </BrowserRouter>
         </TooltipProvider>
       </ThemeProvider>
+      </ShadowCoachProvider>
     </>
   );
 }
