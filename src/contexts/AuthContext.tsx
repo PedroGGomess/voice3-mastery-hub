@@ -15,6 +15,19 @@ interface AuthContextType {
 }
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Quick user object from session data (no DB calls)
+function quickUserFromSession(session: Session): User {
+  const meta = session.user.user_metadata || {};
+  return {
+    id: session.user.id,
+    name: meta.name || meta.full_name || session.user.email?.split('@')[0] || 'User',
+    email: session.user.email || '',
+    role: 'student', // default, will be enriched
+    createdAt: session.user.created_at || new Date().toISOString(),
+  };
+}
+
+// Full profile fetch (runs in background to enrich role/company/pack)
 async function fetchUserProfile(userId: string, email: string): Promise<User | null> {
   try {
     const [{ data: roleData }, { data: profile }] = await Promise.all([
@@ -26,10 +39,18 @@ async function fetchUserProfile(userId: string, email: string): Promise<User | n
     if (rawRole === 'professor') role = 'professor';
     else if (rawRole === 'admin') role = 'admin';
     else if (rawRole === 'company_admin') role = 'company_admin';
-    return { id: userId, name: profile?.name || email.split('@')[0] || 'User', email: profile?.email || email, company: profile?.company || undefined, role, createdAt: profile?.created_at || new Date().toISOString(), pack: profile?.pack || undefined, timezone: profile?.timezone || 'Europe/Lisbon' };
+    return {
+      id: userId,
+      name: profile?.name || email.split('@')[0] || 'User',
+      email: profile?.email || email,
+      company: profile?.company || undefined,
+      role,
+      createdAt: profile?.created_at || new Date().toISOString(),
+      pack: profile?.pack || undefined,
+      timezone: profile?.timezone || 'Europe/Lisbon',
+    };
   } catch (e) {
     console.error('Error fetching user profile', e);
-    // Return a basic user even if profile fetch fails
     return { id: userId, name: email.split('@')[0] || 'User', email, role: 'student', createdAt: new Date().toISOString() };
   }
 }
@@ -42,22 +63,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Timeout to prevent infinite loading
     const timeout = setTimeout(() => {
       setIsLoading(false);
-    }, 5000);
+    }, 3000);
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
-        setCurrentUser(await fetchUserProfile(session.user.id, session.user.email || ''));
+        // Set a quick user immediately so the app can redirect
+        setCurrentUser(quickUserFromSession(session));
+        setIsLoading(false);
+        clearTimeout(timeout);
+        // Then enrich with full profile in background
+        const fullUser = await fetchUserProfile(session.user.id, session.user.email || '');
+        if (fullUser) setCurrentUser(fullUser);
+      } else {
+        setIsLoading(false);
+        clearTimeout(timeout);
       }
-      setIsLoading(false);
-      clearTimeout(timeout);
     }).catch(() => {
       setIsLoading(false);
       clearTimeout(timeout);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event: string, session: Session | null) => {
-      if (session?.user) setCurrentUser(await fetchUserProfile(session.user.id, session.user.email || ''));
-      else setCurrentUser(null);
+      if (session?.user) {
+        // Set quick user immediately for fast redirect
+        setCurrentUser(quickUserFromSession(session));
+        setIsLoading(false);
+        // Enrich in background
+        const fullUser = await fetchUserProfile(session.user.id, session.user.email || '');
+        if (fullUser) setCurrentUser(fullUser);
+      } else {
+        setCurrentUser(null);
+      }
       setIsLoading(false);
     });
     return () => { subscription.unsubscribe(); clearTimeout(timeout); };
@@ -65,17 +101,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw new Error('Email ou password incorretos.');
+    if (error) throw new Error('Invalid email or password.');
   };
   const register = async (data: any) => {
     const { data: authData, error } = await supabase.auth.signUp({ email: data.email, password: data.password, options: { data: { name: data.name } } });
     if (error) throw new Error(error.message);
-    if (!authData.user) {
-      throw new Error('Não foi possível criar a conta.');
-    }
+    if (!authData.user) throw new Error('Could not create account.');
 
     // The handle_new_user trigger creates profile + role automatically.
-    // Fire-and-forget upserts for extra fields (pack, company) — don't await to avoid auth lock deadlock.
+    // Fire-and-forget upserts for extra fields — don't await to avoid auth lock deadlock.
     if (authData.session) {
       supabase.from('profiles').update({ company: data.company || null, pack: data.pack || null, timezone: 'Europe/Lisbon' }).eq('id', authData.user.id).then(() => {});
     }
